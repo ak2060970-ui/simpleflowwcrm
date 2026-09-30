@@ -1,0 +1,4001 @@
+/**
+ * Simple Floww Business Portal — Sales Dashboard Interactive Engine (v2 Pro)
+ * Inspired by automate.simplefunnel.in SaaS design patterns
+ * 
+ * Includes SVG Donut Chart, Area Activity Sparkline, Upcoming Reminders Stream,
+ * Dynamic Filters, Skeleton Loaders, and Drill-down Leads Drawer.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Global State
+  const state = {
+    filters: {
+      dateRange: 'last-30-days',
+      dateRangeLabel: 'Last 30 Days',
+      pipeline: 'all',
+      pipelineLabel: 'All Pipelines',
+      salesperson: 'all',
+      salespersonLabel: 'All Salespersons',
+      source: 'all',
+      sourceLabel: 'All Sources',
+      tag: 'all',
+      tagLabel: 'All Tags'
+    },
+    funnelPipeline: 'sales-core'
+  };
+
+  // Cache DOM containers
+  const kpiGridEl = document.getElementById('kpi-grid');
+  const funnelStagesEl = document.getElementById('funnel-stages-container');
+  const funnelPipelineSelectBtn = document.getElementById('funnel-pipeline-select-btn');
+  const leadConvBoxEl = document.getElementById('lead-conversion-content');
+  const followupsGridEl = document.getElementById('followups-grid');
+  const remindersStreamEl = document.getElementById('reminders-stream-list');
+  const attentionListEl = document.getElementById('attention-list');
+  const repSummaryStripEl = document.getElementById('rep-summary-strip');
+  const salesTeamTableBodyEl = document.getElementById('sales-team-table-body');
+  const sourceDonutSvgEl = document.getElementById('source-donut-svg');
+  const donutCenterNumEl = document.getElementById('donut-center-num');
+  const sourcesLegendGridEl = document.getElementById('sources-legend-grid');
+  const activitiesSparklineSvgEl = document.getElementById('activities-sparkline-svg');
+  const activitiesGridEl = document.getElementById('activities-grid');
+  const activitiesTotalEl = document.getElementById('activities-total');
+  const tagsCloudEl = document.getElementById('tags-cloud');
+
+  // Drawer DOM
+  const drawerBackdrop = document.getElementById('leads-drawer-backdrop');
+  const drawerCloseBtn = document.getElementById('drawer-close-btn');
+  const drawerTitleEl = document.getElementById('drawer-title');
+  const drawerSubtitleEl = document.getElementById('drawer-subtitle');
+  const drawerLeadsCountEl = document.getElementById('drawer-leads-count');
+  const drawerLeadsListEl = document.getElementById('drawer-leads-list');
+
+  // Filter Buttons
+  const dateBtn = document.getElementById('filter-btn-date');
+  const pipelineBtn = document.getElementById('filter-btn-pipeline');
+  const salespersonBtn = document.getElementById('filter-btn-salesperson');
+  const sourceBtn = document.getElementById('filter-btn-source');
+  const tagBtn = document.getElementById('filter-btn-tag');
+  const headerDateBtn = document.getElementById('header-date-btn');
+  const clearFiltersBtn = document.getElementById('clear-filters-btn');
+  const activeFiltersBadge = document.getElementById('active-filters-badge');
+
+  /**
+   * Main Render Pipeline
+   */
+  function refreshDashboard(withSkeleton = true) {
+    if (withSkeleton) {
+      applySkeletonStates();
+    }
+
+    setTimeout(() => {
+      const data = SalesDataService.getDashboardData({
+        dateRange: state.filters.dateRange,
+        pipeline: state.filters.pipeline,
+        salesperson: state.filters.salesperson,
+        source: state.filters.source,
+        tag: state.filters.tag
+      });
+
+      renderKPIs(data.kpis);
+      renderSalesFunnel(data.pipelineFunnel);
+      renderLeadConversion(data.leadConversion);
+      renderFollowups(data.followups);
+      renderUpcomingReminders(data.upcomingReminders);
+      renderNeedsAttention(data.needsAttention);
+      renderSalesTeam(data.salesTeam);
+      renderLeadSourceDonut(data.leadSources);
+      renderActivities(data.activities);
+      renderTags(data.tags);
+      updateFilterButtonsUI();
+
+      removeSkeletonStates();
+    }, withSkeleton ? 160 : 0);
+  }
+
+  function applySkeletonStates() {
+    document.querySelectorAll('.kpi-card, .dashboard-card').forEach(el => {
+      el.classList.add('skeleton-loading');
+    });
+  }
+
+  function removeSkeletonStates() {
+    document.querySelectorAll('.kpi-card, .dashboard-card').forEach(el => {
+      el.classList.remove('skeleton-loading');
+    });
+  }
+
+  /**
+   * 1. Render Top 8 KPI Cards (with subtle top border & SaaS pills)
+   */
+  function renderKPIs(kpis) {
+    if (!kpiGridEl) return;
+
+    kpiGridEl.innerHTML = `
+      <!-- 1. Total Leads -->
+      <div class="kpi-card" data-action="kpi" data-param="total">
+        <div class="kpi-head">
+          <span class="kpi-label">Total Leads</span>
+          <div class="kpi-icon-wrap blue">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.totalLeads.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend positive">↑ ${kpis.totalLeads.change}</span>
+          <span>${kpis.totalLeads.period}</span>
+        </div>
+      </div>
+
+      <!-- 2. New Leads -->
+      <div class="kpi-card" data-action="kpi" data-param="new">
+        <div class="kpi-head">
+          <span class="kpi-label">New Leads</span>
+          <div class="kpi-icon-wrap green">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.newLeads.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend positive">⚡ Active</span>
+          <span>${kpis.newLeads.label}</span>
+        </div>
+      </div>
+
+      <!-- 3. Qualified Leads -->
+      <div class="kpi-card" data-action="kpi" data-param="qualified">
+        <div class="kpi-head">
+          <span class="kpi-label">Qualified Leads</span>
+          <div class="kpi-icon-wrap purple">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.qualifiedLeads.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend positive">${kpis.qualifiedLeads.rate}</span>
+        </div>
+      </div>
+
+      <!-- 4. Deals Won -->
+      <div class="kpi-card" data-action="kpi" data-param="won">
+        <div class="kpi-head">
+          <span class="kpi-label">Deals Won</span>
+          <div class="kpi-icon-wrap orange">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.dealsWon.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend positive">↑ ${kpis.dealsWon.change}</span>
+          <span>vs previous period</span>
+        </div>
+      </div>
+
+      <!-- 5. Conversion Rate -->
+      <div class="kpi-card" data-action="kpi" data-param="won">
+        <div class="kpi-head">
+          <span class="kpi-label">Conversion Rate</span>
+          <div class="kpi-icon-wrap amber">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.conversionRate.value}</div>
+        <div class="kpi-footer">
+          <span>${kpis.conversionRate.sub}</span>
+        </div>
+      </div>
+
+      <!-- 6. Total Sales -->
+      <div class="kpi-card" data-action="kpi" data-param="won">
+        <div class="kpi-head">
+          <span class="kpi-label">Total Sales</span>
+          <div class="kpi-icon-wrap orange">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.totalSales.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend positive">↑ ${kpis.totalSales.change}</span>
+          <span>vs previous period</span>
+        </div>
+      </div>
+
+      <!-- 7. Pending Follow-ups -->
+      <div class="kpi-card" data-action="followup" data-param="pending">
+        <div class="kpi-head">
+          <span class="kpi-label">Pending Follow-ups</span>
+          <div class="kpi-icon-wrap blue">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.pendingFollowups.value}</div>
+        <div class="kpi-footer">
+          <span>${kpis.pendingFollowups.sub}</span>
+        </div>
+      </div>
+
+      <!-- 8. Overdue Follow-ups (Subtle warning, no aggressive red) -->
+      <div class="kpi-card kpi-warning" data-action="followup" data-param="overdue">
+        <div class="kpi-head">
+          <span class="kpi-label">Overdue Follow-ups</span>
+          <div class="kpi-icon-wrap rose">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+        </div>
+        <div class="kpi-main-number">${kpis.overdueFollowups.value}</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend warning-badge">⚠️ Action Required</span>
+          <span>${kpis.overdueFollowups.sub}</span>
+        </div>
+      </div>
+    `;
+
+    kpiGridEl.querySelectorAll('.kpi-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const action = card.getAttribute('data-action');
+        const param = card.getAttribute('data-param');
+        openLeadsDrawer(action, param, `Filtered Leads: ${card.querySelector('.kpi-label').textContent}`);
+      });
+    });
+  }
+
+  /**
+   * 2. Render Sales Funnel Stages
+   */
+  function renderSalesFunnel(pipelineFunnel) {
+    if (!funnelStagesEl) return;
+
+    if (!pipelineFunnel.stages || pipelineFunnel.stages.length === 0) {
+      funnelStagesEl.innerHTML = `
+        <div style="padding: 24px; text-align: center; color: var(--sf-text-muted); width: 100%;">
+          Select a pipeline to view funnel performance.
+        </div>`;
+      return;
+    }
+
+    const maxLeads = Math.max(...pipelineFunnel.stages.map(s => s.leads), 1);
+
+    funnelStagesEl.innerHTML = pipelineFunnel.stages.map(stage => {
+      const barPercent = Math.min(100, Math.max(8, Math.round((stage.leads / maxLeads) * 100)));
+
+      return `
+        <div class="funnel-stage-card" data-action="stage" data-param="${stage.name}">
+          <div>
+            <div class="funnel-stage-name" title="${stage.name}">${stage.name}</div>
+            <div class="funnel-stage-count">${stage.leads.toLocaleString('en-IN')}</div>
+            <div class="funnel-stage-sub">Leads in stage</div>
+            <div style="height: 3px; background: #e2e8f0; border-radius: 2px; margin-top: 6px; overflow: hidden;">
+              <div style="height: 100%; width: ${barPercent}%; background: ${stage.color || 'var(--sf-primary)'}; border-radius: 2px;"></div>
+            </div>
+          </div>
+
+          <div class="funnel-stage-conversion">
+            ${stage.nextConversion !== null ? `
+              <div class="conversion-pill">
+                <span>↓ ${stage.nextConversion}%</span>
+              </div>
+              <div class="stage-time">Avg: ${stage.avgTime}</div>
+            ` : `
+              <div class="conversion-pill" style="color: var(--sf-green);">
+                <span>★ Closed Won</span>
+              </div>
+              <div class="stage-time">Avg: ${stage.avgTime}</div>
+            `}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    funnelStagesEl.querySelectorAll('.funnel-stage-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const stageName = card.getAttribute('data-param');
+        openLeadsDrawer('stage', stageName, `Pipeline Stage: ${stageName}`);
+      });
+    });
+  }
+
+  /**
+   * 3. Render Lead Conversion Flow
+   */
+  function renderLeadConversion(conv) {
+    if (!leadConvBoxEl) return;
+
+    leadConvBoxEl.innerHTML = `
+      <div class="conversion-flow-box">
+        <div class="milestones-strip">
+          <div class="milestone-node" data-action="kpi" data-param="total" style="cursor: pointer;">
+            <div class="m-label">TOTAL LEADS</div>
+            <div class="m-val">${conv.leads}</div>
+          </div>
+          <div class="milestone-arrow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="milestone-node" data-action="stage" data-param="Demo" style="cursor: pointer;">
+            <div class="m-label">DEMOS</div>
+            <div class="m-val">${conv.demos}</div>
+          </div>
+          <div class="milestone-arrow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="milestone-node" data-action="stage" data-param="Won" style="cursor: pointer;">
+            <div class="m-label">SALES</div>
+            <div class="m-val">${conv.sales}</div>
+          </div>
+        </div>
+
+        <div class="conversion-rates-grid">
+          <div class="conv-metric-card">
+            <div class="cm-label">Lead → Demo</div>
+            <div class="cm-rate">${conv.leadToDemoRate}%</div>
+          </div>
+          <div class="conv-metric-card">
+            <div class="cm-label">Demo → Sale</div>
+            <div class="cm-rate">${conv.demoToSaleRate}%</div>
+          </div>
+          <div class="conv-metric-card highlight">
+            <div class="cm-label">Lead → Sale</div>
+            <div class="cm-rate">${conv.leadToSaleRate}%</div>
+          </div>
+        </div>
+
+        <div class="conv-explain">
+          Out of <strong>${conv.leads} leads</strong>, <strong>${conv.demos} reached demos</strong> (${conv.leadToDemoRate}%) and <strong>${conv.sales} converted to deals</strong> (${conv.demoToSaleRate}% demo close rate).
+        </div>
+      </div>
+    `;
+
+    leadConvBoxEl.querySelectorAll('.milestone-node').forEach(node => {
+      node.addEventListener('click', () => {
+        const action = node.getAttribute('data-action');
+        const param = node.getAttribute('data-param');
+        openLeadsDrawer(action, param, `Conversion Milestone: ${node.querySelector('.m-label').textContent}`);
+      });
+    });
+  }
+
+  /**
+   * 4. Render Follow-up Overview (6 Clickable Cards)
+   */
+  function renderFollowups(fu) {
+    if (!followupsGridEl) return;
+
+    followupsGridEl.innerHTML = `
+      <div class="followup-card" data-action="followup" data-param="due-today">
+        <div class="fu-title">Due Today</div>
+        <div class="fu-count">${fu.dueToday}</div>
+        <span class="fu-action-link">View Leads →</span>
+      </div>
+
+      <div class="followup-card card-overdue" data-action="followup" data-param="overdue">
+        <div class="fu-title">Overdue</div>
+        <div class="fu-count">${fu.overdue}</div>
+        <span class="fu-action-link" style="color: #b45309;">Prioritize →</span>
+      </div>
+
+      <div class="followup-card" data-action="followup" data-param="completed">
+        <div class="fu-title">Completed Today</div>
+        <div class="fu-count" style="color: var(--sf-green);">${fu.completedToday}</div>
+        <span class="fu-action-link" style="color: var(--sf-green);">View Done →</span>
+      </div>
+
+      <div class="followup-card" data-action="followup" data-param="no-followup">
+        <div class="fu-title">No Follow-up Set</div>
+        <div class="fu-count">${fu.noFollowup}</div>
+        <span class="fu-action-link">Assign Date →</span>
+      </div>
+
+      <div class="followup-card" data-action="followup" data-param="no-next">
+        <div class="fu-title">No Next Follow-up</div>
+        <div class="fu-count">${fu.noNextFollowup}</div>
+        <span class="fu-action-link">Schedule →</span>
+      </div>
+
+      <div class="followup-card" data-action="followup" data-param="upcoming">
+        <div class="fu-title">Upcoming</div>
+        <div class="fu-count">${fu.upcoming}</div>
+        <span class="fu-action-link">Pipeline View →</span>
+      </div>
+    `;
+
+    followupsGridEl.querySelectorAll('.followup-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const param = card.getAttribute('data-param');
+        openLeadsDrawer('followup', param, `Follow-up Filter: ${card.querySelector('.fu-title').textContent}`);
+      });
+    });
+  }
+
+  /**
+   * 4b. Render Upcoming Follow-ups Stream (Inspired by automate.simplefunnel.in upcoming-reminders-widget)
+   */
+  function renderUpcomingReminders(reminders) {
+    if (!remindersStreamEl) return;
+
+    if (!reminders || reminders.length === 0) {
+      remindersStreamEl.innerHTML = `<div style="text-align: center; color: var(--sf-text-muted); font-size: 12px; padding: 16px;">No upcoming follow-ups scheduled for this period</div>`;
+      return;
+    }
+
+    remindersStreamEl.innerHTML = reminders.map(r => `
+      <div class="reminder-row" data-action="followup" data-param="upcoming">
+        <div class="rem-left">
+          <div class="rem-avatar">${r.repAvatar}</div>
+          <div class="rem-info">
+            <div class="rem-lead-name">${r.leadName} <span style="font-weight: 400; color: var(--sf-text-muted); font-size: 11px;">• ${r.company}</span></div>
+            <div class="rem-sub">${r.title}</div>
+          </div>
+        </div>
+
+        <div class="rem-right">
+          <span class="rem-type-pill ${r.typeColor}">${r.type}</span>
+          <span class="rem-time-tag">⏰ ${r.timeFormatted}</span>
+        </div>
+      </div>
+    `).join('');
+
+    remindersStreamEl.querySelectorAll('.reminder-row').forEach(row => {
+      row.addEventListener('click', () => {
+        openLeadsDrawer('followup', 'upcoming', 'Scheduled Priority Follow-ups');
+      });
+    });
+  }
+
+  /**
+   * 5. Render Needs Attention (Actionable items)
+   */
+  function renderNeedsAttention(items) {
+    if (!attentionListEl) return;
+
+    attentionListEl.innerHTML = items.map(item => `
+      <div class="attention-item" data-action="attention" data-param="${item.filterParam}">
+        <div class="attention-left">
+          <span class="attention-icon-span">${item.icon || '⚠️'}</span>
+          <span class="attention-label">${item.label}</span>
+        </div>
+        <div class="attention-right">
+          <span class="attention-count ${item.count > 15 ? 'high-count' : ''}">${item.count}</span>
+          <svg class="attention-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+    `).join('');
+
+    attentionListEl.querySelectorAll('.attention-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const param = item.getAttribute('data-param');
+        const label = item.querySelector('.attention-label').textContent;
+        openLeadsDrawer('attention', param, `Needs Attention: ${label}`);
+      });
+    });
+  }
+
+  /**
+   * 6. Render Sales Team Performance Table & Summary
+   */
+  function renderSalesTeam(team) {
+    if (repSummaryStripEl) {
+      repSummaryStripEl.innerHTML = `
+        <div class="rep-summary-item">
+          <div class="rsi-label">Assigned Leads</div>
+          <div class="rsi-val">${team.summary.assigned}</div>
+        </div>
+        <div class="rep-summary-item">
+          <div class="rsi-label">Contacted</div>
+          <div class="rsi-val">${team.summary.contacted}</div>
+        </div>
+        <div class="rep-summary-item">
+          <div class="rsi-label">Demos Done</div>
+          <div class="rsi-val">${team.summary.demos}</div>
+        </div>
+        <div class="rep-summary-item">
+          <div class="rsi-label">Deals Won</div>
+          <div class="rsi-val">${team.summary.won}</div>
+        </div>
+        <div class="rep-summary-item">
+          <div class="rsi-label">Conversion %</div>
+          <div class="rsi-val" style="color: var(--sf-green);">${team.summary.conversion}%</div>
+        </div>
+        <div class="rep-summary-item">
+          <div class="rsi-label">Overdue</div>
+          <div class="rsi-val" style="color: #b45309;">${team.summary.overdue}</div>
+        </div>
+      `;
+    }
+
+    if (salesTeamTableBodyEl) {
+      salesTeamTableBodyEl.innerHTML = team.members.map(m => `
+        <tr data-rep-id="${m.id}" data-rep-name="${m.name}">
+          <td>
+            <div class="rep-profile-cell">
+              <span class="rep-avatar-sm">${m.avatar}</span>
+              <div>
+                <span class="rep-name-txt">${m.name}</span>
+                ${m.status === 'top-performer' ? '<span style="font-size: 10px; background: #fef3c7; color: #b45309; border-radius: 4px; padding: 1px 4px; font-weight: 700; margin-left: 4px;">Top</span>' : ''}
+              </div>
+            </div>
+          </td>
+          <td><strong>${m.assigned}</strong></td>
+          <td>${m.contacted}</td>
+          <td>${m.demos}</td>
+          <td><strong>${m.won}</strong></td>
+          <td><span class="conv-pill-badge">${m.conversion}%</span></td>
+          <td><span class="overdue-count-badge">${m.overdue}</span></td>
+        </tr>
+      `).join('');
+
+      salesTeamTableBodyEl.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('click', () => {
+          const repId = row.getAttribute('data-rep-id');
+          const repName = row.getAttribute('data-rep-name');
+
+          state.filters.salesperson = repId;
+          state.filters.salespersonLabel = repName;
+          showToast(`Filtered dashboard by: ${repName}`);
+          refreshDashboard();
+        });
+      });
+    }
+  }
+
+  /**
+   * 7. Render Lead Source Performance WITH SVG DONUT (Inspired by automate.simplefunnel.in contact-source-donut)
+   */
+  function renderLeadSourceDonut(leadSources) {
+    if (!sourceDonutSvgEl || !sourcesLegendGridEl) return;
+
+    if (donutCenterNumEl) {
+      donutCenterNumEl.textContent = leadSources.totalLeads.toLocaleString('en-IN');
+    }
+
+    // Generate SVG path arcs for the donut
+    const radius = 68;
+    const strokeWidth = 20;
+    const center = 85;
+    const circumference = 2 * Math.PI * radius;
+
+    let accumulatedPercent = 0;
+
+    const circlesSvg = leadSources.slices.map(slice => {
+      const strokeDash = (slice.percent / 100) * circumference;
+      const strokeGap = circumference - strokeDash;
+      const offset = (accumulatedPercent / 100) * circumference;
+      accumulatedPercent += parseFloat(slice.percent);
+
+      return `
+        <circle 
+          cx="${center}" cy="${center}" r="${radius}" 
+          fill="none" 
+          stroke="${slice.color}" 
+          stroke-width="${strokeWidth}" 
+          stroke-dasharray="${strokeDash} ${strokeGap}" 
+          stroke-dashoffset="-${offset}"
+          style="cursor: pointer; transition: stroke-width 0.15s ease;"
+          onmouseover="this.setAttribute('stroke-width', '24')"
+          onmouseout="this.setAttribute('stroke-width', '20')"
+          data-source-name="${slice.name}"
+        />
+      `;
+    }).join('');
+
+    sourceDonutSvgEl.innerHTML = circlesSvg;
+
+    // Render 2-Column Sources Legend Grid
+    sourcesLegendGridEl.innerHTML = leadSources.slices.map(src => `
+      <div class="source-legend-item" data-action="source" data-param="${src.name}">
+        <div class="sli-left">
+          <span class="sli-dot" style="background-color: ${src.color};"></span>
+          <span class="sli-name" title="${src.name}">${src.name}</span>
+        </div>
+        <div class="sli-right">
+          <span>${src.leads}</span>
+          <span style="color: var(--sf-primary); font-size: 11px;">(${src.percent}%)</span>
+        </div>
+      </div>
+    `).join('');
+
+    sourcesLegendGridEl.querySelectorAll('.source-legend-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const srcName = item.getAttribute('data-param');
+        openLeadsDrawer('source', srcName, `Source Leads: ${srcName}`);
+      });
+    });
+  }
+
+  /**
+   * 8. Render Sales Activities + Sparkline Area Chart (Inspired by automate.simplefunnel.in message-analytics)
+   */
+  function renderActivities(act) {
+    if (!activitiesGridEl) return;
+
+    activitiesGridEl.innerHTML = `
+      <div class="activity-tile">
+        <div class="act-title">📞 Calls</div>
+        <div class="act-count">${act.calls}</div>
+      </div>
+      <div class="activity-tile">
+        <div class="act-title">💬 WhatsApp</div>
+        <div class="act-count">${act.whatsapp}</div>
+      </div>
+      <div class="activity-tile">
+        <div class="act-title">✉️ Emails</div>
+        <div class="act-count">${act.emails}</div>
+      </div>
+      <div class="activity-tile">
+        <div class="act-title">🎯 Demos</div>
+        <div class="act-count">${act.demos}</div>
+      </div>
+      <div class="activity-tile">
+        <div class="act-title">✓ Tasks</div>
+        <div class="act-count">${act.tasks}</div>
+      </div>
+      <div class="activity-tile" style="background: var(--sf-primary-light); border-color: var(--sf-primary-border);">
+        <div class="act-title" style="color: var(--sf-primary);">Velocity Index</div>
+        <div class="act-count" style="color: var(--sf-primary);">96.8%</div>
+      </div>
+    `;
+
+    if (activitiesTotalEl) {
+      activitiesTotalEl.textContent = `${act.total.toLocaleString('en-IN')} Total Touchpoints Recorded`;
+    }
+
+    // Render SVG Area Sparkline Chart
+    if (activitiesSparklineSvgEl && act.trend) {
+      const width = 460;
+      const height = 75;
+      const maxVal = Math.max(...act.trend.map(t => t.total), 1);
+      const stepX = width / (act.trend.length - 1);
+
+      const points = act.trend.map((pt, i) => {
+        const x = i * stepX;
+        const y = height - ((pt.total / maxVal) * (height - 18)) - 8;
+        return { x, y, ...pt };
+      });
+
+      // Construct path data
+      let linePath = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpX1 = prev.x + (curr.x - prev.x) / 2;
+        const cpX2 = cpX1;
+        linePath += ` C ${cpX1} ${prev.y}, ${cpX2} ${curr.y}, ${curr.x} ${curr.y}`;
+      }
+
+      const areaPath = `${linePath} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+
+      activitiesSparklineSvgEl.innerHTML = `
+        <defs>
+          <linearGradient id="actGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ea580c" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#ea580c" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaPath}" fill="url(#actGradient)" />
+        <path d="${linePath}" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" />
+        ${points.map(p => `
+          <circle cx="${p.x}" cy="${p.y}" r="3.5" fill="#ffffff" stroke="#ea580c" stroke-width="2" />
+        `).join('')}
+      `;
+    }
+  }
+
+  /**
+   * 9. Render Tags Overview
+   */
+  function renderTags(tags) {
+    if (!tagsCloudEl) return;
+
+    tagsCloudEl.innerHTML = tags.map(tag => `
+      <div class="tag-chip ${state.filters.tag === tag.id ? 'active-tag' : ''}" data-action="tag" data-tag-id="${tag.id}" data-tag-name="${tag.name}">
+        <span>${tag.icon || ''} ${tag.name}</span>
+        <span class="tag-chip-count">${tag.count}</span>
+      </div>
+    `).join('');
+
+    tagsCloudEl.querySelectorAll('.tag-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const tagId = chip.getAttribute('data-tag-id');
+        const tagName = chip.getAttribute('data-tag-name');
+
+        if (state.filters.tag === tagId) {
+          state.filters.tag = 'all';
+          state.filters.tagLabel = 'All Tags';
+        } else {
+          state.filters.tag = tagId;
+          state.filters.tagLabel = tagName;
+        }
+
+        showToast(`Filtered by tag: ${tagName}`);
+        refreshDashboard();
+      });
+    });
+  }
+
+  /**
+   * Update Filter Buttons UI Text & Active Badges
+   */
+  function updateFilterButtonsUI() {
+    if (dateBtn) dateBtn.querySelector('.filter-text').textContent = state.filters.dateRangeLabel;
+    if (pipelineBtn) pipelineBtn.querySelector('.filter-text').textContent = state.filters.pipelineLabel;
+    if (salespersonBtn) salespersonBtn.querySelector('.filter-text').textContent = state.filters.salespersonLabel;
+    if (sourceBtn) sourceBtn.querySelector('.filter-text').textContent = state.filters.sourceLabel;
+    if (tagBtn) tagBtn.querySelector('.filter-text').textContent = state.filters.tagLabel;
+
+    if (headerDateBtn) {
+      const headerDateText = headerDateBtn.querySelector('.header-date-text');
+      if (headerDateText) headerDateText.textContent = state.filters.dateRangeLabel;
+    }
+
+    let activeCount = 0;
+    if (state.filters.dateRange !== 'last-30-days') activeCount++;
+    if (state.filters.pipeline !== 'all') activeCount++;
+    if (state.filters.salesperson !== 'all') activeCount++;
+    if (state.filters.source !== 'all') activeCount++;
+    if (state.filters.tag !== 'all') activeCount++;
+
+    if (activeFiltersBadge) {
+      if (activeCount > 0) {
+        activeFiltersBadge.textContent = `${activeCount} Active`;
+        activeFiltersBadge.style.display = 'inline-block';
+      } else {
+        activeFiltersBadge.style.display = 'none';
+      }
+    }
+  }
+
+  /**
+   * Actionable Leads Drawer
+   */
+  function openLeadsDrawer(filterType, filterValue, title = 'Filtered Leads') {
+    if (!drawerBackdrop) return;
+
+    const leads = SalesDataService.getFilteredLeads(filterType, filterValue);
+
+    if (drawerTitleEl) drawerTitleEl.textContent = title;
+    if (drawerSubtitleEl) drawerSubtitleEl.textContent = `Displaying ${leads.length} leads matching criteria`;
+    if (drawerLeadsCountEl) drawerLeadsCountEl.textContent = `${leads.length} Leads`;
+
+    if (drawerLeadsListEl) {
+      if (leads.length === 0) {
+        drawerLeadsListEl.innerHTML = `
+          <div style="padding: 40px 20px; text-align: center; color: var(--sf-text-muted);">
+            No leads currently match this filter condition.
+          </div>`;
+      } else {
+        drawerLeadsListEl.innerHTML = leads.map(l => `
+          <div class="drawer-lead-card">
+            <div class="dlc-top">
+              <div>
+                <span class="dlc-name">${l.name}</span>
+                <span style="font-size: 11px; color: var(--sf-text-muted); margin-left: 6px;">• ${l.company}</span>
+              </div>
+              <span class="dlc-value">${l.value}</span>
+            </div>
+            <div class="dlc-meta">
+              <span>📞 ${l.phone}</span>
+              <span>👤 Rep: <strong>${l.rep}</strong></span>
+              <span>🌐 ${l.source}</span>
+              <span style="background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 11px;">${l.tag}</span>
+            </div>
+            <div class="dlc-bottom">
+              <span>Stage: <strong>${l.stage}</strong></span>
+              <span class="dlc-followup">📅 ${l.followUp}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    drawerBackdrop.classList.add('open');
+  }
+
+  function closeLeadsDrawer() {
+    if (drawerBackdrop) drawerBackdrop.classList.remove('open');
+  }
+
+  if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeLeadsDrawer);
+  if (drawerBackdrop) {
+    drawerBackdrop.addEventListener('click', (e) => {
+      if (e.target === drawerBackdrop) closeLeadsDrawer();
+    });
+  }
+
+  /**
+   * Filter Dropdowns Controller
+   */
+  function setupDropdown(btnId, menuId, onSelect) {
+    const btn = document.getElementById(btnId);
+    const menu = document.getElementById(menuId);
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.dropdown-menu').forEach(m => {
+        if (m !== menu) m.classList.remove('show');
+      });
+      menu.classList.toggle('show');
+    });
+
+    menu.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const val = item.getAttribute('data-value');
+        const text = item.textContent.trim();
+        menu.classList.remove('show');
+        onSelect(val, text);
+      });
+    });
+  }
+
+  // Setup dropdowns
+  setupDropdown('filter-btn-date', 'date-menu', (val, text) => {
+    state.filters.dateRange = val;
+    state.filters.dateRangeLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('header-date-btn', 'header-date-menu', (val, text) => {
+    state.filters.dateRange = val;
+    state.filters.dateRangeLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('filter-btn-pipeline', 'pipeline-menu', (val, text) => {
+    state.filters.pipeline = val;
+    state.filters.pipelineLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('funnel-pipeline-select-btn', 'funnel-pipeline-menu', (val, text) => {
+    state.filters.pipeline = val;
+    state.filters.pipelineLabel = text;
+    if (funnelPipelineSelectBtn) {
+      funnelPipelineSelectBtn.querySelector('span').textContent = text;
+    }
+    refreshDashboard();
+  });
+
+  setupDropdown('filter-btn-salesperson', 'salesperson-menu', (val, text) => {
+    state.filters.salesperson = val;
+    state.filters.salespersonLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('team-salesperson-select-btn', 'team-salesperson-menu', (val, text) => {
+    state.filters.salesperson = val;
+    state.filters.salespersonLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('filter-btn-source', 'source-menu', (val, text) => {
+    state.filters.source = val;
+    state.filters.sourceLabel = text;
+    refreshDashboard();
+  });
+
+  setupDropdown('filter-btn-tag', 'tag-menu', (val, text) => {
+    state.filters.tag = val;
+    state.filters.tagLabel = text;
+    refreshDashboard();
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+  });
+
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
+      state.filters = {
+        dateRange: 'last-30-days',
+        dateRangeLabel: 'Last 30 Days',
+        pipeline: 'all',
+        pipelineLabel: 'All Pipelines',
+        salesperson: 'all',
+        salespersonLabel: 'All Salespersons',
+        source: 'all',
+        sourceLabel: 'All Sources',
+        tag: 'all',
+        tagLabel: 'All Tags'
+      };
+      showToast('Global filters reset to defaults');
+      refreshDashboard();
+    });
+  }
+
+  function showToast(msg) {
+    let toast = document.getElementById('sf-dashboard-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'sf-dashboard-toast';
+      toast.className = 'sf-toast';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span>⚡</span> <span>${msg}</span>`;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+
+  const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
+  const sidebarEl = document.querySelector('.sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+  const mobileMenuBtn = document.getElementById('mobile-bottom-menu-btn');
+
+  function toggleMobileSidebar(force) {
+    if (!sidebarEl) return;
+    const shouldOpen = typeof force === 'boolean' ? force : !sidebarEl.classList.contains('mobile-open');
+    if (shouldOpen) {
+      sidebarEl.classList.add('mobile-open');
+      if (sidebarOverlay) sidebarOverlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    } else {
+      sidebarEl.classList.remove('mobile-open');
+      if (sidebarOverlay) sidebarOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileSidebar();
+    });
+  }
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileSidebar();
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+      toggleMobileSidebar(false);
+    });
+  }
+
+  /* ==========================================================================
+     ALL-IN-ONE CRM INTERACTION ENGINE
+     ========================================================================== */
+  
+  // 1. View Navigation & Routing
+  const topBreadcrumb = document.getElementById('top-breadcrumb');
+  const navLinks = document.querySelectorAll('[data-view]');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const viewName = link.getAttribute('data-view');
+      const breadcrumb = link.getAttribute('data-breadcrumb');
+      if (!viewName) return;
+
+      // Update active links
+      document.querySelectorAll('.sidebar__nav .nav-item, .sidebar__nav .nav-subitem').forEach(el => el.classList.remove('active'));
+      link.classList.add('active');
+
+      // Update breadcrumb
+      if (topBreadcrumb && breadcrumb) {
+        topBreadcrumb.textContent = breadcrumb;
+      }
+
+      // Switch view panel
+      document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+      const targetPanel = document.getElementById(`view-${viewName}`);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+        if (viewName === 'dashboard') {
+          refreshDashboard(false);
+        }
+      }
+
+      // Close mobile sidebar if open
+      if (sidebarEl && window.innerWidth <= 900) {
+        sidebarEl.classList.remove('mobile-open');
+      }
+    });
+  });
+
+  // 2. Submenu Accordions
+  document.querySelectorAll('[data-toggle="submenu"]').forEach(parentItem => {
+    parentItem.addEventListener('click', () => {
+      const targetId = parentItem.getAttribute('data-target');
+      const submenu = document.getElementById(targetId);
+      if (submenu) {
+        submenu.classList.toggle('open');
+        parentItem.classList.toggle('open');
+      }
+    });
+  });
+
+  // 3. Theme Toggle (Dark / Light)
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  if (themeToggleBtn) {
+    const savedTheme = localStorage.getItem('sf-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      localStorage.setItem('sf-theme', nextTheme);
+      showToast(`Switched to ${nextTheme.toUpperCase()} mode`);
+    });
+  }
+
+  // 4. Wallet Refresh Action
+  const walletRefreshBtn = document.getElementById('wallet-refresh-btn');
+  if (walletRefreshBtn) {
+    walletRefreshBtn.addEventListener('click', () => {
+      walletRefreshBtn.style.transform = 'rotate(360deg)';
+      walletRefreshBtn.style.transition = 'transform 0.5s ease';
+      setTimeout(() => {
+        walletRefreshBtn.style.transform = 'none';
+        showToast('Wallet balance synced: ₹1,056.51');
+      }, 500);
+    });
+  }
+
+  // 5. Inbox Chat Interactions
+  const contactRows = document.querySelectorAll('.inbox-contact-row');
+  const welcomeScreen = document.getElementById('inbox-welcome-screen');
+  const activeChatScreen = document.getElementById('inbox-active-chat-screen');
+  const chatHeaderName = document.getElementById('chat-header-name');
+  const chatHeaderAvatar = document.getElementById('chat-header-avatar');
+  const chatMessagesContainer = document.getElementById('chat-messages-container');
+  const chatInputText = document.getElementById('chat-input-text');
+  const chatSendBtn = document.getElementById('chat-send-msg-btn');
+  const contactSearchInput = document.getElementById('inbox-contact-search');
+
+  const chatHistories = {
+    'Adnan Qureshi': [
+      { text: 'Hello Abhinandan bhai, API webhook setup complete hua kya?', time: '6:27 pm', type: 'incoming' },
+      { text: 'Haan Adnan, outgoing webhooks ready hain. Main test payload bhej raha hu.', time: '6:28 pm', type: 'outgoing' },
+      { text: 'Update krdiya aapne', time: '6:29 pm', type: 'incoming' }
+    ],
+    'Abhinandan Kumar': [
+      { text: 'Simple Floww WhatsApp automation system check', time: '5:50 pm', type: 'incoming' },
+      { text: 'You: * Simple Floww is running smoothly on Cloud Meta API', time: '5:55 pm', type: 'outgoing' }
+    ],
+    'faiz57185': [
+      { text: 'How do I start my own WhatsApp Marketing Agency?', time: '5:10 pm', type: 'incoming' },
+      { text: 'You: [Interactive] 🚀 Start Your Own Agency with Simple Floww Whitelabel!', time: '5:14 pm', type: 'outgoing' }
+    ],
+    'Backend Support Team': [
+      { text: '+91 79832 98464', time: '4:15 pm', type: 'incoming' },
+      { text: 'Broadcasting template approval pending for festive sales.', time: '4:18 pm', type: 'incoming' }
+    ],
+    'Divya Agrawal': [
+      { text: 'Can we get instant WhatsApp alerts for new leads?', time: '3:30 pm', type: 'incoming' },
+      { text: 'Yes! Instant webhook & push notifications are active.', time: '3:34 pm', type: 'outgoing' },
+      { text: 'Perfect', time: '3:36 pm', type: 'incoming' }
+    ],
+    'MR Singh': [
+      { text: 'Can you send the plan brochure screenshot?', time: '2:30 pm', type: 'incoming' },
+      { text: 'You: image (pricing_matrix.png)', time: '2:32 pm', type: 'outgoing' }
+    ],
+    'Satyam Singh': [
+      { text: 'Lead auto-assignment round-robin kaam kar raha hai?', time: '12:05 pm', type: 'incoming' },
+      { text: 'ho rha hai isse b', time: '12:10 pm', type: 'incoming' }
+    ],
+    'Rohan Verma': [
+      { text: 'Hi, hume Simple Floww CRM ka live demo dekhna hai.', time: '11:40 am', type: 'incoming' },
+      { text: 'Sure Rohan! Aap aaj sham 4 baje ya kal 11 baje available hain?', time: '11:42 am', type: 'outgoing' },
+      { text: 'Demo scheduling link bhej do please', time: '11:45 am', type: 'incoming' }
+    ],
+    'TechSolutions Pvt Ltd': [
+      { text: 'Meta Business Manager verification and display name approved.', time: '10:55 am', type: 'incoming' },
+      { text: 'WABA Green Tick docs submitted', time: '11:02 am', type: 'incoming' }
+    ],
+    'Priya Sharma': [
+      { text: 'Hi, enterprise plan mein kitne team members add kar sakte hain?', time: '10:20 am', type: 'incoming' },
+      { text: 'You: Pricing PDF and ROI calculator sent', time: '10:28 am', type: 'outgoing' }
+    ],
+    'Vikas Malhotra': [
+      { text: 'Hello, recharge failed in wallet yesterday night.', time: '09:42 am', type: 'incoming' },
+      { text: 'Checking with billing team right away.', time: '09:46 am', type: 'outgoing' },
+      { text: 'Payment gateway link generate kar dijiye', time: '09:50 am', type: 'incoming' }
+    ],
+    'Digital Growth Agency': [
+      { text: 'White-label dashboard branding logo and primary colors updated.', time: 'Yesterday', type: 'incoming' },
+      { text: 'Custom domain CNAME mapped. Please verify', time: 'Yesterday', type: 'incoming' }
+    ],
+    'Neha Gupta': [
+      { text: 'Hello team, onboarding call kab schedule hoga?', time: 'Yesterday', type: 'incoming' },
+      { text: 'You: Reminder for tomorrow 11 AM onboarding', time: 'Yesterday', type: 'outgoing' }
+    ],
+    'Karanveer Patel': [
+      { text: 'Diwali promotional template meta se approved ho gaya hai.', time: 'Yesterday', type: 'incoming' },
+      { text: 'Broadcast campaign for 25k users scheduled', time: 'Yesterday', type: 'incoming' }
+    ],
+    'SmartKart Ecommerce': [
+      { text: 'Shopify order recovery webhook testing chal rahi thi.', time: 'Sep 28', type: 'incoming' },
+      { text: 'Abandoned cart webhook trigger test successful', time: 'Sep 28', type: 'incoming' }
+    ],
+    'Amit Singhania': [
+      { text: 'Hamara monthly plan expire hone wala hai agle hafte.', time: 'Sep 28', type: 'incoming' },
+      { text: 'You: Plan renews on 1st October with discount', time: 'Sep 28', type: 'outgoing' }
+    ],
+    'Pooja Mishra': [
+      { text: 'Namaste! AI chatbot training ke liye documentation chahiye thi.', time: 'Sep 27', type: 'incoming' },
+      { text: 'AI chatbot setup guide share kijiyega', time: 'Sep 27', type: 'incoming' }
+    ],
+    'Global Trade Hub': [
+      { text: 'We have multi-department sales & support executives.', time: 'Sep 27', type: 'incoming' },
+      { text: 'Looking for 10 team seats with custom roles', time: 'Sep 27', type: 'incoming' }
+    ]
+  };
+
+  contactRows.forEach(row => {
+    row.addEventListener('click', () => {
+      contactRows.forEach(r => r.classList.remove('active'));
+      row.classList.add('active');
+
+      const name = row.getAttribute('data-name');
+      const avatar = row.getAttribute('data-avatar');
+
+      if (welcomeScreen) welcomeScreen.style.display = 'none';
+      if (activeChatScreen) activeChatScreen.classList.add('show');
+
+      if (chatHeaderName) chatHeaderName.textContent = name;
+      if (chatHeaderAvatar) chatHeaderAvatar.textContent = avatar;
+
+      renderChatMessages(name);
+    });
+  });
+
+  function renderChatMessages(name) {
+    if (!chatMessagesContainer) return;
+    const history = chatHistories[name] || [
+      { text: `Conversation with ${name}`, time: 'Just now', type: 'incoming' }
+    ];
+
+    chatMessagesContainer.innerHTML = history.map(msg => `
+      <div class="chat-bubble ${msg.type}">
+        ${msg.text}
+        <span class="chat-bubble-time">${msg.time} ${msg.type === 'outgoing' ? '· Read ✓✓' : ''}</span>
+      </div>
+    `).join('');
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+  }
+
+  function sendChatMessage() {
+    if (!chatInputText) return;
+    const text = chatInputText.value.trim();
+    if (!text) return;
+
+    const currentContact = document.querySelector('.inbox-contact-row.active');
+    const name = currentContact ? currentContact.getAttribute('data-name') : 'Adnan Qureshi';
+
+    const newMsg = { text: text, time: 'Just now', type: 'outgoing' };
+    if (!chatHistories[name]) chatHistories[name] = [];
+    chatHistories[name].push(newMsg);
+
+    renderChatMessages(name);
+    chatInputText.value = '';
+
+    // Simulated Auto-Reply / AI Agent Response
+    setTimeout(() => {
+      const replyMsg = {
+        text: `🤖 [AI Auto-Reply]: Received your message! Simple Floww AI Agent is processing your request.`,
+        time: 'Just now',
+        type: 'incoming'
+      };
+      chatHistories[name].push(replyMsg);
+      renderChatMessages(name);
+    }, 1200);
+  }
+
+  if (chatSendBtn) {
+    chatSendBtn.addEventListener('click', sendChatMessage);
+  }
+  if (chatInputText) {
+    chatInputText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+  }
+
+  // Filter tabs (All / Active / Inactive)
+  const filterTabs = document.querySelectorAll('.inbox-list-col .inbox-filter-tab');
+  if (filterTabs.length > 0) {
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filterType = tab.getAttribute('data-tab');
+
+        contactRows.forEach(row => {
+          const status = row.getAttribute('data-status') || 'active';
+          if (filterType === 'all') {
+            row.style.display = 'flex';
+          } else if (filterType === status) {
+            row.style.display = 'flex';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // Filter contacts search
+  if (contactSearchInput) {
+    contactSearchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      contactRows.forEach(row => {
+        const name = (row.getAttribute('data-name') || '').toLowerCase();
+        const msg = (row.querySelector('.inbox-contact-preview')?.textContent || '').toLowerCase();
+        if (name.includes(term) || msg.includes(term)) {
+          row.style.display = 'flex';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+  // 6. Action Toasts for Other Modules
+  const btnSaveAi = document.getElementById('btn-save-ai-agent');
+  if (btnSaveAi) {
+    btnSaveAi.addEventListener('click', () => {
+      showToast('✓ AI Agent system prompt & knowledge base updated successfully!');
+    });
+  }
+
+  const btnAddRule = document.getElementById('btn-add-assign-rule');
+  if (btnAddRule) {
+    btnAddRule.addEventListener('click', () => {
+      showToast('✓ New Round-Robin rule added to active auto-assignment engine!');
+    });
+  }
+
+  const btnCreateTicket = document.getElementById('btn-create-ticket');
+  if (btnCreateTicket) {
+    btnCreateTicket.addEventListener('click', () => {
+      showToast('✓ Support Ticket created! Assigned to Tier-1 Support Agent.');
+    });
+  }
+
+  const btnAddTask = document.getElementById('btn-add-task');
+  if (btnAddTask) {
+    btnAddTask.addEventListener('click', () => {
+      showToast('✓ New follow-up reminder task scheduled!');
+    });
+  }
+
+  const refCopyBtn = document.getElementById('ref-copy-btn');
+  if (refCopyBtn) {
+    refCopyBtn.addEventListener('click', () => {
+      const link = document.getElementById('ref-link-text')?.textContent || 'https://connect.simplefloww.com/ref/ak9082';
+      navigator.clipboard.writeText(link);
+      showToast('✓ Referral Link copied to clipboard!');
+    });
+  }
+
+  const btnWalletPayout = document.getElementById('btn-wallet-payout');
+  if (btnWalletPayout) {
+    btnWalletPayout.addEventListener('click', () => {
+      showToast('✓ Payout requested: ₹1,056.51 will be credited within 2 hours!');
+    });
+  }
+
+  const btnTestWebhook = document.getElementById('btn-test-webhook-ping');
+  if (btnTestWebhook) {
+    btnTestWebhook.addEventListener('click', () => {
+      const tbody = document.getElementById('webhook-logs-table-body');
+      if (tbody) {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td><strong>test.ping</strong></td>
+          <td>Just now</td>
+          <td><span class="status-chip resolved">200 OK</span></td>
+          <td>38ms</td>
+          <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
+        `;
+        tbody.insertBefore(newRow, tbody.firstChild);
+      }
+      showToast('✓ Outgoing Webhook test ping successfully delivered (HTTP 200 OK)!');
+    });
+  }
+
+  const btnInviteTeam = document.getElementById('btn-invite-team-member');
+  if (btnInviteTeam) {
+    btnInviteTeam.addEventListener('click', () => {
+      const email = prompt('Enter team member email to invite:');
+      if (email) {
+        showToast(`✓ Invitation link sent to ${email}`);
+      }
+    });
+  }
+
+  // =========================================================================
+  // TASK MANAGEMENT & TEAM TO-DO ENGINE (Enterprise v4 with Subtasks & Drag-Drop)
+  // =========================================================================
+  // TASK MANAGEMENT & TEAM TO-DOS ENGINE (Interactive CRM Task System)
+  // =========================================================================
+  const STORAGE_KEY = 'simplefloww_tasks_v5';
+  const STORAGE_TASK_TYPES_KEY = 'simplefloww_task_types_v5';
+
+  let draggedTaskId = null;
+
+  const LEAD_PHONE_MAP = {
+    'Adnan Qureshi': '+91 98765 43210',
+    'Abhinandan Kumar': '+91 95186 49420',
+    'faiz57185': '+91 98111 22334',
+    'Backend Support Team': '+91 79832 98464',
+    'Divya Agrawal': '+91 99887 76655',
+    'Rohan Verma': '+91 98234 11223',
+    'Vikas Malhotra': '+91 98991 77654',
+    'Karanveer Patel': '+91 98250 88990',
+    'TechSolutions Pvt Ltd': '+91 88001 99234',
+    'Priya Sharma': '+91 98190 22334',
+    'SmartKart Ecommerce': '+91 98450 66778',
+    'Global Trade Hub': '+91 98334 22110'
+  };
+
+  function getLeadPhone(leadName) {
+    if (!leadName || leadName === 'None') return '';
+    return LEAD_PHONE_MAP[leadName] || '+91 98765 00000';
+  }
+
+  function getLocalDateString(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function addDaysToLocalDate(daysToAdd) {
+    const d = new Date();
+    d.setDate(d.getDate() + daysToAdd);
+    return getLocalDateString(d);
+  }
+
+  const defaultTaskTypes = [
+    { id: 'Follow-up', name: 'Follow-up Call', icon: '📞' },
+    { id: 'WhatsApp Message', name: 'WhatsApp Message', icon: '💬' },
+    { id: 'Product Demo', name: 'Product Demo', icon: '🎯' },
+    { id: 'Payment Reminder', name: 'Payment Follow-up', icon: '💳' },
+    { id: 'Contract Review', name: 'Contract / Proposal', icon: '📄' },
+    { id: 'Client Onboarding', name: 'Client Onboarding', icon: '🤝' },
+    { id: 'Technical Support', name: 'Technical Support', icon: '⚙️' }
+  ];
+
+  function loadTaskTypes() {
+    try {
+      const stored = localStorage.getItem(STORAGE_TASK_TYPES_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse task types', e);
+    }
+    return JSON.parse(JSON.stringify(defaultTaskTypes));
+  }
+
+  let customTaskTypes = loadTaskTypes();
+
+  function saveTaskTypes() {
+    try {
+      localStorage.setItem(STORAGE_TASK_TYPES_KEY, JSON.stringify(customTaskTypes));
+    } catch (e) {
+      console.warn('Failed to write task types', e);
+    }
+  }
+
+  const defaultTasksData = [
+    {
+      id: 'TSK-101',
+      title: 'Follow up on Enterprise WhatsApp API quote & pricing matrix',
+      type: 'Follow-up',
+      typeIcon: '📞',
+      lead: 'Adnan Qureshi',
+      leadPhone: '+91 98765 43210',
+      assignee: 'Rahul Sharma',
+      assigneeAvatar: 'RS',
+      priority: 'Urgent',
+      rawDate: getLocalDateString(),
+      rawTime: '16:30',
+      dueDate: 'Today, 04:30 PM',
+      dueCategory: 'today',
+      status: 'todo',
+      completed: false,
+      isMine: true,
+      notes: 'Client reviewed rate card, need confirmation on 25k monthly broadcast bundle.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-101-1', text: 'Share 25k broadcast rate card PDF', completed: true },
+        { id: 'st-101-2', text: 'Confirm onboarding timeline with client', completed: false },
+        { id: 'st-101-3', text: 'Collect billing GST registration details', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-101-1', author: 'Rahul Sharma', avatar: 'RS', time: 'Today, 11:30 AM', text: 'Client requested custom quotation for 25k WhatsApp broadcast limit.' },
+        { id: 'nh-101-2', author: 'Rahul Sharma', avatar: 'RS', time: 'Today, 02:15 PM', text: 'Sent proposal PDF on WhatsApp; scheduled follow-up for 4:30 PM.' }
+      ]
+    },
+    {
+      id: 'TSK-102',
+      title: 'Live product demo walkthrough on Round-Robin auto assignment',
+      type: 'Product Demo',
+      typeIcon: '🎯',
+      lead: 'Rohan Verma',
+      leadPhone: '+91 98234 11223',
+      assignee: 'Rahul Sharma',
+      assigneeAvatar: 'RS',
+      priority: 'High',
+      rawDate: getLocalDateString(),
+      rawTime: '17:30',
+      dueDate: 'Today, 05:30 PM',
+      dueCategory: 'today',
+      status: 'progress',
+      completed: false,
+      isMine: true,
+      notes: 'Schedule Google Meet link and test screen sharing for 6 sales agents.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-102-1', text: 'Generate Google Meet link & send calendar invite', completed: true },
+        { id: 'st-102-2', text: 'Pre-configure 6 telecaller seats in demo workspace', completed: true },
+        { id: 'st-102-3', text: 'Demonstrate live WhatsApp incoming routing', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-102-1', author: 'Rahul Sharma', avatar: 'RS', time: 'Today, 01:00 PM', text: 'Rohan confirmed 6 sales agents will join the call.' }
+      ]
+    },
+    {
+      id: 'TSK-103',
+      title: 'Overdue payment link follow-up for wallet recharge credit',
+      type: 'Payment Reminder',
+      typeIcon: '💳',
+      lead: 'Vikas Malhotra',
+      leadPhone: '+91 98991 77654',
+      assignee: 'Aman Gupta',
+      assigneeAvatar: 'AG',
+      priority: 'Urgent',
+      rawDate: addDaysToLocalDate(-1),
+      rawTime: '18:00',
+      dueDate: 'Yesterday, 06:00 PM',
+      dueCategory: 'overdue',
+      status: 'todo',
+      completed: false,
+      isMine: false,
+      notes: 'Transaction dropped at gateway. Generate custom Razorpay direct link.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-103-1', text: 'Inspect transaction failure log on payment gateway', completed: true },
+        { id: 'st-103-2', text: 'Issue ₹5,000 recharge link with zero surcharge', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-103-1', author: 'Aman Gupta', avatar: 'AG', time: 'Yesterday, 06:00 PM', text: 'Client attempted payment but session timed out on UPI gateway.' }
+      ]
+    },
+    {
+      id: 'TSK-104',
+      title: 'Meta Business Manager verification & WABA green tick submission',
+      type: 'Technical Support',
+      typeIcon: '⚙️',
+      lead: 'TechSolutions Pvt Ltd',
+      leadPhone: '+91 88001 99234',
+      assignee: 'Priya Patel',
+      assigneeAvatar: 'PP',
+      priority: 'High',
+      rawDate: addDaysToLocalDate(1),
+      rawTime: '11:00',
+      dueDate: 'Tomorrow, 11:00 AM',
+      dueCategory: 'future',
+      status: 'waiting',
+      completed: false,
+      isMine: false,
+      notes: 'Awaiting GST certificate & official domain email verification OTP.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-104-1', text: 'Verify GST business registration document', completed: true },
+        { id: 'st-104-2', text: 'Verify official domain email address', completed: false },
+        { id: 'st-104-3', text: 'Submit Green Tick Official Business Account application', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-104-1', author: 'Priya Patel', avatar: 'PP', time: 'Sep 29, 04:30 PM', text: 'Meta Business Manager ID linked. Waiting for client OTP verification.' }
+      ]
+    },
+    {
+      id: 'TSK-105',
+      title: 'Send Diwali promotional broadcast template proof for Meta approval',
+      type: 'WhatsApp Message',
+      typeIcon: '💬',
+      lead: 'Karanveer Patel',
+      leadPhone: '+91 98250 88990',
+      assignee: 'Aman Gupta',
+      assigneeAvatar: 'AG',
+      priority: 'Medium',
+      rawDate: addDaysToLocalDate(1),
+      rawTime: '14:00',
+      dueDate: 'Tomorrow, 02:00 PM',
+      dueCategory: 'future',
+      status: 'todo',
+      completed: false,
+      isMine: false,
+      notes: 'Targeting 25,000 opt-in subscribers. Verify interactive CTA buttons.',
+      reminder: false,
+      subtasks: [
+        { id: 'st-105-1', text: 'Draft Diwali greeting copy with dynamic name variable', completed: true },
+        { id: 'st-105-2', text: 'Add interactive quick reply buttons (Claim Offer / Speak to Agent)', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-105-1', author: 'Aman Gupta', avatar: 'AG', time: 'Yesterday, 03:20 PM', text: 'Drafted template sent to client for brand signoff.' }
+      ]
+    },
+    {
+      id: 'TSK-106',
+      title: 'Overdue SLA: Onboarding training call for telecalling team',
+      type: 'Client Onboarding',
+      typeIcon: '🤝',
+      lead: 'Abhinandan Kumar',
+      leadPhone: '+91 95186 49420',
+      assignee: 'Rohit Verma',
+      assigneeAvatar: 'RV',
+      priority: 'Urgent',
+      rawDate: addDaysToLocalDate(-2),
+      rawTime: '15:00',
+      dueDate: '2 Days ago, 03:00 PM',
+      dueCategory: 'overdue',
+      status: 'todo',
+      completed: false,
+      isMine: false,
+      notes: 'SLA breached by 24h. Escalate to sales lead immediately.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-106-1', text: 'Send reminder SMS & WhatsApp for onboarding', completed: true },
+        { id: 'st-106-2', text: 'Reschedule demo slot with senior telecalling executive', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-106-1', author: 'Rohit Verma', avatar: 'RV', time: 'Sep 28, 05:00 PM', text: 'Client missed scheduled onboarding slot. Need urgent follow-up.' }
+      ]
+    },
+    {
+      id: 'TSK-107',
+      title: 'Contract signing & NDA document dispatch via DigiLocker',
+      type: 'Contract Review',
+      typeIcon: '📄',
+      lead: 'Global Trade Hub',
+      leadPhone: '+91 98334 22110',
+      assignee: 'Rahul Sharma',
+      assigneeAvatar: 'RS',
+      priority: 'High',
+      rawDate: addDaysToLocalDate(3),
+      rawTime: '15:00',
+      dueDate: 'This Week, 03:00 PM',
+      dueCategory: 'future',
+      status: 'progress',
+      completed: false,
+      isMine: true,
+      notes: 'Legal department approved customized 10-seat enterprise addendum.',
+      reminder: true,
+      subtasks: [
+        { id: 'st-107-1', text: 'Upload master agreement on DigiLocker e-sign', completed: true },
+        { id: 'st-107-2', text: 'Receive counter-signed agreement from authorized director', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-107-1', author: 'Rahul Sharma', avatar: 'RS', time: 'Today, 10:00 AM', text: 'Legal team greenlit 10-seat addendum without penalties.' }
+      ]
+    },
+    {
+      id: 'TSK-108',
+      title: 'AI Agent knowledge base prompt tuning for order status intent',
+      type: 'Technical Support',
+      typeIcon: '⚙️',
+      lead: 'SmartKart Ecommerce',
+      leadPhone: '+91 98450 66778',
+      assignee: 'Priya Patel',
+      assigneeAvatar: 'PP',
+      priority: 'Medium',
+      rawDate: addDaysToLocalDate(4),
+      rawTime: '14:30',
+      dueDate: 'This Week, 02:30 PM',
+      dueCategory: 'future',
+      status: 'waiting',
+      completed: false,
+      isMine: false,
+      notes: 'Upload FAQ JSON file with webhook tracking URL parameters.',
+      reminder: false,
+      subtasks: [
+        { id: 'st-108-1', text: 'Format product FAQ in JSON schema', completed: true },
+        { id: 'st-108-2', text: 'Connect Shopify order recovery webhook trigger', completed: false }
+      ],
+      notesHistory: [
+        { id: 'nh-108-1', author: 'Priya Patel', avatar: 'PP', time: 'Yesterday, 12:00 PM', text: 'Shopify webhook test ping delivered successfully.' }
+      ]
+    },
+    {
+      id: 'TSK-109',
+      title: 'Initial discovery call and CRM requirement gathering',
+      type: 'Follow-up',
+      typeIcon: '📞',
+      lead: 'Divya Agrawal',
+      leadPhone: '+91 99887 76655',
+      assignee: 'Aman Gupta',
+      assigneeAvatar: 'AG',
+      priority: 'Medium',
+      rawDate: addDaysToLocalDate(14),
+      rawTime: '11:30',
+      dueDate: 'Later this Month, 11:30 AM',
+      dueCategory: 'future',
+      status: 'done',
+      completed: true,
+      isMine: false,
+      notes: 'Demo completed. Client interested in 3-seat starter plan.',
+      reminder: false,
+      subtasks: [
+        { id: 'st-109-1', text: 'Conduct 20-min introductory discovery zoom', completed: true },
+        { id: 'st-109-2', text: 'Map sales team permissions requirement', completed: true }
+      ],
+      notesHistory: [
+        { id: 'nh-109-1', author: 'Aman Gupta', avatar: 'AG', time: 'Sep 27, 03:00 PM', text: 'Discovery complete. Highly interested in starter 3-seat plan.' }
+      ]
+    },
+    {
+      id: 'TSK-110',
+      title: 'Send customized ROI calculation sheet & annual discount coupon',
+      type: 'WhatsApp Message',
+      typeIcon: '💬',
+      lead: 'Priya Sharma',
+      leadPhone: '+91 98190 22334',
+      assignee: 'Rahul Sharma',
+      assigneeAvatar: 'RS',
+      priority: 'Low',
+      rawDate: getLocalDateString(),
+      rawTime: '13:15',
+      dueDate: 'Today, 01:15 PM',
+      dueCategory: 'today',
+      status: 'done',
+      completed: true,
+      isMine: true,
+      notes: 'Sent via WhatsApp document attachment.',
+      reminder: false,
+      subtasks: [
+        { id: 'st-110-1', text: 'Calculate estimated annual ROI on 10k monthly messages', completed: true },
+        { id: 'st-110-2', text: 'Generate 15% annual prepaid coupon code', completed: true }
+      ],
+      notesHistory: [
+        { id: 'nh-110-1', author: 'Rahul Sharma', avatar: 'RS', time: 'Today, 01:15 PM', text: 'ROI PDF sheet delivered via WhatsApp.' }
+      ]
+    }
+  ];
+
+  function loadTasksData() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('LocalStorage read error, fallback to defaults', e);
+    }
+    return JSON.parse(JSON.stringify(defaultTasksData));
+  }
+
+  let tasksData = loadTasksData();
+
+  function saveTasksData() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasksData));
+    } catch (e) {
+      console.warn('LocalStorage write error', e);
+    }
+  }
+
+  const taskFilterState = {
+    tab: 'all',
+    search: '',
+    assignee: 'all',
+    priority: 'all',
+    view: 'list'
+  };
+
+  const STAGE_LABELS = {
+    'todo': 'To-Do',
+    'progress': 'In Progress',
+    'waiting': 'Waiting Client',
+    'done': 'Completed'
+  };
+
+  function getInitials(name) {
+    if (!name) return 'TM';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  function computeDueInfo(dateVal, timeVal) {
+    if (!dateVal) {
+      return {
+        dueText: 'Today, ' + (timeVal || '16:00'),
+        category: 'today'
+      };
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const parts = dateVal.split('-').map(Number);
+    const targetDate = new Date(parts[0], parts[1] - 1, parts[2]);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
+    let dayLabel = '';
+    let category = 'future';
+
+    if (diffDays < 0) {
+      dayLabel = diffDays === -1 ? 'Yesterday' : `${Math.abs(diffDays)}d ago`;
+      category = 'overdue';
+    } else if (diffDays === 0) {
+      dayLabel = 'Today';
+      category = 'today';
+    } else if (diffDays === 1) {
+      dayLabel = 'Tomorrow';
+      category = 'future';
+    } else if (diffDays <= 7) {
+      dayLabel = `In ${diffDays} days`;
+      category = 'future';
+    } else {
+      dayLabel = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      category = 'future';
+    }
+
+    return {
+      dueText: `${dayLabel}, ${timeVal || '16:00'}`,
+      category
+    };
+  }
+
+  // Classify task into one of the 5 schedule columns for Kanban
+  function classifyScheduleColumn(task) {
+    if (!task.rawDate) {
+      if (task.dueCategory === 'overdue') return 'overdue';
+      return 'today';
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const parts = task.rawDate.split('-').map(Number);
+    const target = new Date(parts[0], parts[1] - 1, parts[2]);
+    target.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return 'overdue';
+    if (diffDays === 0) return 'today';
+    if (diffDays === 1) return 'tomorrow';
+    if (diffDays <= 7) return 'week';
+    return 'month';
+  }
+
+  // WhatsApp Icon SVG
+  const waSvgIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:-1px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`;
+
+  // 1-Click WhatsApp Navigation & Chat Opener
+  function openWhatsAppForLead(leadName) {
+    if (!leadName || leadName === 'None') {
+      showToast('Internal agency task — no external contact attached.');
+      return;
+    }
+
+    document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+    const inboxPanel = document.getElementById('view-inbox');
+    if (inboxPanel) inboxPanel.classList.add('active');
+
+    document.querySelectorAll('.sidebar__nav .nav-item, .sidebar__nav .nav-subitem').forEach(el => el.classList.remove('active'));
+    const inboxNav = document.querySelector('.sidebar__nav [data-view="inbox"]');
+    if (inboxNav) inboxNav.classList.add('active');
+
+    if (topBreadcrumb) {
+      topBreadcrumb.textContent = 'Communication > Live Chat Inbox';
+    }
+
+    const contactRows = document.querySelectorAll('#inbox-contacts-list .inbox-contact-row');
+    let matchedRow = null;
+    contactRows.forEach(row => {
+      const name = (row.getAttribute('data-name') || '').toLowerCase();
+      const target = leadName.toLowerCase();
+      if (name === target || name.includes(target) || target.includes(name)) {
+        matchedRow = row;
+      }
+    });
+
+    if (matchedRow) {
+      matchedRow.click();
+      matchedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast(`✓ Opened WhatsApp chat with ${leadName}`);
+    } else {
+      if (contactRows.length > 0) contactRows[0].click();
+      showToast(`Switched to WhatsApp Inbox for ${leadName}`);
+    }
+  }
+
+  // Update Top 4 KPI Health Cards & Filter Tab Badges
+  function updateTaskMetrics() {
+    const todayDue = tasksData.filter(t => t.dueCategory === 'today' && !t.completed).length;
+    const overdue = tasksData.filter(t => t.dueCategory === 'overdue' && !t.completed).length;
+    const progress = tasksData.filter(t => t.status === 'progress' && !t.completed).length;
+    const completed = tasksData.filter(t => t.completed).length;
+    const myTasks = tasksData.filter(t => t.isMine && !t.completed).length;
+
+    const elToday = document.getElementById('task-kpi-today');
+    const elOverdue = document.getElementById('task-kpi-overdue');
+    const elProgress = document.getElementById('task-kpi-progress');
+    const elCompleted = document.getElementById('task-kpi-completed');
+
+    if (elToday) elToday.textContent = todayDue;
+    if (elOverdue) elOverdue.textContent = overdue;
+    if (elProgress) elProgress.textContent = progress;
+    if (elCompleted) elCompleted.textContent = completed;
+
+    // Update Tab labels with dynamic counts
+    document.querySelectorAll('[data-task-tab]').forEach(tab => {
+      const tabType = tab.getAttribute('data-task-tab');
+      if (tabType === 'all') tab.textContent = `All Tasks (${tasksData.length})`;
+      if (tabType === 'today') tab.textContent = `Due Today (${todayDue})`;
+      if (tabType === 'mine') tab.textContent = `My Tasks (${myTasks})`;
+      if (tabType === 'overdue') tab.innerHTML = `🚨 Overdue (${overdue})`;
+      if (tabType === 'done') tab.textContent = `Completed (${completed})`;
+    });
+
+    // Update module sidebar badge
+    const taskNavBadge = document.querySelector('.sidebar__nav [data-view="tasks"] .nav-badge');
+    if (taskNavBadge) {
+      taskNavBadge.textContent = todayDue + overdue;
+    }
+  }
+
+  // Filter Tasks Engine
+  function getFilteredTasks() {
+    return tasksData.filter(task => {
+      if (taskFilterState.tab === 'today' && (task.dueCategory !== 'today' || task.completed)) return false;
+      if (taskFilterState.tab === 'mine' && (!task.isMine || task.completed)) return false;
+      if (taskFilterState.tab === 'overdue' && (task.dueCategory !== 'overdue' || task.completed)) return false;
+      if (taskFilterState.tab === 'done' && !task.completed) return false;
+
+      if (taskFilterState.assignee !== 'all' && task.assignee !== taskFilterState.assignee) return false;
+      if (taskFilterState.priority !== 'all' && task.priority !== taskFilterState.priority) return false;
+
+      if (taskFilterState.search.trim()) {
+        const query = taskFilterState.search.toLowerCase();
+        const inTitle = task.title.toLowerCase().includes(query);
+        const inLead = (task.lead || '').toLowerCase().includes(query);
+        const inRep = (task.assignee || '').toLowerCase().includes(query);
+        const inNotes = (task.notes || '').toLowerCase().includes(query);
+        const inSubtasks = (task.subtasks || []).some(st => st.text.toLowerCase().includes(query));
+        if (!inTitle && !inLead && !inRep && !inNotes && !inSubtasks) return false;
+      }
+
+      return true;
+    });
+  }
+
+  // Populate Custom Task Types into Select Dropdowns
+  function populateTaskTypeDropdowns(selectedVal) {
+    const select = document.getElementById('task-input-type');
+    if (!select) return;
+    const optionsHtml = customTaskTypes.map(t => `
+      <option value="${t.id}" ${(selectedVal && selectedVal === t.id) ? 'selected' : ''}>
+        ${t.icon} ${t.name}
+      </option>
+    `).join('');
+
+    select.innerHTML = optionsHtml + `
+      <option value="__CUSTOMIZE_TYPES__" style="color: var(--sf-primary); font-weight: 600;">
+        ⚙️ + Customize / Edit Task Types...
+      </option>
+    `;
+
+    if (selectedVal && customTaskTypes.some(t => t.id === selectedVal)) {
+      select.value = selectedVal;
+    } else if (customTaskTypes.length > 0) {
+      select.value = customTaskTypes[0].id;
+    }
+  }
+
+  // Custom Task Types Manager Modal Controller
+  const modalTaskTypesOverlay = document.getElementById('modal-task-types-overlay');
+  const btnManageTaskTypes = document.getElementById('btn-manage-task-types');
+  const btnOpenTypeCustomizer = document.getElementById('btn-open-type-customizer');
+  const btnCloseTaskTypes = document.getElementById('modal-task-types-close-btn');
+  const btnDoneTaskTypes = document.getElementById('modal-task-types-done-btn');
+  const btnRestoreDefaultTypes = document.getElementById('btn-restore-default-types');
+  const customTypesListContainer = document.getElementById('custom-task-types-list');
+  const btnSaveCustomType = document.getElementById('btn-save-custom-type');
+  const inputNewTypeIcon = document.getElementById('new-type-icon-input');
+  const inputNewTypeName = document.getElementById('new-type-name-input');
+  const inputTaskType = document.getElementById('task-input-type');
+
+  if (inputTaskType) {
+    inputTaskType.addEventListener('change', () => {
+      if (inputTaskType.value === '__CUSTOMIZE_TYPES__') {
+        openTaskTypesModal();
+        if (customTaskTypes.length > 0) {
+          inputTaskType.value = customTaskTypes[0].id;
+        }
+      }
+    });
+  }
+
+  function renderCustomTaskTypesList() {
+    if (!customTypesListContainer) return;
+    customTypesListContainer.innerHTML = customTaskTypes.map((type, idx) => {
+      const isDefault = defaultTaskTypes.some(d => d.id === type.id);
+      return `
+        <div class="custom-type-item" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: #fff; border: 1px solid var(--sf-border); border-radius: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+            <input type="text" class="cti-icon-edit" data-idx="${idx}" value="${type.icon}" style="width: 34px; height: 30px; text-align: center; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px;" title="Edit icon" />
+            <input type="text" class="cti-name-edit" data-idx="${idx}" value="${type.name}" style="flex: 1; height: 30px; padding: 0 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" title="Edit category name" />
+            ${isDefault ? `<span style="font-size: 10px; color: var(--sf-text-muted); font-weight: 500;">(Default)</span>` : `<span style="font-size: 10px; color: #16a34a; font-weight: 600;">(Custom)</span>`}
+          </div>
+          <button type="button" class="cti-del-btn" data-type-id="${type.id}" style="margin-left: 8px; border: none; background: #fee2e2; color: #dc2626; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;" title="Delete this type">✕</button>
+        </div>
+      `;
+    }).join('');
+
+    // Attach listeners for editing icon/name inline
+    customTypesListContainer.querySelectorAll('.cti-icon-edit').forEach(input => {
+      input.addEventListener('change', () => {
+        const idx = parseInt(input.getAttribute('data-idx'), 10);
+        if (customTaskTypes[idx]) {
+          customTaskTypes[idx].icon = input.value.trim() || '📌';
+          saveTaskTypes();
+          populateTaskTypeDropdowns();
+          renderTasks();
+          showToast(`✓ Updated icon to ${customTaskTypes[idx].icon}`);
+        }
+      });
+    });
+
+    customTypesListContainer.querySelectorAll('.cti-name-edit').forEach(input => {
+      input.addEventListener('change', () => {
+        const idx = parseInt(input.getAttribute('data-idx'), 10);
+        const newName = input.value.trim();
+        if (customTaskTypes[idx] && newName) {
+          customTaskTypes[idx].name = newName;
+          customTaskTypes[idx].id = newName;
+          saveTaskTypes();
+          populateTaskTypeDropdowns();
+          renderTasks();
+          showToast(`✓ Updated task type to "${newName}"`);
+        }
+      });
+    });
+
+    customTypesListContainer.querySelectorAll('.cti-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const typeId = btn.getAttribute('data-type-id');
+        if (customTaskTypes.length <= 1) {
+          showToast('At least one task type must remain.');
+          return;
+        }
+        customTaskTypes = customTaskTypes.filter(t => t.id !== typeId);
+        saveTaskTypes();
+        renderCustomTaskTypesList();
+        populateTaskTypeDropdowns();
+        renderTasks();
+        showToast('✓ Task type removed');
+      });
+    });
+  }
+
+  function openTaskTypesModal() {
+    if (modalTaskTypesOverlay) {
+      renderCustomTaskTypesList();
+      modalTaskTypesOverlay.classList.add('open');
+      modalTaskTypesOverlay.style.display = 'flex';
+    }
+  }
+
+  function closeTaskTypesModal() {
+    if (modalTaskTypesOverlay) {
+      modalTaskTypesOverlay.classList.remove('open');
+      modalTaskTypesOverlay.style.display = 'none';
+      populateTaskTypeDropdowns();
+    }
+  }
+
+  if (btnManageTaskTypes) btnManageTaskTypes.addEventListener('click', openTaskTypesModal);
+  if (btnOpenTypeCustomizer) btnOpenTypeCustomizer.addEventListener('click', openTaskTypesModal);
+  if (btnCloseTaskTypes) btnCloseTaskTypes.addEventListener('click', closeTaskTypesModal);
+  if (btnDoneTaskTypes) btnDoneTaskTypes.addEventListener('click', closeTaskTypesModal);
+  if (btnRestoreDefaultTypes) {
+    btnRestoreDefaultTypes.addEventListener('click', () => {
+      customTaskTypes = JSON.parse(JSON.stringify(defaultTaskTypes));
+      saveTaskTypes();
+      renderCustomTaskTypesList();
+      populateTaskTypeDropdowns();
+      renderTasks();
+      showToast('✓ Task types restored to standard defaults');
+    });
+  }
+  if (modalTaskTypesOverlay) {
+    modalTaskTypesOverlay.addEventListener('click', (e) => {
+      if (e.target === modalTaskTypesOverlay) closeTaskTypesModal();
+    });
+  }
+
+  if (btnSaveCustomType) {
+    btnSaveCustomType.addEventListener('click', () => {
+      const name = inputNewTypeName?.value?.trim();
+      const icon = inputNewTypeIcon?.value?.trim() || '📌';
+      if (!name) {
+        showToast('Please enter a category name');
+        return;
+      }
+      if (customTaskTypes.some(t => t.name.toLowerCase() === name.toLowerCase())) {
+        showToast('This task type already exists');
+        return;
+      }
+      customTaskTypes.push({
+        id: name,
+        name: name,
+        icon: icon
+      });
+      saveTaskTypes();
+      if (inputNewTypeName) inputNewTypeName.value = '';
+      if (inputNewTypeIcon) inputNewTypeIcon.value = '📌';
+      renderCustomTaskTypesList();
+      populateTaskTypeDropdowns(name);
+      renderTasks();
+      showToast(`✓ Custom type "${icon} ${name}" added successfully!`);
+    });
+  }
+
+  // Active State for Subtasks & Notes in Modal
+  let currentModalSubtasks = [];
+  let currentModalNotes = [];
+
+  const modalSubtasksContainer = document.getElementById('modal-subtasks-container');
+  const modalSubtaskBadge = document.getElementById('modal-subtask-badge');
+  const modalSubtaskProgressWrap = document.getElementById('modal-subtask-progress-wrap');
+  const modalSubtaskProgressBar = document.getElementById('modal-subtask-progress-bar');
+  const inputNewSubtask = document.getElementById('task-input-new-subtask');
+  const btnAddSubtask = document.getElementById('btn-add-subtask');
+
+  const modalNotesTimeline = document.getElementById('modal-notes-timeline');
+  const inputNewNote = document.getElementById('task-input-new-note');
+  const btnAddNoteEntry = document.getElementById('btn-add-note-entry');
+
+  function renderModalSubtasks() {
+    if (!modalSubtasksContainer) return;
+    const total = currentModalSubtasks.length;
+    const done = currentModalSubtasks.filter(s => s.completed).length;
+
+    if (modalSubtaskBadge) {
+      modalSubtaskBadge.textContent = `${done}/${total}`;
+    }
+    if (modalSubtaskProgressWrap && modalSubtaskProgressBar) {
+      if (total > 0) {
+        modalSubtaskProgressWrap.style.display = 'block';
+        modalSubtaskProgressBar.style.width = `${Math.round((done / total) * 100)}%`;
+      } else {
+        modalSubtaskProgressWrap.style.display = 'none';
+      }
+    }
+
+    if (total === 0) {
+      modalSubtasksContainer.innerHTML = `<div style="font-size: 11.5px; color: var(--sf-text-muted); font-style: italic;">No sub-tasks added yet. Add a step below.</div>`;
+      return;
+    }
+
+    modalSubtasksContainer.innerHTML = currentModalSubtasks.map((st, idx) => `
+      <div class="subtask-item ${st.completed ? 'completed' : ''}">
+        <input type="checkbox" class="subtask-check" data-subtask-id="${st.id}" ${st.completed ? 'checked' : ''} />
+        <span class="subtask-text">${st.text}</span>
+        <button type="button" class="subtask-del-btn" data-subtask-del="${st.id}" title="Remove step">✕</button>
+      </div>
+    `).join('');
+
+    modalSubtasksContainer.querySelectorAll('.subtask-check').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const id = cb.getAttribute('data-subtask-id');
+        const item = currentModalSubtasks.find(s => s.id === id);
+        if (item) {
+          item.completed = cb.checked;
+          renderModalSubtasks();
+        }
+      });
+    });
+
+    modalSubtasksContainer.querySelectorAll('.subtask-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-subtask-del');
+        currentModalSubtasks = currentModalSubtasks.filter(s => s.id !== id);
+        renderModalSubtasks();
+      });
+    });
+  }
+
+  function addSubtaskEntry() {
+    const text = inputNewSubtask?.value?.trim();
+    if (!text) return;
+    currentModalSubtasks.push({
+      id: `st-${Date.now()}-${Math.floor(Math.random() * 100)}`,
+      text: text,
+      completed: false
+    });
+    if (inputNewSubtask) inputNewSubtask.value = '';
+    renderModalSubtasks();
+  }
+
+  if (btnAddSubtask) btnAddSubtask.addEventListener('click', addSubtaskEntry);
+  if (inputNewSubtask) {
+    inputNewSubtask.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addSubtaskEntry();
+      }
+    });
+  }
+
+  function renderModalNotesTimeline() {
+    if (!modalNotesTimeline) return;
+    if (currentModalNotes.length === 0) {
+      modalNotesTimeline.innerHTML = `<div style="font-size: 11.5px; color: var(--sf-text-muted); font-style: italic;">No activity notes recorded yet. Post an update below.</div>`;
+      return;
+    }
+
+    modalNotesTimeline.innerHTML = currentModalNotes.map(n => `
+      <div class="note-timeline-item">
+        <div class="nti-head">
+          <div class="nti-author-wrap">
+            <div class="nti-avatar">${n.avatar || 'TM'}</div>
+            <span class="nti-author">${n.author}</span>
+          </div>
+          <span class="nti-time">${n.time}</span>
+        </div>
+        <div class="nti-text">${n.text}</div>
+      </div>
+    `).join('');
+
+    modalNotesTimeline.scrollTop = modalNotesTimeline.scrollHeight;
+  }
+
+  function addNoteEntry() {
+    const text = inputNewNote?.value?.trim();
+    if (!text) return;
+    const author = 'Rahul Sharma';
+    const time = `Today, ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    currentModalNotes.push({
+      id: `note-${Date.now()}`,
+      author: author,
+      avatar: getInitials(author),
+      time: time,
+      text: text
+    });
+    if (inputNewNote) inputNewNote.value = '';
+    renderModalNotesTimeline();
+    showToast('✓ Note added to timeline');
+  }
+
+  if (btnAddNoteEntry) btnAddNoteEntry.addEventListener('click', addNoteEntry);
+
+  // Modal Controls: Create & Edit Mode
+  const modalTaskOverlay = document.getElementById('modal-task-overlay');
+  const modalTaskHeading = document.getElementById('modal-task-heading');
+  const modalTaskSubheading = document.getElementById('modal-task-subheading');
+  const btnOpenTaskModal = document.getElementById('btn-open-task-modal');
+  const btnCloseTaskModal = document.getElementById('modal-task-close-btn');
+  const btnCancelTaskModal = document.getElementById('modal-task-cancel-btn');
+  const btnDeleteTaskModal = document.getElementById('btn-delete-task-modal');
+  const btnSaveTask = document.getElementById('btn-save-task');
+  const formCreateTask = document.getElementById('form-create-task');
+  const inputEditId = document.getElementById('task-edit-id');
+
+  const inputTaskTitle = document.getElementById('task-input-title');
+  // Note: inputTaskType is already declared above for custom types handler
+  const inputTaskAssignee = document.getElementById('task-input-assignee');
+  const inputTaskLead = document.getElementById('task-input-lead');
+  const inputTaskPriority = document.getElementById('task-input-priority');
+  const inputTaskDate = document.getElementById('task-input-date');
+  const inputTaskTime = document.getElementById('task-input-time');
+  const inputTaskStatus = document.getElementById('task-input-status');
+  const inputTaskReminder = document.getElementById('task-input-reminder');
+
+  function openCreateTaskModal() {
+    if (!modalTaskOverlay) return;
+    if (inputEditId) inputEditId.value = '';
+    if (formCreateTask) formCreateTask.reset();
+
+    currentModalSubtasks = [];
+    currentModalNotes = [];
+
+    populateTaskTypeDropdowns('Follow-up');
+
+    if (modalTaskHeading) modalTaskHeading.textContent = 'Create New Team Task';
+    if (modalTaskSubheading) modalTaskSubheading.textContent = 'Assign to telecaller or rep with CRM lead association';
+    if (btnSaveTask) btnSaveTask.textContent = 'Save & Assign Task';
+    if (btnDeleteTaskModal) btnDeleteTaskModal.style.display = 'none';
+
+    if (inputTaskDate) inputTaskDate.value = getLocalDateString();
+    if (inputTaskTime) inputTaskTime.value = '16:00';
+    if (inputTaskStatus) inputTaskStatus.value = 'todo';
+    if (inputTaskReminder) inputTaskReminder.checked = true;
+
+    renderModalSubtasks();
+    renderModalNotesTimeline();
+
+    modalTaskOverlay.classList.add('open');
+    modalTaskOverlay.style.display = 'flex';
+    if (inputTaskTitle) inputTaskTitle.focus();
+  }
+
+  function openEditTaskModal(taskId) {
+    if (!modalTaskOverlay) return;
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+
+    if (inputEditId) inputEditId.value = task.id;
+    if (inputTaskTitle) inputTaskTitle.value = task.title;
+
+    populateTaskTypeDropdowns(task.type || 'Follow-up');
+
+    if (inputTaskAssignee) inputTaskAssignee.value = task.assignee || 'Rahul Sharma';
+    if (inputTaskLead) inputTaskLead.value = task.lead || 'None';
+    if (inputTaskPriority) inputTaskPriority.value = task.priority || 'High';
+    if (inputTaskDate) inputTaskDate.value = task.rawDate || getLocalDateString();
+    if (inputTaskTime) inputTaskTime.value = task.rawTime || '16:00';
+    if (inputTaskStatus) inputTaskStatus.value = task.status || (task.completed ? 'done' : 'todo');
+    if (inputTaskReminder) inputTaskReminder.checked = task.reminder !== false;
+
+    currentModalSubtasks = JSON.parse(JSON.stringify(task.subtasks || []));
+    currentModalNotes = JSON.parse(JSON.stringify(task.notesHistory || []));
+
+    renderModalSubtasks();
+    renderModalNotesTimeline();
+
+    if (modalTaskHeading) modalTaskHeading.textContent = `Edit Task — ${task.id}`;
+    if (modalTaskSubheading) modalTaskSubheading.textContent = 'Update sub-tasks, notes timeline, due date or stage';
+    if (btnSaveTask) btnSaveTask.textContent = 'Save Changes';
+    if (btnDeleteTaskModal) btnDeleteTaskModal.style.display = 'inline-flex';
+
+    modalTaskOverlay.classList.add('open');
+    modalTaskOverlay.style.display = 'flex';
+    if (inputTaskTitle) inputTaskTitle.focus();
+  }
+
+  function closeTaskModal() {
+    if (modalTaskOverlay) {
+      modalTaskOverlay.classList.remove('open');
+      modalTaskOverlay.style.display = 'none';
+    }
+  }
+
+  if (btnOpenTaskModal) btnOpenTaskModal.addEventListener('click', openCreateTaskModal);
+  if (btnCloseTaskModal) btnCloseTaskModal.addEventListener('click', closeTaskModal);
+  if (btnCancelTaskModal) btnCancelTaskModal.addEventListener('click', closeTaskModal);
+  if (modalTaskOverlay) {
+    modalTaskOverlay.addEventListener('click', (e) => {
+      if (e.target === modalTaskOverlay) closeTaskModal();
+    });
+  }
+
+  function deleteTask(taskId) {
+    const idx = tasksData.findIndex(t => t.id === taskId);
+    if (idx !== -1) {
+      const removed = tasksData.splice(idx, 1)[0];
+      saveTasksData();
+      renderTasks();
+      closeTaskModal();
+      showToast(`✓ Task "${removed.title.substring(0, 26)}..." deleted`);
+    }
+  }
+
+  if (btnDeleteTaskModal) {
+    btnDeleteTaskModal.addEventListener('click', () => {
+      const editId = inputEditId ? inputEditId.value : null;
+      if (editId) {
+        if (confirm('Are you sure you want to delete this task?')) {
+          deleteTask(editId);
+        }
+      }
+    });
+  }
+
+  // Form Submit: Create OR Update
+  if (formCreateTask) {
+    formCreateTask.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const editId = inputEditId ? inputEditId.value.trim() : '';
+      const title = inputTaskTitle?.value?.trim() || 'New Team Task';
+      const type = inputTaskType?.value || 'Follow-up';
+      const typeObj = customTaskTypes.find(t => t.id === type) || { icon: '📌' };
+      const assignee = inputTaskAssignee?.value || 'Rahul Sharma';
+      const lead = inputTaskLead?.value || 'None';
+      const priority = inputTaskPriority?.value || 'High';
+      const dateVal = inputTaskDate?.value || getLocalDateString();
+      const timeVal = inputTaskTime?.value || '16:00';
+      const statusVal = inputTaskStatus?.value || 'todo';
+      const reminder = inputTaskReminder?.checked ?? true;
+
+      const dueInfo = computeDueInfo(dateVal, timeVal);
+      const isCompleted = statusVal === 'done';
+
+      // Summary note for preview
+      const previewNote = currentModalNotes.length > 0
+        ? currentModalNotes[currentModalNotes.length - 1].text
+        : '';
+
+      if (editId) {
+        // UPDATE EXISTING TASK
+        const existing = tasksData.find(t => t.id === editId);
+        if (existing) {
+          existing.title = title;
+          existing.type = type;
+          existing.typeIcon = typeObj.icon || '📌';
+          existing.assignee = assignee;
+          existing.assigneeAvatar = getInitials(assignee);
+          existing.lead = lead;
+          existing.leadPhone = getLeadPhone(lead);
+          existing.priority = priority;
+          existing.rawDate = dateVal;
+          existing.rawTime = timeVal;
+          existing.dueDate = dueInfo.dueText;
+          existing.dueCategory = dueInfo.category;
+          existing.status = statusVal;
+          existing.completed = isCompleted;
+          existing.notes = previewNote;
+          existing.reminder = reminder;
+          existing.subtasks = JSON.parse(JSON.stringify(currentModalSubtasks));
+          existing.notesHistory = JSON.parse(JSON.stringify(currentModalNotes));
+          existing.isMine = assignee === 'Rahul Sharma';
+
+          saveTasksData();
+          closeTaskModal();
+          renderTasks();
+          showToast(`✓ Task "${title.substring(0, 24)}..." updated successfully!`);
+        }
+      } else {
+        // CREATE NEW TASK
+        const newTask = {
+          id: `TSK-${Math.floor(100 + Math.random() * 900)}`,
+          title,
+          type,
+          typeIcon: typeObj.icon || '📌',
+          lead,
+          leadPhone: getLeadPhone(lead),
+          assignee,
+          assigneeAvatar: getInitials(assignee),
+          priority,
+          rawDate: dateVal,
+          rawTime: timeVal,
+          dueDate: dueInfo.dueText,
+          dueCategory: dueInfo.category,
+          status: statusVal,
+          completed: isCompleted,
+          isMine: assignee === 'Rahul Sharma',
+          notes: previewNote,
+          reminder,
+          subtasks: JSON.parse(JSON.stringify(currentModalSubtasks)),
+          notesHistory: JSON.parse(JSON.stringify(currentModalNotes))
+        };
+
+        tasksData.unshift(newTask);
+        saveTasksData();
+        closeTaskModal();
+        renderTasks();
+        showToast(`✓ Task created & assigned to ${assignee}!`);
+      }
+    });
+  }
+
+  // Quick Stage Change
+  function updateTaskStatus(taskId, newStatus) {
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+    task.status = newStatus;
+    task.completed = newStatus === 'done';
+    saveTasksData();
+    renderTasks();
+    showToast(`✓ Task moved to "${STAGE_LABELS[newStatus] || newStatus}"`);
+  }
+
+  // Toggle Completion Checkbox
+  function toggleTaskCompletion(taskId, isChecked) {
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+    task.completed = isChecked;
+    task.status = isChecked ? 'done' : 'todo';
+    saveTasksData();
+    renderTasks();
+    if (isChecked) {
+      showToast(`✓ Task "${task.title.substring(0, 24)}..." marked complete!`);
+    } else {
+      showToast(`Task reopened: marked as To-Do`);
+    }
+  }
+
+  // Reschedule Task via Drag and Drop
+  function rescheduleTaskToColumn(taskId, targetColumn) {
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+
+    let targetDays = 0;
+    let colName = 'Today';
+
+    if (targetColumn === 'overdue') {
+      targetDays = -1;
+      colName = 'Overdue';
+    } else if (targetColumn === 'today') {
+      targetDays = 0;
+      colName = 'Today';
+    } else if (targetColumn === 'tomorrow') {
+      targetDays = 1;
+      colName = 'Tomorrow';
+    } else if (targetColumn === 'week') {
+      targetDays = 3;
+      colName = 'This Week';
+    } else if (targetColumn === 'month') {
+      targetDays = 14;
+      colName = 'Later / Month';
+    }
+
+    const rawDateStr = addDaysToLocalDate(targetDays);
+    const dueInfo = computeDueInfo(rawDateStr, task.rawTime || '16:00');
+
+    task.rawDate = rawDateStr;
+    task.dueDate = dueInfo.dueText;
+    task.dueCategory = dueInfo.category;
+
+    if (targetColumn !== 'overdue' && task.completed) {
+      task.completed = false;
+      task.status = 'todo';
+    }
+
+    // Add note in timeline
+    if (!task.notesHistory) task.notesHistory = [];
+    task.notesHistory.push({
+      id: `nh-${Date.now()}`,
+      author: 'Rahul Sharma',
+      avatar: 'RS',
+      time: `Today, ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+      text: `🔄 Rescheduled to ${colName} (${task.dueDate})`
+    });
+
+    saveTasksData();
+    renderTasks();
+    showToast(`✓ Rescheduled to "${colName}" (${task.dueDate})`);
+  }
+
+  // Render List / Table View
+  function renderTasksListView(tasks) {
+    const container = document.getElementById('task-rows-container');
+    if (!container) return;
+
+    if (tasks.length === 0) {
+      container.innerHTML = `
+        <div style="padding: 48px 20px; text-align: center; color: var(--sf-text-muted);">
+          <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+          <h3 style="font-size: 15px; font-weight: 700; color: var(--sf-text-main); margin-bottom: 4px;">No tasks match your criteria</h3>
+          <p style="font-size: 13px;">Try switching filter tabs, clearing search, or creating a new task.</p>
+          <button class="btn-primary" onclick="document.getElementById('btn-open-task-modal')?.click()" style="margin-top: 14px;">+ Create Task</button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = tasks.map(task => {
+      const priorityClass = task.priority.toLowerCase();
+      const dueBadgeClass = task.dueCategory === 'overdue' ? 'overdue' : (task.dueCategory === 'today' ? 'today' : 'upcoming');
+      const dueBadgeIcon = task.dueCategory === 'overdue' ? '🚨' : (task.dueCategory === 'today' ? '⏰' : '📅');
+      const hasLead = task.lead && task.lead !== 'None';
+      const leadPhone = task.leadPhone || getLeadPhone(task.lead);
+
+      const subtasks = task.subtasks || [];
+      const totalSt = subtasks.length;
+      const doneSt = subtasks.filter(s => s.completed).length;
+      const allDone = totalSt > 0 && doneSt === totalSt;
+
+      const latestNote = task.notes || (task.notesHistory && task.notesHistory.length > 0 ? task.notesHistory[task.notesHistory.length - 1].text : '');
+
+      return `
+        <div class="task-row-card ${task.completed ? 'is-completed' : ''}" data-task-id="${task.id}">
+          <div class="task-row-left">
+            <input type="checkbox" class="task-checkbox-custom" data-id="${task.id}" ${task.completed ? 'checked' : ''} title="Mark complete" />
+            <div class="task-info-block">
+              <div class="task-title-line">
+                <span class="task-type-badge">${task.typeIcon || '📌'} ${task.type}</span>
+                <span class="task-title-text task-edit-trigger" data-edit-id="${task.id}" style="cursor: pointer;" title="Click to view details & sub-tasks">${task.title}</span>
+              </div>
+              <div class="task-meta-line">
+                ${hasLead ? `
+                  <span class="task-lead-pill" data-lead-name="${task.lead}" title="Open WhatsApp chat with ${task.lead} (${leadPhone})">
+                    👤 <strong>${task.lead}</strong> <span style="color: #475569; font-size: 11px; font-weight: 600; margin-left: 2px;">• ${leadPhone}</span>
+                  </span>
+                ` : `<span class="task-lead-pill" style="opacity: 0.6;">🏢 Internal Team</span>`}
+
+                <span class="task-due-badge ${dueBadgeClass}">
+                  ${dueBadgeIcon} ${task.dueDate}
+                </span>
+
+                ${totalSt > 0 ? `
+                  <span class="task-subtasks-pill ${allDone ? 'all-done' : ''} task-edit-trigger" data-edit-id="${task.id}" title="Subtasks checklist (${doneSt}/${totalSt} completed)">
+                    ☑️ ${doneSt}/${totalSt} subtasks
+                  </span>
+                ` : ''}
+
+                ${latestNote ? `<span style="font-size: 11px; color: var(--sf-text-muted); max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${latestNote}">💬 ${latestNote}</span>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <div class="task-row-right">
+            <select class="task-row-stage-badge ${task.status}" data-stage-id="${task.id}" title="Change task workflow stage">
+              <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>To-Do</option>
+              <option value="progress" ${task.status === 'progress' ? 'selected' : ''}>In Progress</option>
+              <option value="waiting" ${task.status === 'waiting' ? 'selected' : ''}>Waiting</option>
+              <option value="done" ${task.status === 'done' ? 'selected' : ''}>Completed</option>
+            </select>
+
+            <div class="task-rep-badge" title="Assigned Sales Rep">
+              <div class="task-rep-avatar">${task.assigneeAvatar || 'TM'}</div>
+              <span class="task-rep-name">${task.assignee}</span>
+            </div>
+
+            <span class="task-priority-chip ${priorityClass}">
+              ${task.priority}
+            </span>
+
+            <div class="task-action-btns">
+              ${hasLead ? `
+                <button class="btn-task-action-wa" data-lead="${task.lead}" title="Open 1-Click WhatsApp Chat">
+                  ${waSvgIcon} WhatsApp
+                </button>
+              ` : ''}
+              <button class="btn-task-action-edit" data-edit-id="${task.id}" title="Edit Task & Checklist">
+                ✏️ Edit
+              </button>
+              <button class="btn-task-action-del" data-del-id="${task.id}" title="Delete Task">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Attach row events
+    container.querySelectorAll('.task-checkbox-custom').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const taskId = cb.getAttribute('data-id');
+        toggleTaskCompletion(taskId, cb.checked);
+      });
+    });
+
+    container.querySelectorAll('.task-row-stage-badge').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const taskId = sel.getAttribute('data-stage-id');
+        updateTaskStatus(taskId, e.target.value);
+      });
+    });
+
+    container.querySelectorAll('.task-edit-trigger, .btn-task-action-edit').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const taskId = btn.getAttribute('data-edit-id');
+        openEditTaskModal(taskId);
+      });
+    });
+
+    container.querySelectorAll('.btn-task-action-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const taskId = btn.getAttribute('data-del-id');
+        if (confirm('Delete this task?')) {
+          deleteTask(taskId);
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-task-action-wa').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lead = btn.getAttribute('data-lead');
+        openWhatsAppForLead(lead);
+      });
+    });
+
+    container.querySelectorAll('.task-lead-pill').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lead = pill.getAttribute('data-lead-name');
+        if (lead) openWhatsAppForLead(lead);
+      });
+    });
+  }
+
+  // Render Kanban Board View (5 Schedule Columns with Drag & Drop)
+  function renderTasksKanbanView(tasks) {
+    const listOverdue = document.getElementById('kanban-list-overdue');
+    const listToday = document.getElementById('kanban-list-today');
+    const listTomorrow = document.getElementById('kanban-list-tomorrow');
+    const listWeek = document.getElementById('kanban-list-week');
+    const listMonth = document.getElementById('kanban-list-month');
+
+    if (!listOverdue || !listToday || !listTomorrow || !listWeek || !listMonth) return;
+
+    // Distribute into 5 schedule columns
+    const colOverdue = [];
+    const colToday = [];
+    const colTomorrow = [];
+    const colWeek = [];
+    const colMonth = [];
+
+    tasks.forEach(t => {
+      const col = classifyScheduleColumn(t);
+      if (col === 'overdue') colOverdue.push(t);
+      else if (col === 'today') colToday.push(t);
+      else if (col === 'tomorrow') colTomorrow.push(t);
+      else if (col === 'week') colWeek.push(t);
+      else colMonth.push(t);
+    });
+
+    // Update count badges
+    const cntOverdue = document.getElementById('kch-count-overdue');
+    const cntToday = document.getElementById('kch-count-today');
+    const cntTomorrow = document.getElementById('kch-count-tomorrow');
+    const cntWeek = document.getElementById('kch-count-week');
+    const cntMonth = document.getElementById('kch-count-month');
+
+    if (cntOverdue) cntOverdue.textContent = colOverdue.length;
+    if (cntToday) cntToday.textContent = colToday.length;
+    if (cntTomorrow) cntTomorrow.textContent = colTomorrow.length;
+    if (cntWeek) cntWeek.textContent = colWeek.length;
+    if (cntMonth) cntMonth.textContent = colMonth.length;
+
+    function renderCards(cardList) {
+      if (cardList.length === 0) {
+        return `<div style="padding: 24px 10px; text-align: center; font-size: 11.5px; color: var(--sf-text-muted); font-style: italic;">No tasks scheduled</div>`;
+      }
+      return cardList.map(task => {
+        const priorityClass = task.priority.toLowerCase();
+        const dueBadgeClass = task.dueCategory === 'overdue' ? 'overdue' : (task.dueCategory === 'today' ? 'today' : 'upcoming');
+        const dueBadgeIcon = task.dueCategory === 'overdue' ? '🚨' : (task.dueCategory === 'today' ? '⏰' : '📅');
+        const hasLead = task.lead && task.lead !== 'None';
+        const leadPhone = task.leadPhone || getLeadPhone(task.lead);
+
+        const subtasks = task.subtasks || [];
+        const totalSt = subtasks.length;
+        const doneSt = subtasks.filter(s => s.completed).length;
+
+        return `
+          <div class="kanban-card" data-task-id="${task.id}" draggable="true" title="Drag to another column to reschedule">
+            <div class="kc-head">
+              <span class="task-type-badge">${task.typeIcon || '📌'} ${task.type}</span>
+              <span class="task-priority-chip ${priorityClass}">${task.priority}</span>
+            </div>
+            <div class="kc-title task-edit-trigger" data-edit-id="${task.id}" style="${task.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''} cursor: pointer;" title="Click to edit task">
+              ${task.title}
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 8px;">
+              ${hasLead ? `
+                <div class="kc-lead" data-lead-name="${task.lead}" style="cursor: pointer; margin-bottom: 0; display: inline-flex; align-items: center; gap: 4px;" title="Click to chat on WhatsApp (${leadPhone})">
+                  <span>👤</span>
+                  <strong style="color: var(--sf-text-main);">${task.lead}</strong>
+                  <span style="color: #475569; font-size: 10px; font-weight: 600;">• ${leadPhone}</span>
+                </div>
+              ` : `<div class="kc-lead" style="opacity: 0.6; margin-bottom: 0;">🏢 Internal</div>`}
+
+              ${totalSt > 0 ? `
+                <span style="font-size: 10.5px; color: #475569; font-weight: 600; background: #e2e8f0; padding: 1.5px 6px; border-radius: 4px;">
+                  ☑️ ${doneSt}/${totalSt}
+                </span>
+              ` : ''}
+            </div>
+            
+            <div class="kc-footer">
+              <div class="task-rep-badge">
+                <div class="task-rep-avatar" style="width: 22px; height: 22px; font-size: 9px;">${task.assigneeAvatar || 'TM'}</div>
+                <span class="task-rep-name" style="font-size: 11px;">${task.assignee.split(' ')[0]}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span class="task-due-badge ${dueBadgeClass}" style="font-size: 10px; padding: 2px 4px;">
+                  ${dueBadgeIcon} ${task.dueDate.split(',')[0]}
+                </span>
+                ${hasLead ? `
+                  <button class="btn-task-action-wa" data-lead="${task.lead}" style="padding: 2px 6px; font-size: 10px;" title="WhatsApp Quick Chat">
+                    ${waSvgIcon}
+                  </button>
+                ` : ''}
+                <button class="btn-task-action-edit" data-edit-id="${task.id}" style="padding: 2px 5px; font-size: 10px;" title="Edit Task">
+                  ✏️
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    listOverdue.innerHTML = renderCards(colOverdue);
+    listToday.innerHTML = renderCards(colToday);
+    listTomorrow.innerHTML = renderCards(colTomorrow);
+    listWeek.innerHTML = renderCards(colWeek);
+    listMonth.innerHTML = renderCards(colMonth);
+
+    // Attach Kanban Event Listeners & Drag and Drop
+    const allKanbanColumns = [
+      { colEl: document.getElementById('kanban-col-overdue'), listEl: listOverdue, key: 'overdue' },
+      { colEl: document.getElementById('kanban-col-today'), listEl: listToday, key: 'today' },
+      { colEl: document.getElementById('kanban-col-tomorrow'), listEl: listTomorrow, key: 'tomorrow' },
+      { colEl: document.getElementById('kanban-col-week'), listEl: listWeek, key: 'week' },
+      { colEl: document.getElementById('kanban-col-month'), listEl: listMonth, key: 'month' }
+    ];
+
+    allKanbanColumns.forEach(({ colEl, listEl, key }) => {
+      // Button listeners
+      listEl.querySelectorAll('.btn-task-action-wa').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const lead = btn.getAttribute('data-lead');
+          openWhatsAppForLead(lead);
+        });
+      });
+
+      listEl.querySelectorAll('.kc-lead').forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const lead = pill.getAttribute('data-lead-name');
+          if (lead) openWhatsAppForLead(lead);
+        });
+      });
+
+      listEl.querySelectorAll('.task-edit-trigger, .btn-task-action-edit').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const taskId = el.getAttribute('data-edit-id');
+          openEditTaskModal(taskId);
+        });
+      });
+
+      // DRAG AND DROP SETUP
+      listEl.querySelectorAll('.kanban-card').forEach(card => {
+        card.addEventListener('dragstart', (e) => {
+          const taskId = card.getAttribute('data-task-id');
+          draggedTaskId = taskId;
+          e.dataTransfer.setData('text/plain', taskId);
+          e.dataTransfer.effectAllowed = 'move';
+          card.classList.add('is-dragging');
+        });
+
+        card.addEventListener('dragend', () => {
+          draggedTaskId = null;
+          card.classList.remove('is-dragging');
+          document.querySelectorAll('.kanban-column, .kanban-cards-list').forEach(el => el.classList.remove('drag-over'));
+        });
+      });
+
+      // Drop handlers on column
+      if (colEl) {
+        colEl.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          colEl.classList.add('drag-over');
+        });
+
+        colEl.addEventListener('dragleave', (e) => {
+          if (!colEl.contains(e.relatedTarget)) {
+            colEl.classList.remove('drag-over');
+          }
+        });
+
+        colEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          colEl.classList.remove('drag-over');
+          const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
+          if (taskId) {
+            rescheduleTaskToColumn(taskId, key);
+          }
+        });
+      }
+    });
+  }
+
+  // Master Render for Tasks Module
+  function renderTasks() {
+    updateTaskMetrics();
+    const filtered = getFilteredTasks();
+    if (taskFilterState.view === 'list') {
+      renderTasksListView(filtered);
+    } else {
+      renderTasksKanbanView(filtered);
+    }
+  }
+
+  // Dual View Switcher (List vs Kanban)
+  const btnListView = document.getElementById('task-btn-list-view');
+  const btnKanbanView = document.getElementById('task-btn-kanban-view');
+  const containerList = document.getElementById('task-list-view-container');
+  const containerKanban = document.getElementById('task-kanban-view-container');
+
+  if (btnListView && btnKanbanView) {
+    btnListView.addEventListener('click', () => {
+      taskFilterState.view = 'list';
+      btnListView.classList.add('active');
+      btnKanbanView.classList.remove('active');
+      if (containerList) containerList.style.display = 'block';
+      if (containerKanban) containerKanban.style.display = 'none';
+      renderTasks();
+    });
+
+    btnKanbanView.addEventListener('click', () => {
+      taskFilterState.view = 'kanban';
+      btnKanbanView.classList.add('active');
+      btnListView.classList.remove('active');
+      if (containerList) containerList.style.display = 'none';
+      if (containerKanban) containerKanban.style.display = 'block';
+      renderTasks();
+    });
+  }
+
+  // Task Filter Tabs
+  document.querySelectorAll('[data-task-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('[data-task-tab]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      taskFilterState.tab = tab.getAttribute('data-task-tab');
+      renderTasks();
+    });
+  });
+
+  // KPI Health Cards Click Filter Trigger
+  document.querySelectorAll('.task-kpi-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const filterKey = card.getAttribute('data-filter');
+      const targetTab = document.querySelector(`[data-task-tab="${filterKey === 'progress' ? 'all' : filterKey}"]`);
+      if (targetTab) {
+        targetTab.click();
+      }
+    });
+  });
+
+  // Search Input Filter
+  const taskSearchInput = document.getElementById('task-search-input');
+  if (taskSearchInput) {
+    taskSearchInput.addEventListener('input', (e) => {
+      taskFilterState.search = e.target.value;
+      renderTasks();
+    });
+  }
+
+  // Assignee Dropdown Filter
+  const taskAssigneeFilter = document.getElementById('task-assignee-filter');
+  if (taskAssigneeFilter) {
+    taskAssigneeFilter.addEventListener('change', (e) => {
+      taskFilterState.assignee = e.target.value;
+      renderTasks();
+    });
+  }
+
+  // Priority Dropdown Filter
+  const taskPriorityFilter = document.getElementById('task-priority-filter');
+  if (taskPriorityFilter) {
+    taskPriorityFilter.addEventListener('change', (e) => {
+      taskFilterState.priority = e.target.value;
+      renderTasks();
+    });
+  }
+
+  // Export CSV
+  const btnExportTasks = document.getElementById('btn-export-tasks');
+  if (btnExportTasks) {
+    btnExportTasks.addEventListener('click', () => {
+      const headers = ['Task ID', 'Title', 'Type', 'Lead', 'Lead Mobile', 'Assignee', 'Priority', 'Status', 'Due Date', 'Subtasks Count'];
+      const rows = tasksData.map(t => [
+        t.id,
+        `"${(t.title || '').replace(/"/g, '""')}"`,
+        t.type,
+        `"${t.lead}"`,
+        `"${t.leadPhone || getLeadPhone(t.lead)}"`,
+        `"${t.assignee}"`,
+        t.priority,
+        t.completed ? 'Completed' : t.status,
+        `"${t.dueDate}"`,
+        (t.subtasks || []).length
+      ]);
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `SimpleFloww_Tasks_Export_${getLocalDateString()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('✓ Task CSV export initiated successfully!');
+    });
+  }
+
+  // Reset Sample Tasks
+  const btnResetTasks = document.getElementById('btn-reset-tasks');
+  if (btnResetTasks) {
+    btnResetTasks.addEventListener('click', () => {
+      if (confirm('Reset tasks back to original 10 sample tasks?')) {
+        tasksData = JSON.parse(JSON.stringify(defaultTasksData));
+        saveTasksData();
+        renderTasks();
+        showToast('✓ Task list reset to default 10 sample tasks!');
+      }
+    });
+  }
+
+  // Initialize Custom Types Dropdown and Render Tasks
+  populateTaskTypeDropdowns();
+  renderTasks();
+
+  // =========================================================================
+  // HASH ROUTING (Direct Link Support: e.g. #tasks, #inbox, #dashboard)
+  // =========================================================================
+  function handleHashRoute() {
+    const rawHash = window.location.hash.replace('#', '').trim();
+    if (!rawHash) return;
+
+    // Direct match with view panels
+    const targetPanel = document.getElementById(`view-${rawHash}`);
+    if (targetPanel) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      targetPanel.classList.add('active');
+
+      // Update sidebar nav items
+      document.querySelectorAll('.sidebar__nav .nav-item, .sidebar__nav .nav-subitem').forEach(el => el.classList.remove('active'));
+      const activeLink = document.querySelector(`.sidebar__nav [href="#${rawHash}"]`) ||
+                         document.querySelector(`.sidebar__nav [data-view="${rawHash}"]`);
+      if (activeLink) activeLink.classList.add('active');
+
+  // Update top breadcrumb
+      if (topBreadcrumb) {
+        if (rawHash === 'tasks') topBreadcrumb.textContent = 'Operations > Task Management';
+        else if (rawHash === 'helpdesk') topBreadcrumb.textContent = 'Support > Help Desk & Video Knowledge Base';
+        else if (rawHash === 'inbox') topBreadcrumb.textContent = 'Communication > Live Chat Inbox';
+        else if (rawHash === 'dashboard') topBreadcrumb.textContent = 'Sales & Revenue Overview';
+        else if (activeLink && activeLink.getAttribute('data-breadcrumb')) {
+          topBreadcrumb.textContent = activeLink.getAttribute('data-breadcrumb');
+        }
+      }
+
+      // Update mobile bottom nav items
+      document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item').forEach(el => el.classList.remove('active'));
+      const activeMobileNav = document.querySelector(`.mobile-bottom-nav [data-nav="${rawHash}"]`);
+      if (activeMobileNav) activeMobileNav.classList.add('active');
+
+      // Close mobile sidebar drawer if open
+      if (sidebarEl && window.innerWidth <= 900) {
+        sidebarEl.classList.remove('mobile-open');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      if (rawHash === 'dashboard') {
+        refreshDashboard(false);
+      }
+    }
+  }
+
+  window.addEventListener('hashchange', handleHashRoute);
+  if (window.location.hash) {
+    handleHashRoute();
+  }
+
+  // Call Statuses vs Lead Statuses Tab switcher
+  const tabCallStatuses = document.getElementById('tab-call-statuses');
+  const tabLeadStatuses = document.getElementById('tab-lead-statuses');
+  if (tabCallStatuses && tabLeadStatuses) {
+    tabCallStatuses.addEventListener('click', () => {
+      tabCallStatuses.classList.add('active');
+      tabLeadStatuses.classList.remove('active');
+      showToast('Switched to Call Statuses');
+    });
+    tabLeadStatuses.addEventListener('click', () => {
+      tabLeadStatuses.classList.add('active');
+      tabCallStatuses.classList.remove('active');
+      showToast('Switched to Lead Statuses');
+    });
+  }
+
+  const btnCreateLead = document.getElementById('btn-create-lead');
+  if (btnCreateLead) {
+    btnCreateLead.addEventListener('click', () => {
+      const name = prompt('Enter Lead Full Name:');
+      if (name) {
+        showToast(`✓ Lead "${name}" created and auto-assigned!`);
+      }
+    });
+  }
+
+  const btnAddDeal = document.getElementById('btn-add-deal');
+  if (btnAddDeal) {
+    btnAddDeal.addEventListener('click', () => {
+      const deal = prompt('Enter Deal Name:');
+      if (deal) {
+        showToast(`✓ Deal "${deal}" added to New Leads stage!`);
+      }
+    });
+  }
+
+  // =========================================================================
+  // HELP DESK & VIDEO KNOWLEDGE BASE ENGINE (Self-Service Center)
+  // =========================================================================
+  const helpdeskFaqsData = [
+    // --- WhatsApp & API (4) ---
+    {
+      id: 'faq-wa-1',
+      cat: 'whatsapp',
+      catLabel: 'WhatsApp & QR',
+      type: 'guide',
+      title: 'WhatsApp Cloud API & QR Code connect kaise karein?',
+      duration: '0:45',
+      videoTitle: 'Walkthrough: Connecting WhatsApp Account via QR Code',
+      badgeClass: 'whatsapp',
+      steps: [
+        'Sidebar me <strong>Communication > WhatsApp Accounts</strong> par click karke <strong>+ Connect WhatsApp</strong> button dabayein.',
+        'Apne business mobile me WhatsApp kholiye ➔ <strong>Settings</strong> ➔ <strong>Linked Devices</strong> ➔ <strong>Link a Device</strong> par tap karein.',
+        'Screen par show ho rahe dynamic QR Code ko scan karein. 10 seconds me status <strong>🟢 Active & Ready</strong> ho jayega.'
+      ],
+      actionLabel: 'Connect WhatsApp Account ➔',
+      actionTarget: 'inbox',
+      keywords: 'qr code connect scan phone number meta waba link device pairing official cloud api'
+    },
+    {
+      id: 'faq-wa-2',
+      cat: 'whatsapp',
+      catLabel: 'WhatsApp & QR',
+      type: 'troubleshoot',
+      title: 'WhatsApp disconnected / QR code expired show ho raha hai, reconnect kaise karein?',
+      duration: '0:35',
+      videoTitle: 'Fix: Resolving Disconnected WhatsApp Session & Phone Sync',
+      badgeClass: 'whatsapp',
+      steps: [
+        '<strong>WhatsApp Accounts</strong> me jakar disconnected number ke aage <strong>Refresh QR Code</strong> button par click karein.',
+        'Check karein ki primary phone me internet connection active hai aur battery saver mode off hai.',
+        'Naye QR Code ko scan karein. Agar prompt aaye toh <em>"Keep this session active"</em> select karein taaki background sync disconnect na ho.'
+      ],
+      actionLabel: 'Reconnect WhatsApp ➔',
+      actionTarget: 'inbox',
+      keywords: 'disconnected qr code expired reconnect offline phone sleep logout battery saver'
+    },
+    {
+      id: 'faq-wa-3',
+      cat: 'whatsapp',
+      catLabel: 'WhatsApp & QR',
+      type: 'troubleshoot',
+      title: 'Outgoing message par single tick (✓) aa raha hai ya delivery delay ho rahi hai?',
+      duration: '0:40',
+      videoTitle: 'Fix: Diagnosing Delivery Delays & 24h Customer Service Window',
+      badgeClass: 'whatsapp',
+      steps: [
+        'Check karein recipient ka country code (+91) sahi format me hai aur mobile network active hai.',
+        'Sidebar me <strong>Meta Cloud API Status</strong> check karein (operational green hona chahiye).',
+        'Agar user se last reply 24 hours se pehle aaya tha, toh normal text message block hoga; approved <strong>Meta Marketing / Utility Template</strong> send karein.'
+      ],
+      actionLabel: 'Check Message Logs ➔',
+      actionTarget: 'inbox',
+      keywords: 'single tick delivery delay 24 hour window template meta server queue pending failed'
+    },
+    {
+      id: 'faq-wa-4',
+      cat: 'whatsapp',
+      catLabel: 'WhatsApp & QR',
+      type: 'guide',
+      title: 'WhatsApp Green Tick (Official Meta Verified Badge) ke liye apply kaise karein?',
+      duration: '0:50',
+      videoTitle: 'Walkthrough: Applying for Official WhatsApp Green Tick Badge',
+      badgeClass: 'whatsapp',
+      steps: [
+        'Meta Business Manager me apni company ka <strong>Business Verification</strong> complete karein (GST Certificate + Incorporation doc).',
+        'Two-Factor Authentication (2FA) enable karein aur Tier-2 messaging limit (10,000 msgs/day) maintain karein.',
+        '<strong>Settings > WhatsApp Accounts > Request Official Badge</strong> par click karein aur brand press coverage links attach karke submit karein.'
+      ],
+      actionLabel: 'Apply for Green Tick ➔',
+      actionTarget: 'inbox',
+      keywords: 'green tick verified badge official business account oba meta trust brand identity'
+    },
+
+    // --- Broadcast & Campaigns (4) ---
+    {
+      id: 'faq-bc-1',
+      cat: 'broadcast',
+      catLabel: 'Broadcast & Campaigns',
+      type: 'guide',
+      title: 'Broadcast message 10,000+ targeted customers ko safe delivery ke sath kaise bhejein?',
+      duration: '0:50',
+      videoTitle: 'Walkthrough: Setting up High-Volume Broadcast Campaign',
+      badgeClass: 'broadcast',
+      steps: [
+        '<strong>Campaigns > All Broadcasts</strong> me jakar <strong>+ New Campaign</strong> par click karein.',
+        'Approved Meta Marketing Template select karein aur targeted CRM audience/tags filter karein.',
+        '<strong>Smart Rate Limiting (50 msgs/min)</strong> on rakhein taaki number health score "High" rahe, fir <strong>Schedule / Send Now</strong> dabayein.'
+      ],
+      actionLabel: 'Create Broadcast Campaign ➔',
+      actionTarget: 'dashboard',
+      keywords: 'broadcast 10000 bulk message blast campaign rate limit audience filter'
+    },
+    {
+      id: 'faq-bc-2',
+      cat: 'broadcast',
+      catLabel: 'Meta Templates',
+      type: 'troubleshoot',
+      title: 'Meta se WhatsApp Template reject kyun hota hai aur 60s me approve kaise karwayen?',
+      duration: '0:40',
+      videoTitle: 'Walkthrough: Writing Meta-Compliant Templates for 60s Approval',
+      badgeClass: 'broadcast',
+      steps: [
+        'Category sahi chunein: Transactional/order/payment ke liye <strong>Utility</strong>, promotional discount ke liye <strong>Marketing</strong>.',
+        'Dynamic variables (e.g. <code>{{1}}</code>, <code>{{2}}</code>) me realistic sample values (e.g. Rahul, 20% OFF) zaroor provide karein.',
+        'Body text me excessive exclamation marks (!!!) ya short bit.ly links na daalein; direct business domain URLs use karein.'
+      ],
+      actionLabel: 'Create New Template ➔',
+      actionTarget: 'inbox',
+      keywords: 'template rejected meta approval waba sample variables guidelines utility marketing'
+    },
+    {
+      id: 'faq-bc-3',
+      cat: 'broadcast',
+      catLabel: 'Broadcast & Campaigns',
+      type: 'troubleshoot',
+      title: 'Broadcast campaign fail ya pause kyun ho jati hai (Quality Rating Flagged)?',
+      duration: '0:45',
+      videoTitle: 'Fix: Recovering WhatsApp Phone Number Health & Quality Score',
+      badgeClass: 'broadcast',
+      steps: [
+        'Top bar me Number Quality score check karein: agar <strong>Yellow (Medium)</strong> ya <strong>Red (Low)</strong> hai toh Meta rate limit karta hai.',
+        'Har broadcast template me <strong>Quick Unsubscribe Button</strong> ("Reply STOP to opt out") zaroor daalein taaki users report/block na karein.',
+        'Non-responding contacts ko audience list se remove karein aur agle 48 hours tak high-intent warm leads ko hi message bhejein.'
+      ],
+      actionLabel: 'Check Number Health ➔',
+      actionTarget: 'dashboard',
+      keywords: 'broadcast failed paused quality rating spam report block opt-out warm up tier'
+    },
+    {
+      id: 'faq-bc-4',
+      cat: 'broadcast',
+      catLabel: 'Audience & CSV',
+      type: 'guide',
+      title: 'CSV Contact list import karke custom audience broadcast kaise banayein?',
+      duration: '0:45',
+      videoTitle: 'Walkthrough: Uploading CSV and Mapping Columns for Broadcast',
+      badgeClass: 'broadcast',
+      steps: [
+        'Excel ya Google Sheets se CSV file export karein jisme <code>Phone</code>, <code>Name</code>, aur <code>Tag</code> columns hon.',
+        '<strong>Contacts > Import CSV</strong> par click karein aur header columns ko system fields ke sath map karein.',
+        'Contacts ko batch tag assign karein (e.g. <code>Diwali-VIP-2024</code>) aur New Broadcast me ye tag select karein.'
+      ],
+      actionLabel: 'Import Contacts CSV ➔',
+      actionTarget: 'dashboard',
+      keywords: 'csv import excel contacts bulk audience tag list upload map columns'
+    },
+
+    // --- AI & Chatbot (4) ---
+    {
+      id: 'faq-cb-1',
+      cat: 'chatbot',
+      catLabel: 'Chatbot & AI',
+      type: 'guide',
+      title: 'Auto-Reply Welcome Message aur 24/7 Interactive Button flow kaise banayein?',
+      duration: '0:48',
+      videoTitle: 'Walkthrough: Drag-and-Drop Chatbot Flow Builder',
+      badgeClass: 'chatbot',
+      steps: [
+        '<strong>Automation & AI > Chatbot</strong> builder me jayein aur <strong>+ Create Welcome Flow</strong> click karein.',
+        'Trigger condition select karein: <em>"First message from new customer"</em>.',
+        'Interactive quick-reply buttons add karein: <code>[1. View Catalog]</code>, <code>[2. Pricing]</code>, <code>[3. Agent Call]</code> aur <strong>Publish Flow</strong> karein.'
+      ],
+      actionLabel: 'Open Chatbot Builder ➔',
+      actionTarget: 'ai-agents',
+      keywords: 'chatbot auto reply welcome message flow trigger bot 24/7 automation keywords'
+    },
+    {
+      id: 'faq-cb-2',
+      cat: 'chatbot',
+      catLabel: 'Chatbot & AI',
+      type: 'troubleshoot',
+      title: 'Chatbot customer ke messages ka automatic reply kyun nahi de raha hai?',
+      duration: '0:35',
+      videoTitle: 'Fix: Troubleshooting Chatbot Triggers & Human Takeover Mode',
+      badgeClass: 'chatbot',
+      steps: [
+        'Check karein chat window me <strong>Human Agent Takeover</strong> active toh nahi hai; jab executive chat me reply karta hai, bot auto-pause ho jata hai.',
+        'Automation Settings me check karein ki Chatbot switch <strong>🟢 Active</strong> state me hai.',
+        'Trigger keyword matching rule check karein: agar rule <em>"Exact Match"</em> hai toh typo hone par bot trigger nahi hoga; ise <em>"Contains Keyword"</em> karein.'
+      ],
+      actionLabel: 'Check Chatbot Rules ➔',
+      actionTarget: 'ai-agents',
+      keywords: 'chatbot not working silent human takeover pause keyword trigger exact match'
+    },
+    {
+      id: 'faq-cb-3',
+      cat: 'chatbot',
+      catLabel: 'AI Knowledge Base',
+      type: 'guide',
+      title: 'AI Sales Agent me Product Catalog & PDF Knowledge Base train kaise karein?',
+      duration: '0:50',
+      videoTitle: 'Walkthrough: Training AI Agent with PDFs, FAQs & Product Docs',
+      badgeClass: 'chatbot',
+      steps: [
+        '<strong>Automation & AI > AI Agents</strong> me jayein aur <strong>Knowledge Base</strong> tab select karein.',
+        'Apni company ka Pricing PDF, Product Specifications, ya FAQs text file drag & drop karke upload karein.',
+        'Live Simulator playground me sample customer questions puchhkar test karein aur <strong>Deploy AI Agent</strong> par click karein.'
+      ],
+      actionLabel: 'Train AI Agent ➔',
+      actionTarget: 'ai-agents',
+      keywords: 'ai agent knowledge base upload pdf training prompt catalog rag vectors'
+    },
+    {
+      id: 'faq-cb-4',
+      cat: 'chatbot',
+      catLabel: 'AI Accuracy & Prompts',
+      type: 'troubleshoot',
+      title: 'AI Bot customer ko galat ya out-of-context reply de raha hai, guardrails kaise lagayein?',
+      duration: '0:42',
+      videoTitle: 'Fix: Fine-tuning AI Prompts, Temperature & Fallback to Human',
+      badgeClass: 'chatbot',
+      steps: [
+        'AI Agent settings me jakar <strong>AI Temperature</strong> ko <code>0.2</code> (Strict & Precise) par set karein taaki hallucinations na hon.',
+        'System prompt me strict instructions add karein: <em>"Sirf uploaded knowledge base se hi answer karein; agar exact answer na pata ho toh Human Support transfer karein."</em>',
+        '<strong>Automatic Fallback</strong> toggle enable karein: agar AI confidence score 80% se kam ho toh chat turant live sales rep ko escalate ho jayegi.'
+      ],
+      actionLabel: 'Tune AI Guardrails ➔',
+      actionTarget: 'ai-agents',
+      keywords: 'ai wrong reply hallucination temperature guardrails prompt system instructions fallback'
+    },
+
+    // --- CRM & Leads (4) ---
+    {
+      id: 'faq-crm-1',
+      cat: 'crm',
+      catLabel: 'CRM & Routing',
+      type: 'guide',
+      title: 'Inbound Leads ko Telecallers me automatically Round-Robin assign kaise karein?',
+      duration: '0:42',
+      videoTitle: 'Walkthrough: Setting up Auto-Assign Rules & Round Robin',
+      badgeClass: 'team',
+      steps: [
+        '<strong>Automation & AI > Auto Assign</strong> me jayein aur <strong>Round-Robin Lead Distribution</strong> toggle ON karein.',
+        'Active sales executives (Rahul Sharma, Aman Gupta, Priya Patel) select karein aur unka working shifts set karein.',
+        'Naya lead capture hote hi system sequentially agle agent ko WhatsApp notification aur Task ke sath assign kar dega.'
+      ],
+      actionLabel: 'Configure Auto-Assign ➔',
+      actionTarget: 'auto-assign',
+      keywords: 'auto assign round robin lead distribution telecaller routing sales rep delegation'
+    },
+    {
+      id: 'faq-crm-2',
+      cat: 'crm',
+      catLabel: 'Meta Lead Ads',
+      type: 'troubleshoot',
+      title: 'Facebook / Instagram Lead Ads se aane wale leads CRM me sync nahi ho rahe?',
+      duration: '0:40',
+      videoTitle: 'Fix: Reconnecting Meta Lead Ads Webhook & Page Permissions',
+      badgeClass: 'team',
+      steps: [
+        '<strong>Settings > Integrations > Meta Lead Ads</strong> me jayein aur check karein Facebook Page connection status active hai ya nahi.',
+        'Meta Business Manager me check karein ki connected user ke paas Facebook Page ka <strong>"Manage Leads" (Lead Access)</strong> permission granted hai.',
+        '<strong>"Test Webhook Ping"</strong> button par click karein; sample lead generate karke live sync verify karein.'
+      ],
+      actionLabel: 'Check Meta Lead Ads ➔',
+      actionTarget: 'auto-assign',
+      keywords: 'facebook lead ads instagram forms webhook sync not receiving missing permissions token'
+    },
+    {
+      id: 'faq-crm-3',
+      cat: 'crm',
+      catLabel: 'Deals Pipeline',
+      type: 'guide',
+      title: 'Deals Pipeline me Drag & Drop karke deals win/close kaise karein?',
+      duration: '0:40',
+      videoTitle: 'Walkthrough: Managing Deals Kanban Board & Revenue Tracking',
+      badgeClass: 'team',
+      steps: [
+        'Sidebar me <strong>CRM > Deals Pipeline</strong> par jayein.',
+        'Deal card ko mouse se drag karke next stage me drop karein: <em>Discovery ➔ Demo Booked ➔ Proposal Sent ➔ Deal Won</em>.',
+        'Deal Won stage me drop karte hi system deal amount calculate karke team analytics aur sales rep commission me add kar dega.'
+      ],
+      actionLabel: 'Open Deals Pipeline ➔',
+      actionTarget: 'dashboard',
+      keywords: 'deals pipeline kanban stages close win revenue sales funnel drag drop'
+    },
+    {
+      id: 'faq-crm-4',
+      cat: 'crm',
+      catLabel: 'Data & Contacts',
+      type: 'troubleshoot',
+      title: 'Lead details me phone number duplicate create hone se kaise rokein?',
+      duration: '0:35',
+      videoTitle: 'Fix: Enabling Smart Phone Deduplication & Auto-Merge Rules',
+      badgeClass: 'team',
+      steps: [
+        '<strong>Settings > CRM Settings > Deduplication Rules</strong> me jayein.',
+        '<strong>"Strict Phone Deduplication"</strong> switch ON karein; is se same number se dobara message aane par naya lead banne ke bajaye existing profile update hogi.',
+        'Duplicate contacts ko clean karne ke liye <strong>"Find & Merge Duplicates"</strong> scanner run karein.'
+      ],
+      actionLabel: 'Configure Deduplication ➔',
+      actionTarget: 'dashboard',
+      keywords: 'duplicate leads merge phone number clash crm clean up contacts sync'
+    },
+
+    // --- Tasks & Operations (3) ---
+    {
+      id: 'faq-tsk-1',
+      cat: 'tasks',
+      catLabel: 'Tasks & Checklist',
+      type: 'guide',
+      title: 'Task Management: Subtasks checklist, Due Date reminder aur Notes add kaise karein?',
+      duration: '0:45',
+      videoTitle: 'Walkthrough: Creating Actionable Tasks with Subtasks & Reminders',
+      badgeClass: 'team',
+      steps: [
+        '<strong>Operations > Tasks & Follow-ups</strong> me <strong>+ Create Task</strong> par click karein.',
+        'Title, related Lead, Priority, aur Deadline set karein; neeche <strong>+ Add Subtask</strong> karke actionable checklist banayein.',
+        '<em>"Send automated WhatsApp alert 15 mins before deadline"</em> checkbox tick karein taaki assigned sales rep ko reminder alert mile.'
+      ],
+      actionLabel: 'Create New Task ➔',
+      actionTarget: 'tasks',
+      keywords: 'tasks subtasks checklist due date reminder notes follow up telecaller assignment'
+    },
+    {
+      id: 'faq-tsk-2',
+      cat: 'tasks',
+      catLabel: 'Custom Categories',
+      type: 'troubleshoot',
+      title: 'Custom Task Types create karte waqt error ya missing option kaise fix karein?',
+      duration: '0:35',
+      videoTitle: 'Fix: Managing Business Custom Task Types & Category Reset',
+      badgeClass: 'team',
+      steps: [
+        'Tasks view me header me <strong>⚙️ Customize Types</strong> button par click karein.',
+        'Agar koi customized type dropdown me nahi dikh rahi, toh check karein ki icon aur label dono fill kiye hain (e.g. 🏢 Site Visit).',
+        'Agar default categories restore karni hon, toh modal me <strong>↺ Reset to Defaults</strong> par click karein.'
+      ],
+      actionLabel: 'Customize Task Types ➔',
+      actionTarget: 'tasks',
+      keywords: 'task types custom categories dropdown missing edit delete reset business workflow'
+    },
+    {
+      id: 'faq-tsk-3',
+      cat: 'tasks',
+      catLabel: 'Kanban Reschedule',
+      type: 'troubleshoot',
+      title: 'Overdue Tasks ko Kanban board me Today ya Tomorrow me drag drop karke reschedule kaise karein?',
+      duration: '0:40',
+      videoTitle: 'Fix & Walkthrough: Drag-and-Drop Task Rescheduling on Kanban',
+      badgeClass: 'team',
+      steps: [
+        'Tasks module me view toggle se <strong>Kanban Schedule View</strong> select karein.',
+        '<strong>Overdue</strong> column se kisi bhi expired task card ko drag karein aur <strong>Today</strong> ya <strong>Tomorrow</strong> column me drop karein.',
+        'System automatically task ki due date update kar dega aur timeline audit log me reschedule history record kar dega.'
+      ],
+      actionLabel: 'Open Tasks Kanban ➔',
+      actionTarget: 'tasks',
+      keywords: 'drag drop kanban reschedule overdue today tomorrow column due date update'
+    },
+
+    // --- Integrations & APIs (3) ---
+    {
+      id: 'faq-int-1',
+      cat: 'integrations',
+      catLabel: 'E-Commerce & Carts',
+      type: 'guide',
+      title: 'Shopify / WooCommerce Abandoned Cart recovery WhatsApp alert kaise setup karein?',
+      duration: '0:45',
+      videoTitle: 'Walkthrough: Connecting E-Commerce Cart Webhooks for Recovery',
+      badgeClass: 'chatbot',
+      steps: [
+        '<strong>Settings > Integrations > Webhooks</strong> me jakar apna SimpleFloww Unique Webhook URL copy karein.',
+        'Shopify / WooCommerce store me Admin ➔ Notifications ➔ Webhooks me <em>"Checkout Created / Updated"</em> trigger par ye URL paste karein.',
+        'SimpleFloww me 15-minute delay set karke personalized checkout link aur 10% discount code ka auto-template schedule karein.'
+      ],
+      actionLabel: 'Setup Cart Recovery ➔',
+      actionTarget: 'dashboard',
+      keywords: 'shopify woocommerce abandoned cart recovery webhook trigger ecommerce store'
+    },
+    {
+      id: 'faq-int-2',
+      cat: 'integrations',
+      catLabel: 'API & Webhooks',
+      type: 'troubleshoot',
+      title: 'Webhook payload fail ho raha hai ya 401 Unauthorized error aa raha hai?',
+      duration: '0:35',
+      videoTitle: 'Fix: Resolving API Authentication & Invalid Webhook Payloads',
+      badgeClass: 'chatbot',
+      steps: [
+        '<strong>Settings > API Keys</strong> me jakar verify karein ki aapka <strong>Bearer Token</strong> active hai aur revoke nahi hua.',
+        'Ensure karein ki incoming POST request me header <code>Content-Type: application/json</code> set hai aur phone number valid E.164 (+91) format me hai.',
+        '<strong>Webhook Logs</strong> tab me jakar failed request ka exact HTTP response code aur server error stack trace inspect karein.'
+      ],
+      actionLabel: 'Inspect Webhook Logs ➔',
+      actionTarget: 'dashboard',
+      keywords: 'webhook error 401 unauthorized bearer token payload bad request post api'
+    },
+    {
+      id: 'faq-int-3',
+      cat: 'integrations',
+      catLabel: 'Zapier & Make',
+      type: 'troubleshoot',
+      title: 'Google Sheets se Zapier / Make.com automation trigger nahi ho raha hai?',
+      duration: '0:40',
+      videoTitle: 'Fix: Connecting Google Sheets Triggers with WhatsApp Outbound API',
+      badgeClass: 'chatbot',
+      steps: [
+        'Google Sheet me check karein ki naye rows add hone par pehli row empty na ho aur column headers (Name, Phone) row 1 me fixed hon.',
+        'Zapier / Make connection test me <strong>"Fetch Sample Data"</strong> run karein taaki field mapping refresh ho jaye.',
+        'Ensure karein ki Zap status <strong>ON (Published)</strong> hai aur SimpleFloww outbound endpoint <code>/api/v1/send-template</code> call ho raha hai.'
+      ],
+      actionLabel: 'Open Integrations ➔',
+      actionTarget: 'dashboard',
+      keywords: 'google sheets zapier make automation trigger new row zap error field mapping'
+    },
+
+    // --- Billing & GST (4) ---
+    {
+      id: 'faq-bil-1',
+      cat: 'billing',
+      catLabel: 'Invoices & Tax',
+      type: 'guide',
+      title: 'Monthly GST Tax Invoice aur Wallet Recharge Receipt download kaise karein?',
+      duration: '0:35',
+      videoTitle: 'Walkthrough: Downloading GST Invoices & Managing Wallet',
+      badgeClass: 'billing',
+      steps: [
+        'Top header me wallet balance pill par click karein ya <strong>Settings > Invoices</strong> me jayein.',
+        '<strong>Transaction & Invoice History</strong> me aapke sabhi recharge transactions listed hain.',
+        'Download icon par click karke 18% GST Input Credit claim karne ke liye signed PDF invoice instant download karein.'
+      ],
+      actionLabel: 'View Invoices & Wallet ➔',
+      actionTarget: 'dashboard',
+      keywords: 'invoice gst tax receipt wallet recharge billing pdf download payment input tax credit'
+    },
+    {
+      id: 'faq-bil-2',
+      cat: 'billing',
+      catLabel: 'Wallet & Payments',
+      type: 'troubleshoot',
+      title: 'UPI / NetBanking recharge payment deduct ho gaya par wallet balance update nahi hua?',
+      duration: '0:35',
+      videoTitle: 'Fix: Instant Reconciliation for Pending UPI & Gateway Payments',
+      badgeClass: 'billing',
+      steps: [
+        'Top header me wallet balance pill ke paas <strong>↻ Sync Balance</strong> button par click karein; banking gateway ping refresh ho jayega.',
+        'Bank statement ya UPI app (GPay/PhonePe) se 12-digit <strong>UTR Number</strong> note karein.',
+        'Agar 5 minutes me auto-credit na ho, toh <strong>1-Click WhatsApp Support</strong> par UTR share karein; hamari finance team 3 minutes me credit karti hai.'
+      ],
+      actionLabel: 'Sync Wallet Balance ➔',
+      actionTarget: 'dashboard',
+      keywords: 'upi payment failed wallet recharge money deducted pending utr reconciliation razorpay'
+    },
+    {
+      id: 'faq-bil-3',
+      cat: 'billing',
+      catLabel: 'Meta Pricing Rules',
+      type: 'guide',
+      title: 'Meta WhatsApp Conversation Charges (Marketing vs Utility) kaise calculate hote hain?',
+      duration: '0:45',
+      videoTitle: 'Walkthrough: Meta Official Pricing & Conversation Session Rules',
+      badgeClass: 'billing',
+      steps: [
+        'Meta conversation charges 24-hour window basis par lagte hain: promotional offers ke liye <strong>Marketing (~₹0.78/conv)</strong>.',
+        'Order dispatch, OTP aur transactional receipts ke liye <strong>Utility (~₹0.11/conv)</strong> apply hota hai.',
+        'Har mahine pehle <strong>1,000 Inbound Service Conversations bilkul Free</strong> hote hain (Meta Tier-1 waiver).'
+      ],
+      actionLabel: 'View Pricing Calculator ➔',
+      actionTarget: 'dashboard',
+      keywords: 'meta charges pricing marketing utility service conversation 24 hour rates cost per message'
+    },
+    {
+      id: 'faq-bil-4',
+      cat: 'billing',
+      catLabel: 'Company Tax Profile',
+      type: 'troubleshoot',
+      title: 'Company GSTIN update kaise karein taaki input credit tax invoice par print ho?',
+      duration: '0:35',
+      videoTitle: 'Fix: Updating Registered GSTIN & Billing Address for Invoices',
+      badgeClass: 'billing',
+      steps: [
+        '<strong>Settings > Company Profile > Billing & Tax Details</strong> me jayein.',
+        'Apna 15-digit verified GSTIN aur registered business trade name enter karein.',
+        '<strong>"Save Tax Profile"</strong> dabayein; system GST portal se company name auto-verify karke agle sabhi invoices par legal GSTIN print karega.'
+      ],
+      actionLabel: 'Update GSTIN ➔',
+      actionTarget: 'dashboard',
+      keywords: 'gstin update tax profile input credit itc b2b invoice address company name'
+    }
+  ];
+
+  let helpdeskState = {
+    cat: 'all',
+    type: 'all',
+    search: '',
+    openFaqId: 'faq-wa-1'
+  };
+
+  const activeVideoTimers = {};
+
+  function renderHelpDeskFaqs() {
+    const container = document.getElementById('faq-accordion-list');
+    if (!container) return;
+
+    const filtered = helpdeskFaqsData.filter(faq => {
+      const matchCat = helpdeskState.cat === 'all' || faq.cat === helpdeskState.cat;
+      if (!matchCat) return false;
+      const matchType = helpdeskState.type === 'all' || faq.type === helpdeskState.type;
+      if (!matchType) return false;
+      if (!helpdeskState.search) return true;
+      const q = helpdeskState.search.toLowerCase();
+      return faq.title.toLowerCase().includes(q) ||
+             faq.keywords.toLowerCase().includes(q) ||
+             faq.catLabel.toLowerCase().includes(q) ||
+             faq.steps.some(s => s.toLowerCase().includes(q));
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div style="background:#fff; border:1px solid var(--sf-border); border-radius:12px; padding:40px 20px; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+          <h4 style="font-size:15px; font-weight:700; color:var(--sf-text-main); margin-bottom:4px;">No matching guide found for "${helpdeskState.search}"</h4>
+          <p style="font-size:12.5px; color:var(--sf-text-muted); margin-bottom:14px;">Try searching broader keywords like "QR", "Broadcast", or "Template".</p>
+          <button type="button" class="btn-secondary" id="btn-reset-hd-search" style="font-size:12px;">Clear Search</button>
+        </div>
+      `;
+      const btnClear = document.getElementById('btn-reset-hd-search');
+      if (btnClear) {
+        btnClear.addEventListener('click', () => {
+          helpdeskState.search = '';
+          const inp = document.getElementById('helpdesk-search-input');
+          if (inp) inp.value = '';
+          renderHelpDeskFaqs();
+        });
+      }
+      return;
+    }
+
+    container.innerHTML = filtered.map(faq => {
+      const isOpen = faq.id === helpdeskState.openFaqId;
+      const typeBadgeText = faq.type === 'troubleshoot' ? '⚡ Fix' : '📖 Guide';
+      const typeBadgeClass = faq.type === 'troubleshoot' ? 'troubleshoot' : 'guide';
+
+      return `
+        <div class="faq-item ${isOpen ? 'is-open' : ''}" data-faq-id="${faq.id}">
+          <div class="faq-header" data-toggle-id="${faq.id}">
+            <div class="faq-header-left">
+              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
+              <span class="faq-category-badge ${faq.badgeClass}">${faq.catLabel}</span>
+              <h3 class="faq-title">${faq.title}</h3>
+            </div>
+            <div class="faq-header-right">
+              <span class="faq-video-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                ${faq.duration} Video
+              </span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+
+          <div class="faq-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
+            
+            <!-- Step By Step List -->
+            <div class="faq-steps-card">
+              <div class="faq-steps-card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Step-by-Step Resolution Guide
+              </div>
+              ${faq.steps.map((st, i) => `
+                <div class="faq-step-item">
+                  <div class="faq-step-num">${i + 1}</div>
+                  <div>${st}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Inline Video Walkthrough Player -->
+            <div class="faq-video-card">
+              <div class="faq-video-screen">
+                <canvas class="faq-video-canvas" id="canvas-${faq.id}" width="640" height="360"></canvas>
+                <div class="faq-video-overlay-poster" id="poster-${faq.id}" data-play-id="${faq.id}">
+                  <div class="faq-video-play-btn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                  </div>
+                  <div style="font-size: 13.5px; font-weight: 700;">${faq.videoTitle}</div>
+                  <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">Click to play 45-sec inline screen walkthrough (No redirects)</div>
+                </div>
+              </div>
+
+              <!-- Controls Bar -->
+              <div class="faq-video-controls-bar">
+                <button type="button" class="faq-video-ctrl-btn" data-btn-play="${faq.id}" title="Play / Pause">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="playicon-${faq.id}"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+                <div class="faq-video-timeline-wrap" data-seek-id="${faq.id}">
+                  <div class="faq-video-timeline-progress" id="progress-${faq.id}"></div>
+                </div>
+                <span id="timer-${faq.id}">0:00 / ${faq.duration}</span>
+                <button type="button" class="faq-video-ctrl-btn" data-btn-restart="${faq.id}" title="Replay">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Footer Action Bar -->
+            <div class="faq-footer-bar">
+              <div class="faq-feedback-group">
+                <span>Was this guide helpful?</span>
+                <button type="button" class="faq-feedback-btn" data-rating="yes" title="Mark helpful">👍 Yes</button>
+                <button type="button" class="faq-feedback-btn" data-rating="no" title="Mark not helpful">👎 No</button>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-primary" data-action-target="${faq.actionTarget}" style="font-size: 12.5px; padding: 6px 14px;">
+                  ${faq.actionLabel}
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Attach Accordion Toggle
+    container.querySelectorAll('.faq-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const id = header.getAttribute('data-toggle-id');
+        helpdeskState.openFaqId = helpdeskState.openFaqId === id ? null : id;
+        renderHelpDeskFaqs();
+      });
+    });
+
+    // Attach Video Play triggers
+    container.querySelectorAll('[data-play-id]').forEach(poster => {
+      poster.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = poster.getAttribute('data-play-id');
+        playInlineVideoWalkthrough(id);
+      });
+    });
+
+    container.querySelectorAll('[data-btn-play]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-btn-play');
+        playInlineVideoWalkthrough(id);
+      });
+    });
+
+    container.querySelectorAll('[data-btn-restart]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-btn-restart');
+        restartInlineVideoWalkthrough(id);
+      });
+    });
+
+    // Attach Primary Module Action
+    container.querySelectorAll('[data-action-target]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const target = btn.getAttribute('data-action-target');
+        if (target) {
+          window.location.hash = `#${target}`;
+        }
+      });
+    });
+
+    // Attach Feedback Rating
+    container.querySelectorAll('.faq-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isYes = btn.getAttribute('data-rating') === 'yes';
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.faq-feedback-btn').forEach(b => b.classList.remove('rated-yes', 'rated-no'));
+        btn.classList.add(isYes ? 'rated-yes' : 'rated-no');
+        showToast(isYes ? '✓ Thank you! Glad this guide helped.' : 'Thanks for the feedback. We will improve this walkthrough.');
+      });
+    });
+  }
+
+  // Visual Simulated Video Player on Canvas
+  function playInlineVideoWalkthrough(faqId) {
+    const poster = document.getElementById(`poster-${faqId}`);
+    const canvas = document.getElementById(`canvas-${faqId}`);
+    const progress = document.getElementById(`progress-${faqId}`);
+    const timer = document.getElementById(`timer-${faqId}`);
+    const playIcon = document.getElementById(`playicon-${faqId}`);
+    if (!canvas) return;
+
+    if (poster) poster.style.display = 'none';
+
+    if (activeVideoTimers[faqId]) {
+      // Toggle Pause
+      if (activeVideoTimers[faqId].isPlaying) {
+        activeVideoTimers[faqId].isPlaying = false;
+        if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+        return;
+      } else {
+        activeVideoTimers[faqId].isPlaying = true;
+        if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        return;
+      }
+    }
+
+    if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+
+    const ctx = canvas.getContext('2d');
+    const totalDuration = 45; // 45 seconds walkthrough
+    let currentTime = 0;
+
+    const faqObj = helpdeskFaqsData.find(f => f.id === faqId) || { videoTitle: 'Interactive Walkthrough', catLabel: 'Guide' };
+
+    activeVideoTimers[faqId] = {
+      isPlaying: true,
+      interval: setInterval(() => {
+        if (!activeVideoTimers[faqId] || !activeVideoTimers[faqId].isPlaying) return;
+
+        currentTime += 1;
+        if (currentTime > totalDuration) {
+          currentTime = totalDuration;
+          clearInterval(activeVideoTimers[faqId].interval);
+          activeVideoTimers[faqId] = null;
+          if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+          showToast(`✓ Completed walkthrough: ${faqObj.videoTitle}`);
+          return;
+        }
+
+        const pct = (currentTime / totalDuration) * 100;
+        if (progress) progress.style.width = `${pct}%`;
+        const mins = Math.floor(currentTime / 60);
+        const secs = String(currentTime % 60).padStart(2, '0');
+        if (timer) timer.textContent = `${mins}:${secs} / 0:${totalDuration}`;
+
+        // Draw animated screen frame
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Header bar
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, canvas.width, 36);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText(`▶ SimpleFloww Interactive Walkthrough • ${faqObj.catLabel}`, 18, 23);
+
+        // Sidebar mock
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(16, 50, 140, 290);
+        ctx.fillStyle = '#475569';
+        for (let i = 0; i < 5; i++) {
+          ctx.fillRect(26, 70 + (i * 38), 120, 14);
+        }
+
+        // Active highlighted tab
+        ctx.fillStyle = '#2563eb';
+        ctx.fillRect(26, 70 + (Math.floor(currentTime / 15) * 38), 120, 14);
+
+        // Content Area simulation
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.fillText(faqObj.videoTitle, 175, 80);
+
+        // Step narration card
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.roundRect(175, 105, 440, 120, 8);
+        ctx.fill();
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        let stepText = 'Step 1: Open Target Module';
+        let subText = 'Navigating to section and verifying connected credentials...';
+        if (currentTime > 15 && currentTime <= 30) {
+          stepText = 'Step 2: Configure Parameters & Filters';
+          subText = 'Selecting verified Meta business settings and rate-limiting...';
+        } else if (currentTime > 30) {
+          stepText = 'Step 3: Verification & Live Activation';
+          subText = 'Success! Settings applied and operational status confirmed.';
+        }
+        ctx.fillText(`✓ ${stepText}`, 195, 140);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(subText, 195, 170);
+
+        // Live Simulated Metric pill
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(195, 195, 200, 20, 4);
+        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`TIME: ${mins}:${secs} | SIMULATION: ACTIVE`, 205, 209);
+      }, 1000)
+    };
+  }
+
+  function restartInlineVideoWalkthrough(faqId) {
+    if (activeVideoTimers[faqId]) {
+      clearInterval(activeVideoTimers[faqId].interval);
+      activeVideoTimers[faqId] = null;
+    }
+    const progress = document.getElementById(`progress-${faqId}`);
+    const timer = document.getElementById(`timer-${faqId}`);
+    if (progress) progress.style.width = '0%';
+    if (timer) timer.textContent = '0:00 / 0:45';
+    playInlineVideoWalkthrough(faqId);
+  }
+
+  function updateHelpDeskCounts() {
+    const total = helpdeskFaqsData.length;
+    const troubleshoots = helpdeskFaqsData.filter(f => f.type === 'troubleshoot').length;
+    const guides = helpdeskFaqsData.filter(f => f.type === 'guide').length;
+
+    const btnAll = document.querySelector('.helpdesk-subfilter-btn[data-type="all"]');
+    const btnTr = document.querySelector('.helpdesk-subfilter-btn[data-type="troubleshoot"]');
+    const btnGd = document.querySelector('.helpdesk-subfilter-btn[data-type="guide"]');
+    if (btnAll) btnAll.textContent = `All Content (${total})`;
+    if (btnTr) btnTr.textContent = `⚡ Troubleshooting & Fixes (${troubleshoots})`;
+    if (btnGd) btnGd.textContent = `📖 Feature How-To Guides (${guides})`;
+  }
+
+  function initHelpDesk() {
+    updateHelpDeskCounts();
+    renderHelpDeskFaqs();
+
+    // Category Tabs Filter
+    const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .helpdesk-tab-btn');
+    catTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        catTabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        helpdeskState.cat = btn.getAttribute('data-cat') || 'all';
+        renderHelpDeskFaqs();
+      });
+    });
+
+    // Sub-filters (All / Troubleshooting / Guides)
+    const subfilterBtns = document.querySelectorAll('.helpdesk-subfilter-btn');
+    subfilterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        subfilterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        helpdeskState.type = btn.getAttribute('data-type') || 'all';
+        renderHelpDeskFaqs();
+      });
+    });
+
+    // Search Input
+    const searchInput = document.getElementById('helpdesk-search-input');
+    const searchClear = document.getElementById('helpdesk-search-clear');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        helpdeskState.search = searchInput.value.trim();
+        if (searchClear) searchClear.style.display = helpdeskState.search ? 'block' : 'none';
+        renderHelpDeskFaqs();
+      });
+    }
+
+    if (searchClear && searchInput) {
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        helpdeskState.search = '';
+        searchClear.style.display = 'none';
+        renderHelpDeskFaqs();
+      });
+    }
+
+    // Trending Pills Click
+    document.querySelectorAll('.helpdesk-trend-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const query = pill.getAttribute('data-query');
+        if (searchInput && query) {
+          searchInput.value = query;
+          helpdeskState.search = query;
+          if (searchClear) searchClear.style.display = 'block';
+          renderHelpDeskFaqs();
+        }
+      });
+    });
+
+    // Modal: Feature Request
+    const btnOpenFeatureReq = document.getElementById('btn-open-feature-request');
+    const modalFeatureReq = document.getElementById('modal-feature-request');
+    const modalCloseFeatureReq = document.getElementById('modal-close-feature-request');
+    const modalCancelFeatureReq = document.getElementById('modal-cancel-feature-request');
+    const formFeatureReq = document.getElementById('form-feature-request');
+
+    function openFeatureRequestModal() {
+      if (modalFeatureReq) modalFeatureReq.style.display = 'flex';
+    }
+    function closeFeatureRequestModal() {
+      if (modalFeatureReq) modalFeatureReq.style.display = 'none';
+      if (formFeatureReq) formFeatureReq.reset();
+    }
+
+    if (btnOpenFeatureReq) btnOpenFeatureReq.addEventListener('click', openFeatureRequestModal);
+    if (modalCloseFeatureReq) modalCloseFeatureReq.addEventListener('click', closeFeatureRequestModal);
+    if (modalCancelFeatureReq) modalCancelFeatureReq.addEventListener('click', closeFeatureRequestModal);
+
+    if (formFeatureReq) {
+      formFeatureReq.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('fr-title')?.value || 'Feature';
+        const cat = document.getElementById('fr-category')?.value || 'General';
+        showToast(`🚀 Feature request "${title}" (${cat}) received! Added to product roadmap.`);
+        closeFeatureRequestModal();
+      });
+    }
+
+    // Modal: Feedback
+    const btnOpenFeedback = document.getElementById('btn-open-feedback');
+    const modalFeedback = document.getElementById('modal-feedback');
+    const modalCloseFeedback = document.getElementById('modal-close-feedback');
+    const modalCancelFeedback = document.getElementById('modal-cancel-feedback');
+    const formFeedback = document.getElementById('form-feedback');
+    const starContainer = document.getElementById('feedback-star-container');
+    const ratingInput = document.getElementById('feedback-rating-val');
+    const ratingLabel = document.getElementById('feedback-rating-label');
+
+    const ratingDescriptions = {
+      '1': '1 - Disappointed (Needs work)',
+      '2': '2 - Below Average',
+      '3': '3 - Average / It is okay',
+      '4': '4 - Very Good & Useful',
+      '5': '5 - Excellent! Loves it'
+    };
+
+    function openFeedbackModal() {
+      if (modalFeedback) modalFeedback.style.display = 'flex';
+    }
+    function closeFeedbackModal() {
+      if (modalFeedback) modalFeedback.style.display = 'none';
+      if (formFeedback) formFeedback.reset();
+      updateStarRating(5);
+    }
+
+    function updateStarRating(rating) {
+      if (ratingInput) ratingInput.value = rating;
+      if (ratingLabel) ratingLabel.textContent = ratingDescriptions[rating] || `${rating} Stars`;
+      if (starContainer) {
+        starContainer.querySelectorAll('.feedback-star').forEach(star => {
+          const r = parseInt(star.getAttribute('data-rating') || '0', 10);
+          if (r <= rating) {
+            star.classList.add('active');
+          } else {
+            star.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    if (starContainer) {
+      starContainer.querySelectorAll('.feedback-star').forEach(star => {
+        star.addEventListener('click', () => {
+          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
+          updateStarRating(r);
+        });
+      });
+    }
+
+    if (btnOpenFeedback) btnOpenFeedback.addEventListener('click', openFeedbackModal);
+    if (modalCloseFeedback) modalCloseFeedback.addEventListener('click', closeFeedbackModal);
+    if (modalCancelFeedback) modalCancelFeedback.addEventListener('click', closeFeedbackModal);
+
+    if (formFeedback) {
+      formFeedback.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rating = ratingInput ? ratingInput.value : '5';
+        showToast(`⭐ Thank you for your ${rating}-star feedback! Sent to product team.`);
+        closeFeedbackModal();
+      });
+    }
+
+    // WhatsApp Support Escalation Buttons
+    const btnHeaderSupport = document.getElementById('btn-header-wa-support');
+    const btnRepChat = document.getElementById('btn-rep-wa-chat');
+
+    function openSupportWhatsApp() {
+      const phone = '919518649420';
+      const msg = encodeURIComponent('Hi SimpleFloww Support, I need assistance with our business account setup. Business ID: SF-9420.');
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    if (btnHeaderSupport) btnHeaderSupport.addEventListener('click', openSupportWhatsApp);
+    if (btnRepChat) btnRepChat.addEventListener('click', openSupportWhatsApp);
+  }
+
+  initHelpDesk();
+  refreshDashboard(false);
+
+});
+
+

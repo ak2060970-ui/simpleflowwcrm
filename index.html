@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sales Dashboard — Simple Floww Business Portal</title>
+  <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
+  
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ====================================================================
+         1. LEFT SIDEBAR (Preserved Exactly As In Reference UI)
+         ==================================================================== -->
+    <aside class="sidebar">
+      
+      <!-- Brand Box (Matching Simple Floww Blue Gradient Card) -->
+      <div class="sidebar__brand-box">
+        <div class="brand-icon-wrap">
+          <!-- Flow Loop Infinity Icon with Simple Floww Blue -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M18.178 8c1.396 0 2.822 1.05 2.822 2.667 0 2.167-2.614 4.5-4.99 6.666L12 20.833 7.99 17.333C5.614 15.167 3 12.833 3 10.667 3 9.05 4.426 8 5.822 8c1.603 0 3.167 1.5 4.178 2.667C11.01 9.5 12.575 8 14.178 8h4z" stroke="#1269ec" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 12c-1.5-1.5-2.5-1.5-3.5 0s0 3 1.5 3 4-2.5 6-4" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Simple Floww</div>
+          <div class="brand-subtitle">BUSINESS PORTAL</div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar__nav" id="sidebar-main-nav">
+        
+        <!-- 1. DASHBOARD (Direct Link - Sabse Pehle) -->
+        <a href="#dashboard" class="nav-item active" data-view="dashboard" data-breadcrumb="Dashboard > Sales Overview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- 2. COMMUNICATION (Dropdown) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-comm">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span>Communication</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-comm">
+            <a href="#inbox" class="nav-subitem" data-view="inbox" data-breadcrumb="Communication > Unified Inbox">
+              <span>Inbox</span>
+              <span class="nav-badge blue">9+</span>
+            </a>
+            <a href="#whatsapp-accounts" class="nav-subitem" data-view="inbox" data-breadcrumb="Communication > WhatsApp Accounts (WABA & Templates)">
+              <span>WhatsApp Accounts</span>
+            </a>
+            <a href="#media" class="nav-subitem" data-view="inbox" data-breadcrumb="Communication > Media Library">
+              <span>Media Library</span>
+            </a>
+            <a href="#whatsapp-opt" class="nav-subitem" data-view="inbox" data-breadcrumb="Communication > Opt Management">
+              <span>Opt Management</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3. CAMPAIGNS (Direct Link / Standalone) -->
+        <a href="#campaigns" class="nav-item" data-view="dashboard" data-breadcrumb="Campaigns > All Broadcasts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <span>Campaigns</span>
+        </a>
+
+        <!-- 4. CRM & LEADS (Dropdown) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-crm">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span>CRM & Leads</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-crm">
+            <a href="#all-leads" class="nav-subitem" data-view="leads" data-breadcrumb="CRM & Leads > All Leads">
+              <span>All Leads</span>
+              <span class="nav-badge subtle">1,280</span>
+            </a>
+            <a href="#pipeline" class="nav-subitem" data-view="pipeline" data-breadcrumb="CRM & Leads > Pipeline (Kanban Deals)">
+              <span>Pipeline</span>
+            </a>
+            <a href="#tags" class="nav-subitem" data-view="leads" data-breadcrumb="CRM & Leads > Tags">
+              <span>Tags</span>
+            </a>
+            <a href="#columns" class="nav-subitem" data-view="leads" data-breadcrumb="CRM & Leads > Columns">
+              <span>Columns</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. TASK MANAGEMENT (Direct Link) -->
+        <a href="#tasks" class="nav-item" data-view="tasks" data-breadcrumb="Operations > Task Management">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>Task Management</span>
+          <span class="nav-badge subtle">4</span>
+        </a>
+
+        <!-- 6. AUTOMATION & AI (Dropdown: Chatbot, AI Agent, Auto Assign, Workflow) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-ai">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+            <span>Automation & AI</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-ai">
+            <a href="#chatbot" class="nav-subitem" data-view="ai-agents" data-breadcrumb="Automation & AI > Chatbot">
+              <span>Chatbot</span>
+            </a>
+            <a href="#ai-agents" class="nav-subitem" data-view="ai-agents" data-breadcrumb="Automation & AI > AI Agents">
+              <span>AI Agent</span>
+              <span class="nav-badge subtle">Pro</span>
+            </a>
+            <a href="#auto-assign" class="nav-subitem" data-view="auto-assign" data-breadcrumb="Automation & AI > Auto Assign Rules">
+              <span>Auto Assign</span>
+            </a>
+            <a href="#workflows" class="nav-subitem" data-view="auto-assign" data-breadcrumb="Automation & AI > Workflow">
+              <span>Workflow</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 7. TEAM MANAGEMENT (Dropdown: Roles & Permissions, Team Members) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-team">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span>Team Management</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-team">
+            <a href="#roles" class="nav-subitem" data-view="team" data-breadcrumb="Team Management > Roles & Permissions">
+              <span>Roles & Permissions</span>
+            </a>
+            <a href="#team" class="nav-subitem" data-view="team" data-breadcrumb="Team Management > Team Members">
+              <span>Team Members</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 8. INTEGRATIONS (Direct Link - No Dropdown) -->
+        <a href="#integrations" class="nav-item" data-view="webhooks" data-breadcrumb="Workspace > Integrations">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path><path d="M21 12h-3"></path></svg>
+          <span>Integrations</span>
+        </a>
+
+        <!-- 9. REFER & EARN (Direct Link - No Dropdown) -->
+        <a href="#referral" class="nav-item" data-view="referral" data-breadcrumb="Growth > Refer & Earn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>Refer & Earn</span>
+          <span class="nav-badge green">Earn ₹</span>
+        </a>
+
+        <!-- 10. HELP DESK (Direct Link - No Dropdown) -->
+        <a href="#helpdesk" class="nav-item" data-view="helpdesk" data-breadcrumb="Support > Help Desk & Knowledge Base">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span>Help Desk</span>
+          <span class="nav-badge subtle">6</span>
+        </a>
+
+        <!-- 11. DEVELOPER (Dropdown) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-dev">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>Developer</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-dev">
+            <a href="#webhooks" class="nav-subitem" data-view="webhooks" data-breadcrumb="Developer > Webhooks">
+              <span>Webhooks</span>
+            </a>
+            <a href="#api-keys" class="nav-subitem" data-view="webhooks" data-breadcrumb="Developer > API Keys">
+              <span>API Keys</span>
+            </a>
+            <a href="#api-docs" class="nav-subitem" data-view="webhooks" data-breadcrumb="Developer > API Documentation">
+              <span>API Documentation</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 12. SETTINGS (Dropdown - Sabse Last) -->
+        <div class="nav-group">
+          <div class="nav-item-parent" data-toggle="submenu" data-target="submenu-settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+            <svg class="nav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+          <div class="nav-submenu" id="submenu-settings">
+            <a href="#general-settings" class="nav-subitem" data-view="dashboard" data-breadcrumb="Settings > General Settings">
+              <span>General Settings</span>
+            </a>
+            <a href="#billing" class="nav-subitem" data-view="dashboard" data-breadcrumb="Settings > Wallet & Billing">
+              <span>Wallet & Billing</span>
+            </a>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- Sidebar User Profile Footer (Matching Abhinandan kumar AK in screenshot) -->
+      <div class="sidebar__footer">
+        <div class="user-card">
+          <div class="user-avatar">AK</div>
+          <div class="user-info">
+            <div class="user-name">Abhinandan kumar</div>
+            <div class="user-email">abhinandankumar9082@gmail.com</div>
+          </div>
+          <button class="user-more-btn" aria-label="Account Menu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ====================================================================
+         MAIN CONTENT WRAPPER
+         ==================================================================== -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER (Preserved Exactly As In Reference UI) -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          </button>
+          <span class="header-breadcrumb" id="top-breadcrumb">Dashboard &gt; Sales Overview</span>
+        </div>
+
+        <div class="header-right">
+          
+          <!-- Wallet Balance Pill (Exact styling from screenshot) -->
+          <div class="wallet-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M7 15h0M2 9.5h20"></path></svg>
+            <span id="header-wallet-amount">₹1,056.51</span>
+            <div class="wallet-divider"></div>
+            <button class="wallet-refresh-btn" id="wallet-refresh-btn" aria-label="Refresh Balance">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+            <button class="wallet-add-btn" id="wallet-add-btn" aria-label="Add Funds">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="header-search" id="header-search-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Search</span>
+            <span class="search-shortcut">⌘J</span>
+          </div>
+
+          <!-- Moon / Theme Toggle -->
+          <button class="theme-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+
+          <!-- Avatar Circle -->
+          <div class="header-user-avatar">AK</div>
+
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           VIEW 1: INBOX (Faithfully matching Simple Floww Screenshot)
+           ==================================================================== -->
+      <div class="view-panel" id="view-inbox">
+        <div class="inbox-container">
+          
+          <!-- Inbox Contact List Column (Left) -->
+          <div class="inbox-list-col">
+            <div class="inbox-search-bar">
+              <div class="inbox-search-input-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="inbox-search-input" id="inbox-contact-search" placeholder="Search or start new chat" />
+              </div>
+              <button class="inbox-action-icon-btn" title="Filter Chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+              </button>
+              <button class="inbox-action-icon-btn" title="New Conversation">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+              </button>
+            </div>
+
+            <div class="inbox-filter-tabs">
+              <button class="inbox-filter-tab active" data-tab="all">All (12)</button>
+              <button class="inbox-filter-tab" data-tab="active">Active (9)</button>
+              <button class="inbox-filter-tab" data-tab="inactive">Inactive (3)</button>
+            </div>
+
+            <!-- Contacts Scroll List (12 contacts) -->
+            <div class="inbox-contacts-scroll" id="inbox-contacts-list">
+              
+              <!-- 1. Adnan Qureshi -->
+              <div class="inbox-contact-row active" data-name="Adnan Qureshi" data-phone="+91 98765 43210" data-avatar="AD" data-tag="API Context" data-status="active">
+                <div class="inbox-contact-avatar">
+                  AD
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Adnan Qureshi</span>
+                    <span class="inbox-contact-time">6:29 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">Update krdiya aapne</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill green">● API Cont...</span>
+                    <span class="inbox-unread-badge">1</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Abhinandan Kumar -->
+              <div class="inbox-contact-row" data-name="Abhinandan Kumar" data-phone="+91 95186 49420" data-avatar="AB" data-tag="Old Client" data-status="active">
+                <div class="inbox-contact-avatar">AB</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Abhinandan Kumar</span>
+                    <span class="inbox-contact-time">5:55 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">You: * Simple Flow...</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill pink">● Old ... +1</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. faiz57185 -->
+              <div class="inbox-contact-row" data-name="faiz57185" data-phone="+91 98111 22334" data-avatar="FA" data-status="active">
+                <div class="inbox-contact-avatar">FA</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">faiz57185</span>
+                    <span class="inbox-contact-time">5:14 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">You: [Interactive] 🚀 Start Your Ow...</div>
+                </div>
+              </div>
+
+              <!-- 4. Backend Support Team -->
+              <div class="inbox-contact-row" data-name="Backend Support Team" data-phone="+91 79832 98464" data-avatar="BA" data-tag="Interested" data-status="active">
+                <div class="inbox-contact-avatar">
+                  BA
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Backend Support Te...</span>
+                    <span class="inbox-contact-time">4:18 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">+91 79832 98464</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill purple">● Intereste...</span>
+                    <span class="inbox-unread-badge">2</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. Divya Agrawal -->
+              <div class="inbox-contact-row" data-name="Divya Agrawal" data-phone="+91 99887 76655" data-avatar="DI" data-status="active">
+                <div class="inbox-contact-avatar">DI</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Divya Agrawal</span>
+                    <span class="inbox-contact-time">3:36 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">Perfect</div>
+                  <div class="inbox-contact-meta">
+                    <span></span>
+                    <span class="inbox-unread-badge">7</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. MR Singh -->
+              <div class="inbox-contact-row" data-name="MR Singh" data-phone="+91 98711 00998" data-avatar="MR" data-status="inactive">
+                <div class="inbox-contact-avatar">MR</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">MR Singh</span>
+                    <span class="inbox-contact-time">2:32 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">You: image</div>
+                </div>
+              </div>
+
+              <!-- 7. Satyam Singh -->
+              <div class="inbox-contact-row" data-name="Satyam Singh" data-phone="+91 91234 56789" data-avatar="SA" data-tag="API Client" data-status="active">
+                <div class="inbox-contact-avatar">
+                  SA
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Satyam Singh</span>
+                    <span class="inbox-contact-time">12:10 pm</span>
+                  </div>
+                  <div class="inbox-contact-preview">ho rha hai isse b</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill green">● API ... +1</span>
+                    <span class="inbox-unread-badge">6</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8. Rohan Verma -->
+              <div class="inbox-contact-row" data-name="Rohan Verma" data-phone="+91 98234 11223" data-avatar="RV" data-tag="Hot Lead" data-status="active">
+                <div class="inbox-contact-avatar">
+                  RV
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Rohan Verma</span>
+                    <span class="inbox-contact-time">11:45 am</span>
+                  </div>
+                  <div class="inbox-contact-preview">Demo scheduling link bhej do please</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill blue">● Hot Lead</span>
+                    <span class="inbox-unread-badge">3</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 9. TechSolutions Pvt Ltd -->
+              <div class="inbox-contact-row" data-name="TechSolutions Pvt Ltd" data-phone="+91 88001 99234" data-avatar="TS" data-tag="Enterprise" data-status="active">
+                <div class="inbox-contact-avatar">TS</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">TechSolutions Pvt Ltd</span>
+                    <span class="inbox-contact-time">11:02 am</span>
+                  </div>
+                  <div class="inbox-contact-preview">WABA Green Tick docs submitted</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill purple">● Enterprise</span>
+                    <span class="inbox-unread-badge">1</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 10. Priya Sharma -->
+              <div class="inbox-contact-row" data-name="Priya Sharma" data-phone="+91 97112 34567" data-avatar="PS" data-tag="Demo Done" data-status="inactive">
+                <div class="inbox-contact-avatar">PS</div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Priya Sharma</span>
+                    <span class="inbox-contact-time">10:28 am</span>
+                  </div>
+                  <div class="inbox-contact-preview">You: Pricing PDF and ROI calculator sent</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill amber">● Demo Done</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 11. Vikas Malhotra -->
+              <div class="inbox-contact-row" data-name="Vikas Malhotra" data-phone="+91 98991 77654" data-avatar="VM" data-tag="Payment Pending" data-status="active">
+                <div class="inbox-contact-avatar">
+                  VM
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Vikas Malhotra</span>
+                    <span class="inbox-contact-time">09:50 am</span>
+                  </div>
+                  <div class="inbox-contact-preview">Payment gateway link generate kar dijiye</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill pink">● Payment...</span>
+                    <span class="inbox-unread-badge">2</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 12. Karanveer Patel -->
+              <div class="inbox-contact-row" data-name="Karanveer Patel" data-phone="+91 98250 88990" data-avatar="KP" data-tag="VIP Client" data-status="active">
+                <div class="inbox-contact-avatar">
+                  KP
+                  <span class="inbox-online-indicator"></span>
+                </div>
+                <div class="inbox-contact-info">
+                  <div class="inbox-contact-head">
+                    <span class="inbox-contact-name">Karanveer Patel</span>
+                    <span class="inbox-contact-time">Yesterday</span>
+                  </div>
+                  <div class="inbox-contact-preview">Broadcast campaign for 25k users scheduled</div>
+                  <div class="inbox-contact-meta">
+                    <span class="inbox-tag-pill purple">● VIP Client</span>
+                    <span class="inbox-unread-badge">4</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Inbox Right Column -->
+          <div class="inbox-chat-col">
+            
+            <!-- Welcome Placeholder (Faithfully matching screenshot) -->
+            <div class="inbox-welcome-pane" id="inbox-welcome-screen">
+              <div style="width: 64px; height: 64px; border-radius: 20px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #1269ec; margin-bottom: 8px;">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <h2 class="inbox-welcome-title">Welcome to Inbox!</h2>
+              <p class="inbox-welcome-sub">Select a contact from the list to start a conversation. Your messages will appear here.</p>
+              
+              <div class="inbox-welcome-features">
+                <div class="inbox-feat-item">
+                  <div class="inbox-feat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  </div>
+                  <span class="inbox-feat-label">Real-time Chat</span>
+                </div>
+                <div class="inbox-feat-item">
+                  <div class="inbox-feat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </div>
+                  <span class="inbox-feat-label">Templates</span>
+                </div>
+                <div class="inbox-feat-item">
+                  <div class="inbox-feat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                  </div>
+                  <span class="inbox-feat-label">Media Sharing</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Chat Conversation (Interactive Screen) -->
+            <div class="inbox-active-chat" id="inbox-active-chat-screen">
+              <div class="chat-header-bar">
+                <div class="chat-recipient-info">
+                  <div class="inbox-contact-avatar" id="chat-header-avatar">AD</div>
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <span class="inbox-contact-name" id="chat-header-name">Adnan Qureshi</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#22c55e"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <span style="font-size: 11.5px; color: #16a34a; font-weight: 600;" id="chat-header-status">Online (WhatsApp Business)</span>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="inbox-action-icon-btn" title="Create Helpdesk Ticket" id="chat-create-ticket-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
+                  </button>
+                  <button class="inbox-action-icon-btn" title="Assign Lead" id="chat-assign-lead-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Message Stream -->
+              <div class="chat-messages-container" id="chat-messages-container">
+                <div class="chat-bubble incoming">
+                  Hello Abhinandan bhai, API webhook setup complete hua kya?
+                  <span class="chat-bubble-time">6:27 pm</span>
+                </div>
+                <div class="chat-bubble outgoing">
+                  Haan Adnan, outgoing webhooks ready hain. Main test payload bhej raha hu.
+                  <span class="chat-bubble-time">6:28 pm · Read ✓✓</span>
+                </div>
+                <div class="chat-bubble incoming">
+                  Update krdiya aapne
+                  <span class="chat-bubble-time">6:29 pm</span>
+                </div>
+              </div>
+
+              <!-- Composer -->
+              <div class="chat-composer-box">
+                <button class="inbox-action-icon-btn" title="Attach Media">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+                <button class="inbox-action-icon-btn" title="Quick Templates">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </button>
+                <input type="text" class="chat-composer-input" id="chat-input-text" placeholder="Type a message or press '/' for quick replies..." />
+                <button class="chat-send-btn" id="chat-send-msg-btn" title="Send WhatsApp Message">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 2: SALES OVERVIEW DASHBOARD
+           ==================================================================== -->
+      <div class="view-panel active" id="view-dashboard">
+      <main class="dashboard-content">
+
+        <!-- 1. DASHBOARD HEADER CARD (Replacing Business Overview) -->
+        <section class="sales-overview-header">
+          <div class="overview-title-group">
+            <div class="overview-icon-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+            </div>
+            <div>
+              <h1 class="overview-heading">Sales Overview</h1>
+              <p class="overview-subtext">Track leads, conversions, follow-ups and sales performance.</p>
+            </div>
+          </div>
+
+          <div class="overview-actions-group">
+            
+            <!-- Global Date Selector Button -->
+            <div class="filter-dropdown">
+              <button class="date-selector-btn" id="header-date-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span class="header-date-text">Last 30 Days</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              
+              <div class="dropdown-menu" id="header-date-menu">
+                <button class="dropdown-item" data-value="today">Today</button>
+                <button class="dropdown-item" data-value="yesterday">Yesterday</button>
+                <button class="dropdown-item" data-value="last-7-days">Last 7 Days</button>
+                <button class="dropdown-item selected" data-value="last-30-days">Last 30 Days</button>
+                <button class="dropdown-item" data-value="this-month">This Month</button>
+                <button class="dropdown-item" data-value="last-month">Last Month</button>
+                <button class="dropdown-item" data-value="custom">Custom Range</button>
+              </div>
+            </div>
+
+            <!-- Real-time Analytics Badge -->
+            <div class="realtime-badge">
+              <svg class="pulse-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              <span>Real-time Analytics</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 2. COMPACT GLOBAL FILTER BAR -->
+        <section class="global-filter-bar">
+          <div class="filter-items-group">
+            <span class="filter-label-chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              <span>Filters</span>
+            </span>
+
+            <!-- 1. Date Range Dropdown -->
+            <div class="filter-dropdown">
+              <button class="filter-btn" id="filter-btn-date">
+                <span class="filter-text">Last 30 Days</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              <div class="dropdown-menu" id="date-menu">
+                <button class="dropdown-item" data-value="today">Today</button>
+                <button class="dropdown-item" data-value="yesterday">Yesterday</button>
+                <button class="dropdown-item" data-value="last-7-days">Last 7 Days</button>
+                <button class="dropdown-item selected" data-value="last-30-days">Last 30 Days</button>
+                <button class="dropdown-item" data-value="this-month">This Month</button>
+                <button class="dropdown-item" data-value="last-month">Last Month</button>
+                <button class="dropdown-item" data-value="custom">Custom Range</button>
+              </div>
+            </div>
+
+            <!-- 2. Pipeline Dropdown -->
+            <div class="filter-dropdown">
+              <button class="filter-btn" id="filter-btn-pipeline">
+                <span class="filter-text">All Pipelines</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              <div class="dropdown-menu" id="pipeline-menu">
+                <button class="dropdown-item selected" data-value="all">All Pipelines</button>
+                <button class="dropdown-item" data-value="sales-core">Sales Pipeline (Primary)</button>
+                <button class="dropdown-item" data-value="b2b-outbound">B2B Enterprise Outbound</button>
+                <button class="dropdown-item" data-value="partner-funnel">Partner & Reseller Funnel</button>
+                <button class="dropdown-item" data-value="high-ticket">High-Ticket WhatsApp Funnel</button>
+              </div>
+            </div>
+
+            <!-- 3. Salesperson Dropdown -->
+            <div class="filter-dropdown">
+              <button class="filter-btn" id="filter-btn-salesperson">
+                <span class="filter-text">All Salespersons</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              <div class="dropdown-menu" id="salesperson-menu">
+                <button class="dropdown-item selected" data-value="all">All Salespersons</button>
+                <button class="dropdown-item" data-value="rahul">Rahul Sharma</button>
+                <button class="dropdown-item" data-value="aman">Aman Gupta</button>
+                <button class="dropdown-item" data-value="priya">Priya Patel</button>
+                <button class="dropdown-item" data-value="rohit">Rohit Verma</button>
+              </div>
+            </div>
+
+            <!-- 4. Lead Source Dropdown -->
+            <div class="filter-dropdown">
+              <button class="filter-btn" id="filter-btn-source">
+                <span class="filter-text">All Sources</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              <div class="dropdown-menu" id="source-menu">
+                <button class="dropdown-item selected" data-value="all">All Sources</button>
+                <button class="dropdown-item" data-value="facebook">Facebook Ads</button>
+                <button class="dropdown-item" data-value="instagram">Instagram Ads</button>
+                <button class="dropdown-item" data-value="google">Google Ads</button>
+                <button class="dropdown-item" data-value="referral">Referral</button>
+                <button class="dropdown-item" data-value="whatsapp">WhatsApp Inbound</button>
+                <button class="dropdown-item" data-value="organic">Organic / Website</button>
+                <button class="dropdown-item" data-value="webinar">Webinar</button>
+              </div>
+            </div>
+
+            <!-- 5. Tags Dropdown -->
+            <div class="filter-dropdown">
+              <button class="filter-btn" id="filter-btn-tag">
+                <span class="filter-text">All Tags</span>
+                <span class="filter-chevron">▼</span>
+              </button>
+              <div class="dropdown-menu" id="tag-menu">
+                <button class="dropdown-item selected" data-value="all">All Tags</button>
+                <button class="dropdown-item" data-value="hot-lead">🔥 Hot Lead</button>
+                <button class="dropdown-item" data-value="interested">👍 Interested</button>
+                <button class="dropdown-item" data-value="follow-up">⏳ Follow-up</button>
+                <button class="dropdown-item" data-value="demo-done">🎯 Demo Done</button>
+                <button class="dropdown-item" data-value="payment-pending">💳 Payment Pending</button>
+                <button class="dropdown-item" data-value="not-interested">✕ Not Interested</button>
+              </div>
+            </div>
+
+            <span class="active-filter-count" id="active-filters-badge" style="display: none;">0 Active</span>
+          </div>
+
+          <button class="filter-clear-btn" id="clear-filters-btn">Reset Filters</button>
+        </section>
+
+        <!-- 3. TOP 8 KPI CARDS GRID -->
+        <section class="kpi-grid" id="kpi-grid">
+          <!-- Dynamically populated by dashboard.js -->
+        </section>
+
+        <!-- 4. ROW 2: SALES TEAM PERFORMANCE (2ND POSITION) -->
+        <section class="row-full-card">
+          
+          <!-- Sales Team Performance -->
+          <div class="dashboard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <h3>Sales Team Performance</h3>
+                <p>Operational workload, touchpoints and closure ratios</p>
+              </div>
+
+              <!-- Salesperson Selector Dropdown -->
+              <div class="filter-dropdown">
+                <button class="card-action-select" id="team-salesperson-select-btn">
+                  <span>All Team Members</span>
+                  <span class="filter-chevron">▼</span>
+                </button>
+                <div class="dropdown-menu" id="team-salesperson-menu">
+                  <button class="dropdown-item selected" data-value="all">All Team Members</button>
+                  <button class="dropdown-item" data-value="rahul">Rahul Sharma</button>
+                  <button class="dropdown-item" data-value="aman">Aman Gupta</button>
+                  <button class="dropdown-item" data-value="priya">Priya Patel</button>
+                  <button class="dropdown-item" data-value="rohit">Rohit Verma</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rep Summary Strip -->
+            <div class="rep-summary-strip" id="rep-summary-strip">
+              <!-- Dynamically populated by dashboard.js -->
+            </div>
+
+            <!-- Compact Sales Table -->
+            <div class="table-responsive">
+              <table class="sales-table">
+                <thead>
+                  <tr>
+                    <th>Salesperson</th>
+                    <th>Assigned</th>
+                    <th>Contacted</th>
+                    <th>Demos</th>
+                    <th>Won</th>
+                    <th>Conversion %</th>
+                    <th>Overdue</th>
+                  </tr>
+                </thead>
+                <tbody id="sales-team-table-body">
+                  <!-- Dynamically populated by dashboard.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 5. ROW 3: TOP LEAD SOURCES (50%) & TAGS OVERVIEW (50%) -->
+        <section class="row-half-split">
+          
+          <!-- Lead Source Performance WITH DONUT CHART (Inspired by automate.simplefunnel.in) -->
+          <div class="dashboard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <h3>Top Lead Sources</h3>
+                <p>Acquisition channels & distribution ratio</p>
+              </div>
+            </div>
+
+            <!-- Interactive Donut Chart Container -->
+            <div class="sources-donut-container">
+              <svg class="donut-chart-svg" viewBox="0 0 170 170" id="source-donut-svg">
+                <!-- SVG Circle Arcs rendered dynamically -->
+              </svg>
+              <div class="donut-center-info">
+                <div class="donut-center-number" id="donut-center-num">1,248</div>
+                <div class="donut-center-label">Total Leads</div>
+              </div>
+            </div>
+
+            <!-- 2-Column Sources Legend Grid -->
+            <div class="sources-legend-grid" id="sources-legend-grid">
+              <!-- Dynamically populated by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Tags Overview Card -->
+          <div class="dashboard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <h3>Tags Overview</h3>
+                <p>Active CRM tags and lead volume segment (Click to filter)</p>
+              </div>
+            </div>
+
+            <div class="tags-cloud" id="tags-cloud">
+              <!-- Dynamically populated by dashboard.js -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 6. ROW 4: FOLLOW-UP OVERVIEW (FULL WIDTH) -->
+        <section class="row-full-card">
+          
+          <!-- Follow-up Overview Card -->
+          <div class="dashboard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <h3>Follow-up Overview</h3>
+                <p>Active queues & priority touchpoints (Click cards to filter)</p>
+              </div>
+            </div>
+
+            <!-- 6 Metrics Grid -->
+            <div class="followups-grid" id="followups-grid">
+              <!-- Dynamically populated by dashboard.js -->
+            </div>
+
+            <!-- Upcoming Follow-ups Stream (Inspired by automate.simplefunnel.in) -->
+            <div class="reminders-stream-box">
+              <div class="reminders-stream-title">
+                <span>Priority Follow-up Stream</span>
+                <span style="font-weight: 500; font-size: 11px;">Next 24 Hours</span>
+              </div>
+              <div class="reminders-list" id="reminders-stream-list">
+                <!-- Dynamically populated by dashboard.js -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+      </div><!-- End view-dashboard -->
+
+      <!-- ====================================================================
+           VIEW: CRM ALL LEADS
+           ==================================================================== -->
+      <div class="view-panel" id="view-leads">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                All Leads & Contacts
+              </h2>
+              <p>Comprehensive CRM lead records, stage progression, telecaller attribution, and direct WhatsApp actions.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-secondary" id="btn-export-leads">Export CSV</button>
+              <button class="btn-primary" id="btn-create-lead">+ Add New Lead</button>
+            </div>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="module-card" style="margin-bottom: 20px; padding: 14px 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+              <div class="inbox-search-input-wrap" style="max-width: 380px; flex: 1;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="inbox-search-input" placeholder="Search by lead name, phone, or company..." />
+              </div>
+              <div class="inbox-filter-tabs" style="border: none; padding: 0;">
+                <button class="inbox-filter-tab active">All (1,280)</button>
+                <button class="inbox-filter-tab">🔥 Hot Leads (312)</button>
+                <button class="inbox-filter-tab">👍 Interested (440)</button>
+                <button class="inbox-filter-tab">⏳ Follow-up (210)</button>
+                <button class="inbox-filter-tab">💳 Payment Pending (94)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leads Data Table -->
+          <div class="module-card">
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Lead Name & Contact</th>
+                  <th>Source</th>
+                  <th>Deal Budget</th>
+                  <th>Stage</th>
+                  <th>Call Status</th>
+                  <th>Assigned Rep</th>
+                  <th>Quick Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Adnan Qureshi</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted); display: block;">+91 98765 43210</span>
+                  </td>
+                  <td><span class="inbox-tag-pill blue">● WhatsApp Inbound</span></td>
+                  <td><strong>₹50,000</strong></td>
+                  <td><span class="status-chip open">Demo Scheduled</span></td>
+                  <td><span class="status-chip resolved">Connected</span></td>
+                  <td>Rahul Sharma</td>
+                  <td>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Adnan Qureshi...')">💬 WhatsApp</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Backend Support Team</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted); display: block;">+91 79832 98464</span>
+                  </td>
+                  <td><span class="inbox-tag-pill green">● Facebook Lead Ads</span></td>
+                  <td><strong>₹1,20,000</strong></td>
+                  <td><span class="status-chip in-progress">Proposal Sent</span></td>
+                  <td><span class="status-chip in-progress">Busy / Call Back</span></td>
+                  <td>Aman Gupta</td>
+                  <td>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Backend Team...')">💬 WhatsApp</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>faiz57185</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted); display: block;">+91 98111 22334</span>
+                  </td>
+                  <td><span class="inbox-tag-pill purple">● Partner Referral</span></td>
+                  <td><strong>₹1,50,000</strong></td>
+                  <td><span class="status-chip resolved">Closed Won 🎉</span></td>
+                  <td><span class="status-chip resolved">Connected</span></td>
+                  <td>Abhinandan K.</td>
+                  <td>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with faiz...')">💬 WhatsApp</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Divya Agrawal</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted); display: block;">+91 99887 76655</span>
+                  </td>
+                  <td><span class="inbox-tag-pill pink">● Instagram Funnel</span></td>
+                  <td><strong>₹65,000</strong></td>
+                  <td><span class="status-chip open">Qualified</span></td>
+                  <td><span class="status-chip open">Ringing / No Answer</span></td>
+                  <td>Priya Patel</td>
+                  <td>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Divya...')">💬 WhatsApp</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Satyam Singh</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted); display: block;">+91 91234 56789</span>
+                  </td>
+                  <td><span class="inbox-tag-pill blue">● Website Signup</span></td>
+                  <td><strong>₹75,000</strong></td>
+                  <td><span class="status-chip in-progress">Negotiation</span></td>
+                  <td><span class="status-chip resolved">Connected</span></td>
+                  <td>Rahul Sharma</td>
+                  <td>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Satyam...')">💬 WhatsApp</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW: CRM PIPELINE (KANBAN DEALS)
+           ==================================================================== -->
+      <div class="view-panel" id="view-pipeline">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"></path></svg>
+                Sales Pipeline (Deals Board)
+              </h2>
+              <p>Visual deal pipeline. Drag & drop deals to advance deal stages, manage pipeline velocity, and track deal closures.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-primary" id="btn-add-deal">+ Add Deal</button>
+            </div>
+          </div>
+
+          <!-- Kanban Columns Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 20px;">
+            
+            <!-- Col 1: New Leads -->
+            <div style="background: var(--sf-surface); border: 1px solid var(--sf-border); border-radius: 12px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <strong style="font-size: 13.5px; color: var(--sf-text-main);">New Leads</strong>
+                <span class="nav-badge subtle">14 · ₹3.5L</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="padding: 12px; background: var(--sf-surface-alt); border: 1px solid var(--sf-border); border-radius: 10px; cursor: grab;">
+                  <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">MR Singh</strong>
+                  <span style="font-size: 12px; color: var(--sf-primary); font-weight: 700;">₹25,000</span>
+                  <div style="font-size: 11px; color: var(--sf-text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Starter Whitelabel</span>
+                    <span>Rep: Aman</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 2: Contacted -->
+            <div style="background: var(--sf-surface); border: 1px solid var(--sf-border); border-radius: 12px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <strong style="font-size: 13.5px; color: var(--sf-text-main);">Contacted</strong>
+                <span class="nav-badge subtle">9 · ₹4.2L</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="padding: 12px; background: var(--sf-surface-alt); border: 1px solid var(--sf-border); border-radius: 10px; cursor: grab;">
+                  <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">Divya Agrawal</strong>
+                  <span style="font-size: 12px; color: var(--sf-primary); font-weight: 700;">₹65,000</span>
+                  <div style="font-size: 11px; color: var(--sf-text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Annual Growth License</span>
+                    <span>Rep: Priya</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 3: Demo Scheduled -->
+            <div style="background: var(--sf-surface); border: 1px solid var(--sf-border); border-radius: 12px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <strong style="font-size: 13.5px; color: var(--sf-text-main);">Demo Scheduled</strong>
+                <span class="nav-badge subtle">6 · ₹3.8L</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="padding: 12px; background: var(--sf-surface-alt); border: 1px solid var(--sf-border); border-radius: 10px; cursor: grab;">
+                  <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">Adnan Qureshi</strong>
+                  <span style="font-size: 12px; color: var(--sf-primary); font-weight: 700;">₹50,000</span>
+                  <div style="font-size: 11px; color: var(--sf-text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Meta Cloud API Setup</span>
+                    <span>Rep: Rahul</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 4: Proposal Sent -->
+            <div style="background: var(--sf-surface); border: 1px solid var(--sf-border); border-radius: 12px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <strong style="font-size: 13.5px; color: var(--sf-text-main);">Proposal Sent</strong>
+                <span class="nav-badge subtle">4 · ₹2.6L</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="padding: 12px; background: var(--sf-surface-alt); border: 1px solid var(--sf-border); border-radius: 10px; cursor: grab;">
+                  <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">Backend Support Team</strong>
+                  <span style="font-size: 12px; color: var(--sf-primary); font-weight: 700;">₹1,20,000</span>
+                  <div style="font-size: 11px; color: var(--sf-text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Enterprise Cluster</span>
+                    <span>Rep: Rahul</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 5: Closed Won -->
+            <div style="background: var(--sf-surface); border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <strong style="font-size: 13.5px; color: #166534;">Closed Won 🎉</strong>
+                <span class="nav-badge green">18 · ₹18.5L</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;">
+                  <strong style="font-size: 13px; color: #14532d; display: block;">faiz57185</strong>
+                  <span style="font-size: 12px; color: #16a34a; font-weight: 700;">₹1,50,000</span>
+                  <div style="font-size: 11px; color: #166534; margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Full Partner Suite</span>
+                    <span>Rep: Abhinandan K.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW: LEAD & CALL STATUSES (Matching Screenshot)
+           ==================================================================== -->
+      <div class="view-panel" id="view-statuses">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Lead & Call Statuses Configuration
+              </h2>
+              <p>Configure custom telecaller call disposition outcomes, lead qualification stages, and automated actions.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-primary" id="btn-add-status">+ Create New Status</button>
+            </div>
+          </div>
+
+          <div class="module-card">
+            <div class="inbox-filter-tabs" style="margin-bottom: 20px;">
+              <button class="inbox-filter-tab active" id="tab-call-statuses">Call Statuses</button>
+              <button class="inbox-filter-tab" id="tab-lead-statuses">Lead Statuses</button>
+            </div>
+
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Status Label</th>
+                  <th>Color Tag</th>
+                  <th>Automated Trigger</th>
+                  <th>Calls Recorded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Connected</strong></td>
+                  <td><span class="status-chip resolved">● Green (Positive)</span></td>
+                  <td>Create follow-up task + Record disposition</td>
+                  <td><strong>42.8% (548 calls)</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Busy / Call Back</strong></td>
+                  <td><span class="status-chip open">● Blue (Pending)</span></td>
+                  <td>Schedule reminder in 2 hours</td>
+                  <td><strong>24.2% (310 calls)</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Ringing / No Answer</strong></td>
+                  <td><span class="status-chip in-progress">● Amber (Retry)</span></td>
+                  <td>Auto-send WhatsApp "Sorry we missed you" template</td>
+                  <td><strong>18.5% (237 calls)</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Not Interested</strong></td>
+                  <td><span class="status-chip urgent">● Red (Drop)</span></td>
+                  <td>Move lead to long-term newsletter nurture</td>
+                  <td><strong>10.4% (133 calls)</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Wrong / Invalid Number</strong></td>
+                  <td><span class="status-chip" style="background: #f1f5f9; color: #64748b;">● Slate (Dead)</span></td>
+                  <td>Blacklist phone from broadcast lists</td>
+                  <td><strong>4.1% (52 calls)</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 3: AI AGENTS STUDIO
+           ==================================================================== -->
+      <div class="view-panel" id="view-ai-agents">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+                AI Agents Studio
+              </h2>
+              <p>Train and deploy autonomous AI agents for 24/7 WhatsApp sales, query resolution, and qualification.</p>
+            </div>
+            <div class="module-actions-row">
+              <span class="ai-status-pill dot">Agent Active (Auto-Pilot)</span>
+              <button class="btn-primary" id="btn-save-ai-agent">Save Agent Config</button>
+            </div>
+          </div>
+
+          <div class="card-grid-2">
+            <!-- Left: Bot Persona & Instructions -->
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>🤖 Bot Persona & System Prompt</h3>
+                <span class="ai-status-pill" style="background: #eff6ff; color: #1269ec;">Gemini 1.5 Flash</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 6px;">Agent Name</label>
+                  <input type="text" class="inbox-search-input" value="Simple Floww Sales Assistant" style="width: 100%;" />
+                </div>
+                <div>
+                  <label style="font-size: 12.5px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 6px;">System Instructions / Tone</label>
+                  <textarea class="ai-prompt-box">You are the official Simple Floww AI sales consultant. Your goal is to politely answer customer queries regarding WhatsApp Business API, explain pricing plans (₹999/mo Starter, ₹2,499/mo Growth), and qualify leads. If the user asks for technical API integration or asks to talk to human, smoothly offer human agent handoff.</textarea>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--sf-surface-alt); border-radius: 10px;">
+                  <div>
+                    <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">WhatsApp Auto-Reply</strong>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted);">Reply automatically to inbound chats within 3 seconds</span>
+                  </div>
+                  <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--sf-primary);" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Knowledge Base & Human Fallback -->
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>📚 Knowledge Base & Training</h3>
+                <button class="btn-secondary" style="font-size: 12px; padding: 4px 10px;">+ Upload PDF/Doc</button>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="padding: 10px 14px; border: 1px solid var(--sf-border); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 18px;">📄</span>
+                    <div>
+                      <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">SimpleFloww_Pricing_Features.pdf</strong>
+                      <span style="font-size: 11px; color: #16a34a;">● 100% Vector Indexed · 42 pages</span>
+                    </div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--sf-text-light);">Ready</span>
+                </div>
+
+                <div style="padding: 10px 14px; border: 1px solid var(--sf-border); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 18px;">🌐</span>
+                    <div>
+                      <strong style="font-size: 13px; color: var(--sf-text-main); display: block;">https://connect.simplefloww.com/faq</strong>
+                      <span style="font-size: 11px; color: #16a34a;">● Live Website Sync</span>
+                    </div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--sf-text-light);">Synced</span>
+                </div>
+
+                <div style="margin-top: 8px;">
+                  <strong style="font-size: 13px; color: var(--sf-text-main); display: block; margin-bottom: 6px;">Human Handoff Trigger Words</strong>
+                  <input type="text" class="inbox-search-input" value="human, agent, customer care, call me, complaint, issue" style="width: 100%;" />
+                  <span style="font-size: 11px; color: var(--sf-text-muted); margin-top: 4px; display: block;">When triggered, chat assigns to active sales rep via Auto-Assign rules.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 4: AUTO-ASSIGN RULES
+           ==================================================================== -->
+      <div class="view-panel" id="view-auto-assign">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                Lead & Chat Auto-Assign Engine
+              </h2>
+              <p>Distribute incoming WhatsApp inquiries and CRM leads to telecallers based on Round Robin or Agent Capacity.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-primary" id="btn-add-assign-rule">+ Add Routing Rule</button>
+            </div>
+          </div>
+
+          <div class="card-grid-3">
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>⚖️ Active Strategy</h3>
+                <span class="status-chip open">Round Robin</span>
+              </div>
+              <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">Leads are distributed sequentially 1-by-1 across all online sales reps.</p>
+              <div style="font-size: 12px; color: var(--sf-text-main); display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--sf-border-subtle);">
+                <span>Working Hours Restriction:</span>
+                <strong>10:00 AM - 07:00 PM</strong>
+              </div>
+            </div>
+
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>⚡ Online Agents</h3>
+                <span class="status-chip resolved">3 Reps Online</span>
+              </div>
+              <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">Rahul Sharma (3/5), Aman Gupta (2/5), Priya Patel (1/5).</p>
+              <div style="font-size: 12px; color: var(--sf-text-main); display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--sf-border-subtle);">
+                <span>Max Concurrent Chat Limit:</span>
+                <strong>5 Chats / Agent</strong>
+              </div>
+            </div>
+
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>🎯 Today Assigned</h3>
+                <span class="status-chip in-progress">142 Leads</span>
+              </div>
+              <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">98% successfully picked up within 2 minutes of arrival.</p>
+              <div style="font-size: 12px; color: var(--sf-text-main); display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--sf-border-subtle);">
+                <span>Fallback Target:</span>
+                <strong>Unassigned Queue</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rules Table -->
+          <div class="module-card">
+            <div class="module-card-header">
+              <h3>Configured Distribution Rules</h3>
+            </div>
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Rule Name</th>
+                  <th>Source / Trigger</th>
+                  <th>Routing Method</th>
+                  <th>Assigned Team</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>FB & Insta High-Ticket Leads</strong></td>
+                  <td>Facebook Lead Ads (High-Ticket)</td>
+                  <td>Round Robin (Equal Share)</td>
+                  <td>Senior Closers (Rahul, Aman)</td>
+                  <td><span class="status-chip resolved">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>WhatsApp Inbound Auto-Distribute</strong></td>
+                  <td>Inbound Chat without Assignee</td>
+                  <td>Least Busy Agent (Capacity)</td>
+                  <td>All Active Sales Reps</td>
+                  <td><span class="status-chip resolved">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Customer Support Inquiries</strong></td>
+                  <td>Tag: "Support" or "Bug"</td>
+                  <td>Skill Based</td>
+                  <td>Helpdesk & Support Team</td>
+                  <td><span class="status-chip resolved">Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 5: HELP DESK & VIDEO KNOWLEDGE BASE (Self-Service Center)
+           ==================================================================== -->
+      <div class="view-panel" id="view-helpdesk">
+        <div class="module-page">
+          
+          <!-- Module Header -->
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Help Desk & Video Knowledge Base
+              </h2>
+              <p>Self-service resolution center: Step-by-step guides, 45-second inline video walkthroughs, and direct actions.</p>
+            </div>
+            <div class="module-actions-row">
+              <div class="helpdesk-header-badge">
+                <span class="pulse-dot"></span>
+                <span>Meta Cloud API: 99.98% Operational</span>
+              </div>
+              <button class="btn-secondary" id="btn-open-feature-request" title="Suggest a new tool or integration">
+                💡 Request Feature
+              </button>
+              <button class="btn-secondary" id="btn-open-feedback" title="Share suggestions and feedback">
+                ⭐ Give Feedback
+              </button>
+              <button class="btn-primary" id="btn-header-wa-support" style="background: #25D366; border-color: #25D366; color: #ffffff;" title="Direct WhatsApp Support">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:-2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                1-Click WhatsApp Support
+              </button>
+            </div>
+          </div>
+
+          <!-- Hero Search & Quick Action Section -->
+          <div class="helpdesk-hero">
+            <div class="helpdesk-hero-title">
+              <span>🔍 How can we help you today?</span>
+            </div>
+            <div class="helpdesk-hero-sub">
+              Search 26+ step-by-step guides with 45-second inline video walkthroughs, or pick a trending query below.
+            </div>
+            
+            <div class="helpdesk-search-wrapper">
+              <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" class="helpdesk-search-input" id="helpdesk-search-input" placeholder="Type your question or error (e.g. QR disconnect, Meta template, 10k broadcast, auto assign, GST invoice)..." autocomplete="off" />
+              <button type="button" class="helpdesk-search-clear" id="helpdesk-search-clear">&times;</button>
+            </div>
+
+            <div class="helpdesk-trending-row">
+              <span class="helpdesk-trending-label">Popular:</span>
+              <span class="helpdesk-trend-pill" data-query="QR">⚡ Connect WhatsApp QR</span>
+              <span class="helpdesk-trend-pill" data-query="Template">🚫 Meta Template Rejection</span>
+              <span class="helpdesk-trend-pill" data-query="Broadcast">📢 10,000 Safe Broadcast</span>
+              <span class="helpdesk-trend-pill" data-query="Auto Assign">👥 Auto-Assign Telecallers</span>
+              <span class="helpdesk-trend-pill" data-query="Invoice">💳 Download GST Invoice</span>
+              <span class="helpdesk-trend-pill" data-query="Green Tick">✅ Meta Green Tick</span>
+            </div>
+          </div>
+
+          <!-- Sub-filter Type Switcher (Troubleshooting vs How-To Guides) -->
+          <div class="helpdesk-subfilter-bar" id="helpdesk-type-filters">
+            <button class="helpdesk-subfilter-btn active" data-type="all">All Content (<span id="hd-type-all">26</span>)</button>
+            <button class="helpdesk-subfilter-btn" data-type="troubleshoot">⚡ Troubleshooting & Fixes (<span id="hd-type-troubleshoot">14</span>)</button>
+            <button class="helpdesk-subfilter-btn" data-type="guide">📖 Feature How-To Guides (<span id="hd-type-guide">12</span>)</button>
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="helpdesk-tabs-bar" id="helpdesk-cat-tabs">
+            <button class="helpdesk-tab-btn active" data-cat="all">
+              <span>All Guides</span>
+              <span class="helpdesk-tab-count" id="hd-count-all">26</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="whatsapp">
+              <span>📱 WhatsApp & API</span>
+              <span class="helpdesk-tab-count" id="hd-count-whatsapp">4</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="broadcast">
+              <span>📢 Broadcast & Campaigns</span>
+              <span class="helpdesk-tab-count" id="hd-count-broadcast">4</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="chatbot">
+              <span>🤖 AI & Chatbot</span>
+              <span class="helpdesk-tab-count" id="hd-count-chatbot">4</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="crm">
+              <span>👥 CRM & Leads</span>
+              <span class="helpdesk-tab-count" id="hd-count-crm">4</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="team">
+              <span>📋 Tasks & Operations</span>
+              <span class="helpdesk-tab-count" id="hd-count-team">3</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="developer">
+              <span>⚙️ Integrations & APIs</span>
+              <span class="helpdesk-tab-count" id="hd-count-developer">3</span>
+            </button>
+            <button class="helpdesk-tab-btn" data-cat="billing">
+              <span>💳 Billing & GST</span>
+              <span class="helpdesk-tab-count" id="hd-count-billing">4</span>
+            </button>
+          </div>
+
+          <!-- Main Help Desk Content Grid (Left FAQs, Right Support/Status) -->
+          <div class="helpdesk-grid">
+            
+            <!-- Left Column: Interactive FAQ Accordion List -->
+            <div class="faq-accordion-list" id="faq-accordion-list">
+              <!-- Rendered Dynamically via dashboard.js with step-by-step guides & inline video player -->
+            </div>
+
+            <!-- Right Column: Live Status & Account Manager Contact -->
+            <div class="helpdesk-sidebar">
+
+              <!-- 1. Live System Status Radar -->
+              <div class="helpdesk-side-card">
+                <div class="helpdesk-side-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  Live System Health Status
+                </div>
+                <div class="status-indicator-row">
+                  <span style="color: var(--sf-text-main); font-weight: 500;">Meta Cloud API (WABA)</span>
+                  <span class="status-pill-green">🟢 99.98% Active</span>
+                </div>
+                <div class="status-indicator-row">
+                  <span style="color: var(--sf-text-main); font-weight: 500;">SimpleFloww Webhook</span>
+                  <span class="status-pill-green">🟢 38ms Fast</span>
+                </div>
+                <div class="status-indicator-row">
+                  <span style="color: var(--sf-text-main); font-weight: 500;">Payment Gateway (Razorpay)</span>
+                  <span class="status-pill-green">🟢 Operational</span>
+                </div>
+                <div class="status-indicator-row">
+                  <span style="color: var(--sf-text-main); font-weight: 500;">Round-Robin Lead Engine</span>
+                  <span class="status-pill-green">🟢 Normal</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 11px; color: var(--sf-text-muted); text-align: right;">
+                  Updated 2 mins ago • Zero ongoing incidents
+                </div>
+              </div>
+
+              <!-- 2. Dedicated Account Manager Support -->
+              <div class="helpdesk-side-card" style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
+                <div class="helpdesk-side-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  Your Dedicated Account Rep
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid #bfdbfe;">
+                    RS
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: var(--sf-text-main);">Rahul Sharma</h4>
+                    <span style="font-size: 11.5px; color: var(--sf-text-muted);">Senior WhatsApp Specialist</span>
+                  </div>
+                </div>
+                <div style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                  ⚡ <strong>Fast SLA:</strong> Response in under 15 minutes during business hours (10 AM - 7 PM).
+                </div>
+                <button type="button" class="btn-primary" id="btn-rep-wa-chat" style="width: 100%; justify-content: center; background: #25D366; border-color: #25D366;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                  Chat with Rahul on WhatsApp
+                </button>
+              </div>
+
+              <!-- 3. My Active Support Tickets -->
+              <div class="helpdesk-side-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <div class="helpdesk-side-title" style="margin-bottom: 0;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    My Support Tickets
+                  </div>
+                  <span style="font-size: 11px; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 700;">2 Active</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                      <strong style="color: var(--sf-text-main);">#TK-1082</strong>
+                      <span class="status-chip in-progress" style="font-size: 10px; padding: 1px 6px;">In Investigation</span>
+                    </div>
+                    <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Webhook HMAC Signature Mismatch</div>
+                    <span style="font-size: 11px; color: #dc2626; font-weight: 600;">⏰ SLA: 18 mins remaining</span>
+                  </div>
+
+                  <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                      <strong style="color: var(--sf-text-main);">#TK-1081</strong>
+                      <span class="status-chip open" style="font-size: 10px; padding: 1px 6px;">Meta Reviewing</span>
+                    </div>
+                    <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Diwali Marketing Template Expedite</div>
+                    <span style="font-size: 11px; color: var(--sf-text-muted);">Logged 1h ago</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 6: TASKS & FOLLOW-UPS
+           ==================================================================== -->
+      <!-- ====================================================================
+           VIEW 5: TASK MANAGEMENT (Full Enterprise To-Do & Delegation Engine)
+           ==================================================================== -->
+      <div class="view-panel" id="view-tasks">
+        <div class="module-page">
+          
+          <!-- Module Header -->
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Task Management & Team To-Dos
+              </h2>
+              <p>Assign follow-up tasks to telecallers, monitor team workload, track overdue bottlenecks, and trigger 1-click WhatsApp actions.</p>
+            </div>
+            <div class="module-actions-row">
+
+              <button class="btn-secondary" id="btn-reset-tasks" title="Reset sample task data">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                Reset Data
+              </button>
+              <button class="btn-secondary" id="btn-export-tasks">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export CSV
+              </button>
+              <button class="btn-primary" id="btn-open-task-modal">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                + Create Task
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Top 4 Health & Velocity KPI Cards -->
+          <div class="task-kpi-grid">
+            <div class="task-kpi-card due-today" data-filter="today">
+              <div class="task-kpi-header">
+                <span class="tk-title">Due Today</span>
+                <span class="tk-icon-badge amber">⏰</span>
+              </div>
+              <div class="tk-val" id="task-kpi-today">14</div>
+              <div class="tk-sub"><strong>4 Urgent</strong> requiring call today</div>
+            </div>
+
+            <div class="task-kpi-card overdue" data-filter="overdue">
+              <div class="task-kpi-header">
+                <span class="tk-title">Overdue Bottlenecks</span>
+                <span class="tk-icon-badge red">🚨</span>
+              </div>
+              <div class="tk-val text-red" id="task-kpi-overdue">3</div>
+              <div class="tk-sub">Immediate re-assign needed</div>
+            </div>
+
+            <div class="task-kpi-card in-progress" data-filter="progress">
+              <div class="task-kpi-header">
+                <span class="tk-title">In Progress</span>
+                <span class="tk-icon-badge blue">⏳</span>
+              </div>
+              <div class="tk-val text-blue" id="task-kpi-progress">8</div>
+              <div class="tk-sub">Active demos & client setups</div>
+            </div>
+
+            <div class="task-kpi-card completed" data-filter="completed">
+              <div class="task-kpi-header">
+                <span class="tk-title">Completed Today</span>
+                <span class="tk-icon-badge green">✅</span>
+              </div>
+              <div class="tk-val text-green" id="task-kpi-completed">26</div>
+              <div class="tk-sub"><strong>92.8%</strong> team daily velocity</div>
+            </div>
+          </div>
+
+          <!-- 2. Interactive Filter & View Switcher Bar -->
+          <div class="task-toolbar-card">
+            <div class="task-toolbar-left">
+              <div class="inbox-filter-tabs" style="border: none; padding: 0;">
+                <button class="inbox-filter-tab active" data-task-tab="all">All Tasks (12)</button>
+                <button class="inbox-filter-tab" data-task-tab="today">Due Today (5)</button>
+                <button class="inbox-filter-tab" data-task-tab="mine">My Tasks (4)</button>
+                <button class="inbox-filter-tab" data-task-tab="overdue" style="color: #dc2626; font-weight: 600;">🚨 Overdue (2)</button>
+                <button class="inbox-filter-tab" data-task-tab="done">Completed (4)</button>
+              </div>
+            </div>
+
+            <div class="task-toolbar-right">
+              <!-- Search box -->
+              <div class="task-search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="task-search-input" placeholder="Search tasks, leads, reps..." />
+              </div>
+
+              <!-- Assignee Dropdown -->
+              <div class="task-select-wrap">
+                <select id="task-assignee-filter" class="task-select-input">
+                  <option value="all">All Assignees</option>
+                  <option value="Rahul Sharma">Rahul Sharma</option>
+                  <option value="Aman Gupta">Aman Gupta</option>
+                  <option value="Priya Patel">Priya Patel</option>
+                  <option value="Rohit Verma">Rohit Verma</option>
+                </select>
+              </div>
+
+              <!-- Priority Dropdown -->
+              <div class="task-select-wrap">
+                <select id="task-priority-filter" class="task-select-input">
+                  <option value="all">All Priorities</option>
+                  <option value="Urgent">Urgent</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+
+              <!-- Dual View Switcher (List vs Kanban) -->
+              <div class="task-view-switcher">
+                <button class="task-view-btn active" id="task-btn-list-view" title="List Table View">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  <span>List</span>
+                </button>
+                <button class="task-view-btn" id="task-btn-kanban-view" title="Kanban Board View (Drag & Drop Schedule)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="11" rx="1"></rect></svg>
+                  <span>Kanban</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. VIEW MODE 1: LIST / TABLE VIEW -->
+          <div id="task-list-view-container" class="task-view-container active">
+            <div class="task-list-table-card">
+              <div class="task-list-rows" id="task-rows-container">
+                <!-- Dynamically rendered by dashboard.js with rich rows -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. VIEW MODE 2: KANBAN BOARD VIEW (Drag & Drop Schedule Columns) -->
+          <div id="task-kanban-view-container" class="task-view-container" style="display: none;">
+            <div class="task-kanban-board">
+              <!-- Column 1: Overdue -->
+              <div class="kanban-column" id="kanban-col-overdue" data-column-target="overdue">
+                <div class="kanban-col-header">
+                  <div class="kch-title">
+                    <span class="kch-dot red"></span>
+                    <span>🚨 Overdue</span>
+                  </div>
+                  <span class="kch-badge" id="kch-count-overdue">0</span>
+                </div>
+                <div class="kanban-cards-list" id="kanban-list-overdue" data-column-target="overdue"></div>
+              </div>
+
+              <!-- Column 2: Today -->
+              <div class="kanban-column" id="kanban-col-today" data-column-target="today">
+                <div class="kanban-col-header">
+                  <div class="kch-title">
+                    <span class="kch-dot amber"></span>
+                    <span>⏰ Today</span>
+                  </div>
+                  <span class="kch-badge" id="kch-count-today">0</span>
+                </div>
+                <div class="kanban-cards-list" id="kanban-list-today" data-column-target="today"></div>
+              </div>
+
+              <!-- Column 3: Tomorrow -->
+              <div class="kanban-column" id="kanban-col-tomorrow" data-column-target="tomorrow">
+                <div class="kanban-col-header">
+                  <div class="kch-title">
+                    <span class="kch-dot blue"></span>
+                    <span>📅 Tomorrow</span>
+                  </div>
+                  <span class="kch-badge" id="kch-count-tomorrow">0</span>
+                </div>
+                <div class="kanban-cards-list" id="kanban-list-tomorrow" data-column-target="tomorrow"></div>
+              </div>
+
+              <!-- Column 4: This Week -->
+              <div class="kanban-column" id="kanban-col-week" data-column-target="week">
+                <div class="kanban-col-header">
+                  <div class="kch-title">
+                    <span class="kch-dot purple"></span>
+                    <span>📆 This Week</span>
+                  </div>
+                  <span class="kch-badge" id="kch-count-week">0</span>
+                </div>
+                <div class="kanban-cards-list" id="kanban-list-week" data-column-target="week"></div>
+              </div>
+
+              <!-- Column 5: Later / Month -->
+              <div class="kanban-column" id="kanban-col-month" data-column-target="month">
+                <div class="kanban-col-header">
+                  <div class="kch-title">
+                    <span class="kch-dot green"></span>
+                    <span>🗓️ Later / Month</span>
+                  </div>
+                  <span class="kch-badge" id="kch-count-month">0</span>
+                </div>
+                <div class="kanban-cards-list" id="kanban-list-month" data-column-target="month"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 7: REFER & EARN
+           ==================================================================== -->
+      <div class="view-panel" id="view-referral">
+        <div class="module-page">
+          <!-- Hero Banner -->
+          <div class="ref-hero-banner">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 999px; font-weight: 700;">Simple Floww Partner Program</span>
+              <h2 style="font-size: 26px; font-weight: 800; margin: 8px 0 4px;">Refer Clients & Earn 20% Recurring Lifetime</h2>
+              <p style="font-size: 13.5px; opacity: 0.9; max-width: 520px;">Share your personal referral link. Whenever an agency or business purchases any subscription, your CRM wallet is credited immediately.</p>
+            </div>
+            <div class="ref-link-box">
+              <span class="ref-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082</span>
+              <button class="ref-copy-btn" id="ref-copy-btn">Copy Link</button>
+            </div>
+          </div>
+
+          <div class="card-grid-3">
+            <div class="module-card">
+              <span style="font-size: 12.5px; color: var(--sf-text-muted); font-weight: 600;">Total Commission Earned</span>
+              <div style="font-size: 28px; font-weight: 800; color: #16a34a; margin: 4px 0;">₹14,500.00</div>
+              <span style="font-size: 12px; color: var(--sf-text-light);">+₹2,400 credited this month</span>
+            </div>
+
+            <div class="module-card">
+              <span style="font-size: 12.5px; color: var(--sf-text-muted); font-weight: 600;">Available in Wallet</span>
+              <div style="font-size: 28px; font-weight: 800; color: var(--sf-primary); margin: 4px 0;">₹1,056.51</div>
+              <button class="btn-secondary" style="font-size: 12px; padding: 4px 10px; margin-top: 4px;" id="btn-wallet-payout">Request Instant Payout</button>
+            </div>
+
+            <div class="module-card">
+              <span style="font-size: 12.5px; color: var(--sf-text-muted); font-weight: 600;">Total Referrals</span>
+              <div style="font-size: 28px; font-weight: 800; color: var(--sf-text-main); margin: 4px 0;">18 Paid / 42 Clicks</div>
+              <span style="font-size: 12px; color: #16a34a;">42.8% Conversion Ratio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 8: DEVELOPER & WEBHOOKS
+           ==================================================================== -->
+      <div class="view-panel" id="view-webhooks">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                Developer & Webhook Manager
+              </h2>
+              <p>Receive instant real-time HTTP POST alerts for new leads, chat messages, and workflow automation.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-primary" id="btn-test-webhook-ping">⚡ Send Test Webhook Ping</button>
+            </div>
+          </div>
+
+          <div class="card-grid-2">
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>🔗 Outgoing Webhook Endpoint</h3>
+                <span class="status-chip resolved">Active</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Target URL (Zapier, Make, or Custom Backend)</label>
+                  <input type="text" class="inbox-search-input" value="https://api.mycrmservice.com/webhooks/simplefloww" style="width: 100%;" />
+                </div>
+                <div>
+                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Signing Secret Token (HMAC SHA-256)</label>
+                  <input type="password" class="inbox-search-input" value="whsec_9082FlowwSecretKeyMeta" style="width: 100%;" />
+                </div>
+                <div>
+                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 6px;">Subscribe to Events</label>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
+                    <label><input type="checkbox" checked /> lead.created</label>
+                    <label><input type="checkbox" checked /> lead.status_updated</label>
+                    <label><input type="checkbox" checked /> message.received</label>
+                    <label><input type="checkbox" checked /> ticket.created</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="module-card">
+              <div class="module-card-header">
+                <h3>📡 Incoming Webhook (Push Leads)</h3>
+                <span class="status-chip open">Ready</span>
+              </div>
+              <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">Use this URL to push leads directly into Simple Floww from Facebook Lead Ads, Elementor, or Google Forms:</p>
+              <div style="padding: 10px 14px; background: var(--sf-surface-alt); border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--sf-primary); margin-bottom: 14px; word-break: break-all;">
+                https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082
+              </div>
+              <button class="btn-secondary" style="font-size: 12px;" onclick="navigator.clipboard.writeText('https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082'); alert('Copied inbound webhook URL!');">Copy Inbound URL</button>
+            </div>
+          </div>
+
+          <!-- Webhook Logs -->
+          <div class="module-card">
+            <div class="module-card-header">
+              <h3>Recent Delivery Logs (Live Stream)</h3>
+            </div>
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Timestamp</th>
+                  <th>Payload Status</th>
+                  <th>Latency</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="webhook-logs-table-body">
+                <tr>
+                  <td><strong>lead.created</strong></td>
+                  <td>2 mins ago</td>
+                  <td><span class="status-chip resolved">200 OK</span></td>
+                  <td>42ms</td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
+                </tr>
+                <tr>
+                  <td><strong>message.received</strong></td>
+                  <td>6 mins ago</td>
+                  <td><span class="status-chip resolved">200 OK</span></td>
+                  <td>58ms</td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
+                </tr>
+                <tr>
+                  <td><strong>ticket.created</strong></td>
+                  <td>18 mins ago</td>
+                  <td><span class="status-chip resolved">200 OK</span></td>
+                  <td>36ms</td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW 9: TEAM & WORKSPACE
+           ==================================================================== -->
+      <div class="view-panel" id="view-team">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Team Management & Permissions
+              </h2>
+              <p>Manage sales telecallers, support agents, role-based access permissions, and live seat capacity.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-primary" id="btn-invite-team-member">+ Invite Member</button>
+            </div>
+          </div>
+
+          <div class="module-card">
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Active Chats</th>
+                  <th>Conversion Rate</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div class="user-avatar" style="width: 32px; height: 32px;">AK</div>
+                      <div>
+                        <strong>Abhinandan kumar</strong>
+                        <span style="font-size: 11px; color: var(--sf-text-muted); display: block;">abhinandankumar9082@gmail.com</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="status-chip open">Super Admin</span></td>
+                  <td><span class="status-chip resolved">● Online</span></td>
+                  <td>6 Active</td>
+                  <td><strong>68.4%</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 3px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div class="user-avatar" style="width: 32px; height: 32px; background: #6366f1;">RS</div>
+                      <div>
+                        <strong>Rahul Sharma</strong>
+                        <span style="font-size: 11px; color: var(--sf-text-muted); display: block;">rahul@simplefloww.com</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="status-chip in-progress">Sales Closer</span></td>
+                  <td><span class="status-chip resolved">● Online</span></td>
+                  <td>3 / 5 Capacity</td>
+                  <td><strong>52.1%</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 3px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div class="user-avatar" style="width: 32px; height: 32px; background: #ec4899;">PP</div>
+                      <div>
+                        <strong>Priya Patel</strong>
+                        <span style="font-size: 11px; color: var(--sf-text-muted); display: block;">priya@simplefloww.com</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="status-chip in-progress">Support Agent</span></td>
+                  <td><span class="status-chip resolved">● Online</span></td>
+                  <td>2 / 5 Capacity</td>
+                  <td><strong>48.9%</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 3px 8px;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div class="user-avatar" style="width: 32px; height: 32px; background: #94a3b8;">AG</div>
+                      <div>
+                        <strong>Aman Gupta</strong>
+                        <span style="font-size: 11px; color: var(--sf-text-muted); display: block;">aman@simplefloww.com</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="status-chip">Telecaller</span></td>
+                  <td><span class="status-chip" style="background: #f1f5f9; color: #64748b;">Offline</span></td>
+                  <td>0 / 5 Capacity</td>
+                  <td><strong>39.5%</strong></td>
+                  <td><button class="btn-secondary" style="font-size: 11px; padding: 3px 8px;">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       ACTIONABLE DRILL-DOWN DRAWER (Opens when clicking any metric)
+       ==================================================================== -->
+  <div class="drawer-backdrop" id="leads-drawer-backdrop">
+    <div class="leads-drawer">
+      
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <h3 id="drawer-title">Filtered Leads</h3>
+          <p id="drawer-subtitle">Displaying leads matching selected criteria</p>
+        </div>
+        <button class="drawer-close-btn" id="drawer-close-btn">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-leads-list" id="drawer-leads-list">
+          <!-- Dynamically populated with real lead items -->
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <span style="font-size: 12.5px; color: var(--sf-text-muted);" id="drawer-leads-count">12 Leads</span>
+        <button class="btn-primary-action" onclick="alert('Navigating to full Leads & Pipeline module with this active filter view...')">Open in Leads Module &rarr;</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit Task -->
+  <div class="modal-overlay" id="modal-task-overlay" style="display: none;">
+    <div class="modal-card modal-task-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #eff6ff; color: #1269ec; display: flex; align-items: center; justify-content: center;" id="modal-task-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--sf-text-main);" id="modal-task-heading">Create New Team Task</h3>
+            <span style="font-size: 12px; color: var(--sf-text-muted);" id="modal-task-subheading">Assign to telecaller or rep with CRM lead association</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="modal-task-close-btn">&times;</button>
+      </div>
+
+      <form id="form-create-task" class="modal-form">
+        <input type="hidden" id="task-edit-id" value="" />
+
+        <div class="form-group">
+          <label class="form-label">Task Title <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="task-input-title" placeholder="e.g. Follow-up with client regarding proposal approval" required />
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+              <label class="form-label" style="margin-bottom: 0;">Task Type</label>
+              <button type="button" id="btn-open-type-customizer" style="background: none; border: none; font-size: 11px; color: var(--sf-primary); cursor: pointer; text-decoration: underline; padding: 0;">⚙️ Custom Types</button>
+            </div>
+            <select class="form-input" id="task-input-type">
+              <option value="Follow-up" selected>📞 Follow-up Call</option>
+              <option value="WhatsApp Message">💬 WhatsApp Message</option>
+              <option value="Product Demo">🎯 Product Demo</option>
+              <option value="Payment Reminder">💳 Payment Follow-up</option>
+              <option value="Contract Review">📄 Contract / Proposal</option>
+              <option value="Client Onboarding">🤝 Client Onboarding</option>
+              <option value="Technical Support">⚙️ Technical Support</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assign To Telecaller / Rep <span style="color: #ef4444;">*</span></label>
+            <select class="form-input" id="task-input-assignee" required>
+              <option value="Rahul Sharma" selected>Rahul Sharma (Senior Sales)</option>
+              <option value="Aman Gupta">Aman Gupta (Inbound Telecaller)</option>
+              <option value="Priya Patel">Priya Patel (Enterprise Lead)</option>
+              <option value="Rohit Verma">Rohit Verma (Customer Success)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Link with CRM Lead</label>
+            <select class="form-input" id="task-input-lead">
+              <option value="Adnan Qureshi">Adnan Qureshi (+91 98765 43210)</option>
+              <option value="Abhinandan Kumar">Abhinandan Kumar (+91 95186 49420)</option>
+              <option value="faiz57185">faiz57185 (+91 98111 22334)</option>
+              <option value="Backend Support Team">Backend Support Team (+91 79832 98464)</option>
+              <option value="Divya Agrawal">Divya Agrawal (+91 99887 76655)</option>
+              <option value="Rohan Verma">Rohan Verma (+91 98234 11223)</option>
+              <option value="Vikas Malhotra">Vikas Malhotra (+91 98991 77654)</option>
+              <option value="Karanveer Patel">Karanveer Patel (+91 98250 88990)</option>
+              <option value="TechSolutions Pvt Ltd">TechSolutions Pvt Ltd (+91 88001 99234)</option>
+              <option value="Priya Sharma">Priya Sharma (+91 98190 22334)</option>
+              <option value="SmartKart Ecommerce">SmartKart Ecommerce (+91 98450 66778)</option>
+              <option value="Global Trade Hub">Global Trade Hub (+91 98334 22110)</option>
+              <option value="None">None (Internal Agency Task)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority Level</label>
+            <select class="form-input" id="task-input-priority">
+              <option value="Urgent">🚨 Urgent (Must do today)</option>
+              <option value="High" selected>⚡ High Priority</option>
+              <option value="Medium">Normal</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Due Date <span style="color: #ef4444;">*</span></label>
+            <input type="date" class="form-input" id="task-input-date" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due Time</label>
+            <input type="time" class="form-input" id="task-input-time" value="16:00" />
+          </div>
+        </div>
+
+        <!-- Task Stage / Status (Used during Edit & Create) -->
+        <div class="form-group" id="task-status-row">
+          <label class="form-label">Workflow Status / Stage</label>
+          <select class="form-input" id="task-input-status">
+            <option value="todo" selected>📋 To-Do (Pending)</option>
+            <option value="progress">⏳ In Progress (Active)</option>
+            <option value="waiting">🕒 Waiting on Client</option>
+            <option value="done">✅ Completed</option>
+          </select>
+        </div>
+
+        <!-- 1. Sub-tasks & Checklist Section -->
+        <div class="task-modal-section" style="margin-top: 10px; background: #f8fafc; border: 1px solid var(--sf-border); border-radius: 10px; padding: 12px 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--sf-text-main);">☑️ Sub-tasks Checklist</span>
+              <span class="subtask-count-badge" id="modal-subtask-badge" style="font-size: 11px; background: #e2e8f0; color: #475569; padding: 1px 7px; border-radius: 999px; font-weight: 700;">0/0</span>
+            </div>
+            <div id="modal-subtask-progress-wrap" style="width: 110px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; display: none;">
+              <div id="modal-subtask-progress-bar" style="width: 0%; height: 100%; background: #16a34a; transition: width 0.2s ease;"></div>
+            </div>
+          </div>
+
+          <!-- Subtasks Container -->
+          <div id="modal-subtasks-container" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Add Subtask Input Group -->
+          <div style="display: flex; gap: 8px;">
+            <input type="text" class="form-input" id="task-input-new-subtask" placeholder="Add a sub-task step (e.g. Verify GST doc)..." style="height: 34px; font-size: 12.5px;" />
+            <button type="button" class="btn-secondary" id="btn-add-subtask" style="height: 34px; padding: 0 12px; font-size: 12px; white-space: nowrap;">+ Add Step</button>
+          </div>
+        </div>
+
+        <!-- 2. Multiple Activity / Task Notes Timeline -->
+        <div class="task-modal-section" style="margin-top: 10px; background: #f8fafc; border: 1px solid var(--sf-border); border-radius: 10px; padding: 12px 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--sf-text-main);">💬 Activity & Notes History</span>
+            <span style="font-size: 11px; color: var(--sf-text-muted);">Multiple updates log</span>
+          </div>
+
+          <!-- Notes Timeline Feed -->
+          <div id="modal-notes-timeline" style="max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; padding-right: 2px;">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Add Note Input Group -->
+          <div style="display: flex; gap: 8px; align-items: flex-end;">
+            <textarea class="form-input" id="task-input-new-note" rows="2" placeholder="Write a note, meeting outcome, or client remark..." style="height: 48px; font-size: 12.5px; resize: none;"></textarea>
+            <button type="button" class="btn-primary" id="btn-add-note-entry" style="height: 48px; padding: 0 14px; font-size: 12px; white-space: nowrap;">Post Note</button>
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--sf-border); border-radius: 8px; padding: 10px 14px; margin-top: 10px;">
+          <label style="display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--sf-text-main);">
+            <input type="checkbox" id="task-input-reminder" checked style="width: 16px; height: 16px; accent-color: var(--sf-primary);" />
+            <span>Send automated WhatsApp alert to assigned rep 15 minutes before deadline</span>
+          </label>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <button type="button" class="btn-secondary" id="btn-delete-task-modal" style="display: none; color: #dc2626; border-color: #fca5a5; background: #fff5f5;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            Delete Task
+          </button>
+          <div style="display: flex; gap: 10px; margin-left: auto;">
+            <button type="button" class="btn-secondary" id="modal-task-cancel-btn">Cancel</button>
+            <button type="submit" class="btn-primary" id="btn-save-task">Save & Assign Task</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Customize Task Types (Business Customizer) -->
+  <div class="modal-overlay" id="modal-task-types-overlay" style="display: none;">
+    <div class="modal-card modal-task-card" style="max-width: 460px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #f3e8ff; color: #8b5cf6; display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--sf-text-main);">Customize Task Types</h3>
+            <span style="font-size: 12px; color: var(--sf-text-muted);">Manage categories suited for your business</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="modal-task-types-close-btn">&times;</button>
+      </div>
+
+      <!-- Existing Types List -->
+      <div style="margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <label class="form-label" style="margin-bottom: 0;">Active Workflow Types (Editable)</label>
+          <button type="button" id="btn-restore-default-types" style="background: none; border: none; font-size: 11.5px; color: var(--sf-primary); cursor: pointer; text-decoration: underline; padding: 0;">↺ Reset to Defaults</button>
+        </div>
+        <div id="custom-task-types-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; padding-right: 2px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Add New Custom Type Form -->
+      <div style="background: #f8fafc; border: 1px solid var(--sf-border); border-radius: 10px; padding: 12px 14px;">
+        <label class="form-label" style="margin-bottom: 6px;">Add New Custom Category</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="new-type-icon-input" class="form-input" placeholder="Icon" style="width: 55px; text-align: center; font-size: 16px;" value="📌" />
+          <input type="text" id="new-type-name-input" class="form-input" placeholder="Category Name (e.g. Site Visit)" style="flex: 1;" />
+          <button type="button" class="btn-primary" id="btn-save-custom-type" style="white-space: nowrap;">+ Add</button>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 16px; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-secondary" id="modal-task-types-done-btn">Done</button>
+      </div>
+    </div>
+  <!-- Modal: Request Feature -->
+  <div class="modal-overlay" id="modal-feature-request" style="display: none;">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            💡
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--sf-text-main);">Request a Feature or Integration</h3>
+            <span style="font-size: 12px; color: var(--sf-text-muted);">Tell us what workflow or tool you'd like to see next</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="modal-close-feature-request">&times;</button>
+      </div>
+
+      <form id="form-feature-request" style="padding-top: 6px;">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Module / Category <span style="color: #ef4444;">*</span></label>
+          <select class="form-input" id="fr-category" required>
+            <option value="WhatsApp & API">📱 WhatsApp & Official API</option>
+            <option value="Broadcast & Campaigns">📢 Broadcast & Bulk Campaigns</option>
+            <option value="AI & Chatbots">🤖 AI Agent & Automation</option>
+            <option value="CRM & Pipelines">👥 CRM, Leads & Deals</option>
+            <option value="Tasks & Workflows">📋 Tasks & Team Workflow</option>
+            <option value="Integrations & Webhooks">⚙️ Integrations & APIs (Shopify, WooCommerce, Zapier)</option>
+            <option value="Billing & GST">💳 Billing, Subscriptions & GST</option>
+            <option value="Other">✨ Other Innovation</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Feature Title <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="fr-title" placeholder="e.g. Native Shopify Abandoned Cart WhatsApp Trigger" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Why is this important for your business? <span style="color: #ef4444;">*</span></label>
+          <textarea class="form-input" id="fr-description" rows="3" placeholder="Describe how this feature will help your team save time or increase conversions..." required style="resize: vertical;"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">Business Urgency</label>
+          <div style="display: flex; gap: 12px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; cursor: pointer;">
+              <input type="radio" name="fr-urgency" value="Nice to have" checked /> Nice to have
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; cursor: pointer;">
+              <input type="radio" name="fr-urgency" value="High priority" /> High priority
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; cursor: pointer;">
+              <input type="radio" name="fr-urgency" value="Deal breaker" /> Deal breaker
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-secondary" id="modal-cancel-feature-request">Cancel</button>
+          <button type="submit" class="btn-primary" id="btn-submit-feature-request">Submit Request 🚀</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Give Feedback -->
+  <div class="modal-overlay" id="modal-feedback" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            ⭐
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--sf-text-main);">Share Feedback & Suggestions</h3>
+            <span style="font-size: 12px; color: var(--sf-text-muted);">Help us make SimpleFloww even better for you</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="modal-close-feedback">&times;</button>
+      </div>
+
+      <form id="form-feedback" style="padding-top: 6px;">
+        <div class="form-group" style="margin-bottom: 14px; text-align: center;">
+          <label class="form-label" style="margin-bottom: 8px;">Overall Satisfaction</label>
+          <div class="feedback-star-row" id="feedback-star-container" style="justify-content: center;">
+            <span class="feedback-star active" data-rating="1">★</span>
+            <span class="feedback-star active" data-rating="2">★</span>
+            <span class="feedback-star active" data-rating="3">★</span>
+            <span class="feedback-star active" data-rating="4">★</span>
+            <span class="feedback-star active" data-rating="5">★</span>
+          </div>
+          <input type="hidden" id="feedback-rating-val" value="5" />
+          <span id="feedback-rating-label" style="font-size: 12px; font-weight: 600; color: #f59e0b;">5 - Excellent! Loves it</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">What are you reviewing? <span style="color: #ef4444;">*</span></label>
+          <select class="form-input" id="feedback-category" required>
+            <option value="General Experience">Overall Platform Experience</option>
+            <option value="WhatsApp Delivery Speed">WhatsApp Message Delivery & Latency</option>
+            <option value="CRM & Tasks Workflow">CRM, Leads & Task Management</option>
+            <option value="AI Bot Responses">AI Chatbot Quality & Accuracy</option>
+            <option value="Customer Support">Support & Onboarding Assistance</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Your comments or suggestions <span style="color: #ef4444;">*</span></label>
+          <textarea class="form-input" id="feedback-comments" rows="3" placeholder="Tell us what you liked most, or what needs improvement..." required style="resize: vertical;"></textarea>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-secondary" id="modal-cancel-feedback">Cancel</button>
+          <button type="submit" class="btn-primary" id="btn-submit-feedback">Send Feedback 💬</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar (Native App Experience) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <a href="#dashboard" class="mobile-nav-item active" data-nav="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Overview</span>
+    </a>
+    <a href="#tasks" class="mobile-nav-item" data-nav="tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      <span>Tasks</span>
+    </a>
+    <a href="#inbox" class="mobile-nav-item" data-nav="inbox">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      <span>Inbox</span>
+    </a>
+    <a href="#helpdesk" class="mobile-nav-item" data-nav="helpdesk">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <span>Help</span>
+    </a>
+    <button type="button" class="mobile-nav-item" id="mobile-bottom-menu-btn" aria-label="Toggle All Menus">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      <span>Menu</span>
+    </button>
+  </nav>
+
+  <script src="data-service.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
