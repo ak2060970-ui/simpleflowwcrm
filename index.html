@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=2.3" />
+  <link rel="stylesheet" href="dashboard.css?v=2.5" />
 </head>
 <body>
 
@@ -1398,48 +1398,58 @@
         <div class="module-page">
           
           <!-- Module Header -->
-          <div class="module-header-row">
+          <div class="module-header-row hd-clean-header">
             <div class="module-title-box">
-              <h2>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><circle cx="12" cy="10" r="2"></circle><line x1="12" y1="14" x2="12.01" y2="14"></line></svg>
-                Help Desk & Support Center
-              </h2>
-              <p>Dual-interface support desk: Live ticket queue, client portal, SLA monitoring, and video knowledge base.</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;">Help Desk</h2>
+                <span class="hd-status-pill">
+                  <span class="pulse-dot"></span> Operational 99.98%
+                </span>
+              </div>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Manage customer support tickets, live resolution & knowledge base.</p>
             </div>
             <div class="module-actions-row">
-              <div class="helpdesk-header-badge">
-                <span class="pulse-dot"></span>
-                <span>Meta API & Engine: 99.98% Operational</span>
-              </div>
-              <button type="button" class="btn-primary" id="btn-raise-ticket-top" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); font-weight: 600;" title="Submit a new support ticket">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                + Raise New Ticket
+              <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-raise-ticket-top" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()" title="Submit a new support ticket">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New Ticket</span>
               </button>
-              <button type="button" class="btn-secondary" id="btn-open-feature-request" onclick="window.openFeatureRequestModal && window.openFeatureRequestModal()" title="Suggest a new tool or integration">
-                💡 Request Feature
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-header-wa-support" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()" title="Direct WhatsApp Support">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366" style="vertical-align: -2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>WhatsApp</span>
               </button>
-              <button type="button" class="btn-secondary" id="btn-open-feedback" onclick="window.openFeedbackModal && window.openFeedbackModal()" title="Share suggestions and feedback">
-                ⭐ Feedback
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-open-feature-request" onclick="window.openFeatureRequestModal && window.openFeatureRequestModal()">
+                <span>Feature</span>
               </button>
-              <button type="button" class="btn-primary" id="btn-header-wa-support" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()" style="background: #25D366; border-color: #25D366; color: #ffffff;" title="Direct WhatsApp Support">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:-2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                1-Click WhatsApp Support
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-open-feedback" onclick="window.openFeedbackModal && window.openFeedbackModal()">
+                <span>Feedback</span>
               </button>
             </div>
           </div>
 
-          <!-- Top Main Navigation Tabs: Support Tickets vs Video Knowledge Base -->
-          <div class="helpdesk-main-tabs">
-            <button type="button" class="hd-main-tab-btn active" id="tab-hd-tickets" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('tickets')" data-target="section-hd-tickets">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              <span>Support Tickets Desk (Dual Portal)</span>
-              <span class="hd-tab-count-badge" id="hd-ticket-total-badge">6</span>
-            </button>
-            <button type="button" class="hd-main-tab-btn" id="tab-hd-kb" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('kb')" data-target="section-hd-kb">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-              <span>Video Knowledge Base & Guides</span>
-              <span class="hd-tab-count-badge subtle">26</span>
-            </button>
+          <!-- Sleek Combined Navigation Bar: Tabs + Role Switcher -->
+          <div class="hd-nav-row">
+            <div class="helpdesk-main-tabs">
+              <button type="button" class="hd-main-tab-btn active" id="tab-hd-tickets" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('tickets')" data-target="section-hd-tickets">
+                <span>Tickets</span>
+                <span class="hd-tab-count-badge" id="hd-ticket-total-badge">6</span>
+              </button>
+              <button type="button" class="hd-main-tab-btn" id="tab-hd-kb" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('kb')" data-target="section-hd-kb">
+                <span>Knowledge Base</span>
+                <span class="hd-tab-count-badge subtle">26</span>
+              </button>
+            </div>
+
+            <!-- Sleek Segmented Role Switcher -->
+            <div class="hd-role-segmented">
+              <button type="button" class="hd-segmented-btn active" id="btn-switch-team" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('team')" data-role="team">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                <span>Team Desk</span>
+              </button>
+              <button type="button" class="hd-segmented-btn" id="btn-switch-client" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('client')" data-role="client">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Client View</span>
+              </button>
+            </div>
           </div>
 
           <!-- ================================================================
@@ -1447,93 +1457,72 @@
                ================================================================ -->
           <div class="hd-main-section active" id="section-hd-tickets">
 
-            <!-- Dual Role Switcher Bar -->
-            <div class="hd-role-bar">
-              <div class="hd-role-left">
-                <div class="hd-role-indicator">
-                  <span class="pulse-indicator-dot"></span>
-                  <span class="hd-role-current-label">Viewing As: <strong id="hd-role-name">Support Team Desk (Internal Queue)</strong></span>
-                </div>
-                <span class="hd-role-caption">Toggle between Client View (what customer sees) & Support Team Desk (internal triage, private notes & resolution).</span>
-              </div>
-              <div class="hd-role-buttons">
-                <button type="button" class="hd-role-btn active" id="btn-switch-team" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('team')" data-role="team">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                  <span>🛠️ Support Team Desk</span>
-                </button>
-                <button type="button" class="hd-role-btn" id="btn-switch-client" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('client')" data-role="client">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  <span>👤 Client Portal (Customer View)</span>
-                </button>
-              </div>
-            </div>
-
             <!-- SUB-VIEW 1: SUPPORT TEAM DESK (Agent & Admin Command Center) -->
             <div id="hd-team-view">
-              <!-- KPI Command Center Cards -->
+              <!-- Clean Minimalist KPI Metric Row -->
               <div class="hd-kpi-grid">
                 <div class="hd-kpi-card kpi-unassigned">
                   <div class="hd-kpi-head">
-                    <span class="hd-kpi-title">Unassigned Queue</span>
-                    <span class="hd-kpi-icon">🚨</span>
+                    <span class="hd-kpi-title">Unassigned</span>
+                    <span class="hd-kpi-dot warning"></span>
                   </div>
                   <div class="hd-kpi-val" id="kpi-team-unassigned">2</div>
-                  <div class="hd-kpi-sub">Needs immediate triage</div>
+                  <div class="hd-kpi-sub">Needs triage</div>
                 </div>
 
                 <div class="hd-kpi-card kpi-active">
                   <div class="hd-kpi-head">
-                    <span class="hd-kpi-title">Active In-Progress</span>
-                    <span class="hd-kpi-icon">⚡</span>
+                    <span class="hd-kpi-title">In Progress</span>
+                    <span class="hd-kpi-dot info"></span>
                   </div>
                   <div class="hd-kpi-val" id="kpi-team-active">3</div>
-                  <div class="hd-kpi-sub">Assigned across team</div>
+                  <div class="hd-kpi-sub">Active tickets</div>
                 </div>
 
                 <div class="hd-kpi-card kpi-warning">
                   <div class="hd-kpi-head">
-                    <span class="hd-kpi-title">SLA Breach Warning</span>
-                    <span class="hd-kpi-icon">⏳</span>
+                    <span class="hd-kpi-title">SLA Warning</span>
+                    <span class="hd-kpi-dot danger"></span>
                   </div>
                   <div class="hd-kpi-val" id="kpi-team-sla-warning" style="color: #ef4444;">1</div>
-                  <div class="hd-kpi-sub">&lt; 30 mins to breach!</div>
+                  <div class="hd-kpi-sub">&lt; 30m to breach</div>
                 </div>
 
                 <div class="hd-kpi-card kpi-csat">
                   <div class="hd-kpi-head">
-                    <span class="hd-kpi-title">Team CSAT Score</span>
-                    <span class="hd-kpi-icon">🏆</span>
+                    <span class="hd-kpi-title">CSAT Score</span>
+                    <span class="hd-kpi-dot success"></span>
                   </div>
-                  <div class="hd-kpi-val" style="color: #10b981;">4.92<span style="font-size: 14px; font-weight: 600; color: #64748b;"> / 5.0</span></div>
-                  <div class="hd-kpi-sub">98.4% Customer Rating</div>
+                  <div class="hd-kpi-val" style="color: #10b981;">4.9<span style="font-size: 13px; font-weight: 500; color: #94a3b8;">/5.0</span></div>
+                  <div class="hd-kpi-sub">98.4% satisfaction</div>
                 </div>
 
                 <div class="hd-kpi-card kpi-speed">
                   <div class="hd-kpi-head">
-                    <span class="hd-kpi-title">Avg First Response</span>
-                    <span class="hd-kpi-icon">⏱️</span>
+                    <span class="hd-kpi-title">Avg Response</span>
+                    <span class="hd-kpi-dot purple"></span>
                   </div>
-                  <div class="hd-kpi-val" style="color: #8b5cf6;">7m 45s</div>
-                  <div class="hd-kpi-sub">SLA Target: &lt; 15 mins</div>
+                  <div class="hd-kpi-val" style="color: #6366f1;">7.8m</div>
+                  <div class="hd-kpi-sub">Target &lt; 15m</div>
                 </div>
               </div>
 
-              <!-- Team Triage & Filter Control Bar -->
+              <!-- Sleek Triage & Filter Control Bar -->
               <div class="hd-triage-bar">
                 <div class="hd-triage-row-top">
                   <div class="hd-search-box">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="hd-team-search" placeholder="Search ticket #, subject, client company, error code..." />
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="hd-team-search" placeholder="Search ticket #, subject, client..." />
                   </div>
 
                   <div class="hd-view-controls">
                     <select class="hd-select-compact" id="hd-filter-category">
                       <option value="all">All Categories</option>
-                      <option value="WhatsApp Cloud API">📱 WhatsApp API</option>
-                      <option value="Broadcast & Campaigns">📢 Broadcast</option>
-                      <option value="Chatbot & AI Agent">🤖 AI Chatbot</option>
-                      <option value="Billing & Invoices">💳 Billing & GST</option>
-                      <option value="Auto Assign Rules">👥 Auto Assign</option>
+                      <option value="WhatsApp Cloud API">WhatsApp API</option>
+                      <option value="Broadcast & Campaigns">Broadcast</option>
+                      <option value="Chatbot & AI Agent">AI Chatbot</option>
+                      <option value="Billing & Invoices">Billing & GST</option>
+                      <option value="Auto Assign Rules">Auto Assign</option>
                     </select>
 
                     <select class="hd-select-compact" id="hd-filter-priority">
@@ -1544,12 +1533,12 @@
                     </select>
 
                     <div class="hd-view-toggle">
-                      <button type="button" class="hd-view-toggle-btn active" id="btn-view-table" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('table')" data-view="table">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                      <button type="button" class="hd-view-toggle-btn active" id="btn-view-table" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('table')" data-view="table" title="Table View">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                         <span>Table</span>
                       </button>
-                      <button type="button" class="hd-view-toggle-btn" id="btn-view-kanban" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('kanban')" data-view="kanban">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"></rect><rect x="14" y="3" width="7" height="11"></rect></svg>
+                      <button type="button" class="hd-view-toggle-btn" id="btn-view-kanban" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('kanban')" data-view="kanban" title="Kanban Board">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"></rect><rect x="14" y="3" width="7" height="11"></rect></svg>
                         <span>Kanban</span>
                       </button>
                     </div>
@@ -1571,12 +1560,12 @@
                     <span class="hd-pill-count" id="pill-cnt-unassigned">2</span>
                   </button>
                   <button type="button" class="hd-pill-btn" data-pill="urgent">
-                    <span>Urgent 🚨</span>
+                    <span>Urgent</span>
                     <span class="hd-pill-count" id="pill-cnt-urgent">2</span>
                   </button>
                   <button type="button" class="hd-pill-btn" data-pill="sla-warning">
-                    <span>SLA Risk (&lt; 40m)</span>
-                    <span class="hd-pill-count" id="pill-cnt-sla" style="background: #fee2e2; color: #dc2626;">2</span>
+                    <span>SLA Risk</span>
+                    <span class="hd-pill-count danger" id="pill-cnt-sla">2</span>
                   </button>
                   <button type="button" class="hd-pill-btn" data-pill="waiting">
                     <span>Waiting on Client</span>
@@ -1596,12 +1585,12 @@
                     <thead>
                       <tr>
                         <th>Ticket ID</th>
-                        <th>Client / Organization</th>
+                        <th>Client</th>
                         <th>Subject & Category</th>
                         <th>Priority</th>
                         <th>Status</th>
-                        <th>Assigned Specialist</th>
-                        <th>SLA Countdown</th>
+                        <th>Assignee</th>
+                        <th>SLA Timer</th>
                         <th style="text-align: right;">Action</th>
                       </tr>
                     </thead>
@@ -1619,7 +1608,7 @@
                   <div class="hd-kanban-col" data-col-status="Open">
                     <div class="hd-kanban-head">
                       <div class="hd-kanban-title">
-                        <span>📥 Open & Unassigned</span>
+                        <span>Open & Queued</span>
                         <span class="hd-pill-count" id="kb-cnt-open">2</span>
                       </div>
                     </div>
@@ -1632,7 +1621,7 @@
                   <div class="hd-kanban-col" data-col-status="In Progress">
                     <div class="hd-kanban-head">
                       <div class="hd-kanban-title">
-                        <span>⚡ In Progress</span>
+                        <span>In Progress</span>
                         <span class="hd-pill-count" id="kb-cnt-progress">2</span>
                       </div>
                     </div>
@@ -1645,7 +1634,7 @@
                   <div class="hd-kanban-col" data-col-status="Waiting on Client">
                     <div class="hd-kanban-head">
                       <div class="hd-kanban-title">
-                        <span>⏳ Waiting on Client</span>
+                        <span>Waiting on Client</span>
                         <span class="hd-pill-count" id="kb-cnt-waiting">1</span>
                       </div>
                     </div>
@@ -1658,7 +1647,7 @@
                   <div class="hd-kanban-col" data-col-status="Resolved">
                     <div class="hd-kanban-head">
                       <div class="hd-kanban-title">
-                        <span>✅ Resolved</span>
+                        <span>Resolved</span>
                         <span class="hd-pill-count" id="kb-cnt-resolved">1</span>
                       </div>
                     </div>
@@ -1672,42 +1661,41 @@
 
             <!-- SUB-VIEW 2: CLIENT PORTAL (Customer View) -->
             <div id="hd-client-view" style="display: none;">
-              <!-- Client Hero Banner -->
-              <div class="hd-client-hero">
-                <div class="hd-client-hero-title">
-                  <h3>👋 TechNova Solutions Customer Portal</h3>
-                  <p>Enterprise Tier Active • Guaranteed Response in &lt; 15 mins • 24x7 SLA Guarantee</p>
+              <!-- Clean Client Header Strip -->
+              <div class="hd-client-strip">
+                <div>
+                  <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Customer Support Portal</h3>
+                  <span style="font-size: 12px; color: #64748b;">TechNova Solutions • Enterprise Plan</span>
                 </div>
-
-                <div class="hd-client-quick-stats">
-                  <div class="hd-client-stat-badge">
-                    <div class="hd-client-stat-num" id="stat-client-active">2</div>
-                    <div class="hd-client-stat-lbl">Active Tickets</div>
+                <div class="hd-client-stats-row">
+                  <div class="hd-client-stat-item">
+                    <span class="num" id="stat-client-active">2</span>
+                    <span class="lbl">Active</span>
                   </div>
-                  <div class="hd-client-stat-badge">
-                    <div class="hd-client-stat-num" id="stat-client-waiting">1</div>
-                    <div class="hd-client-stat-lbl">Waiting On You</div>
+                  <div class="hd-client-stat-item">
+                    <span class="num waiting" id="stat-client-waiting">1</span>
+                    <span class="lbl">Waiting</span>
                   </div>
-                  <div class="hd-client-stat-badge">
-                    <div class="hd-client-stat-num" id="stat-client-resolved">1</div>
-                    <div class="hd-client-stat-lbl">Resolved</div>
+                  <div class="hd-client-stat-item">
+                    <span class="num resolved" id="stat-client-resolved">1</span>
+                    <span class="lbl">Resolved</span>
                   </div>
-                  <button type="button" class="btn-primary" id="btn-raise-ticket-client" style="background: #2563eb;" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()">
-                    + Raise New Ticket
+                  <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-raise-ticket-client" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()">
+                    + New Ticket
                   </button>
                 </div>
               </div>
 
               <!-- Client Filter & Search Bar -->
-              <div class="hd-triage-bar" style="margin-bottom: 20px;">
+              <div class="hd-triage-bar" style="margin-bottom: 16px;">
                 <div class="hd-triage-row-top">
-                  <div class="hd-search-box" style="max-width: 100%;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <div class="hd-search-box" style="flex: 1; max-width: 380px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" id="hd-client-search" placeholder="Search your tickets by ID or topic..." />
                   </div>
 
                   <div class="hd-filter-pills" id="hd-client-filter-pills">
-                    <button type="button" class="hd-pill-btn active" data-client-pill="all">All My Tickets (6)</button>
+                    <button type="button" class="hd-pill-btn active" data-client-pill="all">All (6)</button>
                     <button type="button" class="hd-pill-btn" data-client-pill="active">In Progress (2)</button>
                     <button type="button" class="hd-pill-btn" data-client-pill="waiting">Needs Your Reply (1)</button>
                     <button type="button" class="hd-pill-btn" data-client-pill="resolved">Resolved (1)</button>
@@ -2987,7 +2975,7 @@
     </button>
   </nav>
 
-  <script src="data-service.js?v=2.3"></script>
-  <script src="dashboard.js?v=2.3"></script>
+  <script src="data-service.js?v=2.5"></script>
+  <script src="dashboard.js?v=2.5"></script>
 </body>
 </html>
