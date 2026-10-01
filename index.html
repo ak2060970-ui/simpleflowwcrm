@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=2.7" />
+  <link rel="stylesheet" href="dashboard.css?v=2.8" />
 </head>
 <body>
 
@@ -2116,7 +2116,11 @@
               <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Earn recurring lifetime commissions or instant bounties by referring businesses to Simple Floww.</p>
             </div>
             <div class="module-actions-row">
-              <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-ref-top-copy" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()" title="Copy your referral link">
+              <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-open-payout-modal" onclick="window.openPayoutModal && window.openPayoutModal()" title="Request Payout Withdrawal">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+                <span>Request Payout</span>
+              </button>
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-ref-top-copy" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()" title="Copy your referral link">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 <span>Copy Link</span>
               </button>
@@ -2160,36 +2164,40 @@
                CONTAINER A: PARTNER / CLIENT VIEW
                ================================================================ -->
           <div id="ref-partner-view">
-            <!-- Dynamic Hero Banner -->
-            <div class="ref-hero-banner" id="ref-hero-banner">
-              <div class="ref-hero-info">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                  <span class="ref-prog-badge">Simple Floww Partner Program</span>
-                  <span class="ref-prog-badge active-model" id="ref-active-model-chip">🟢 Mode A: 20% Recurring Lifetime</span>
+            <!-- Sleek Modern Partner Hero Box -->
+            <div class="ref-clean-hero" id="ref-hero-banner">
+              <div class="ref-clean-hero-info">
+                <div class="ref-hero-badges-row">
+                  <span class="ref-clean-badge subtle">Simple Floww Partner Program</span>
+                  <span class="ref-clean-badge active" id="ref-active-model-chip">🟢 Mode A: 20% Recurring Lifetime</span>
                 </div>
-                <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 6px 0;" id="ref-hero-title">
+                <h3 class="ref-clean-hero-title" id="ref-hero-title">
                   Refer Clients & Earn 20% Recurring Lifetime
-                </h2>
-                <p style="font-size: 13px; opacity: 0.9; margin: 0; max-width: 580px;" id="ref-hero-sub">
+                </h3>
+                <p class="ref-clean-hero-sub" id="ref-hero-sub">
                   Share your personal partner link. Whenever an agency or business purchases any subscription, your CRM wallet is credited immediately. Referred clients get an instant 10% Welcome Discount!
                 </p>
               </div>
 
-              <!-- Referral Link & 1-Click Share Box -->
-              <div class="ref-link-card">
-                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #ffffff; opacity: 0.85;">Your Personal Referral Link</span>
-                <div class="ref-link-box">
-                  <span class="ref-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082</span>
-                  <button type="button" class="ref-copy-btn" id="ref-copy-btn" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()">
-                    Copy Link
+              <!-- Compact Referral Link & Quick Sharing -->
+              <div class="ref-clean-link-container">
+                <div class="ref-link-meta-label">Your Personal Referral Link</div>
+                <div class="ref-clean-link-bar">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                  <span class="ref-clean-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082</span>
+                  <button type="button" class="ref-clean-copy-btn" id="ref-copy-btn" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span>Copy</span>
                   </button>
                 </div>
-                <div class="ref-link-actions">
-                  <button type="button" class="ref-mini-btn wa" onclick="window.shareReferralOnWhatsApp && window.shareReferralOnWhatsApp()">
-                    💬 Share WhatsApp
+                <div class="ref-quick-share-row">
+                  <button type="button" class="ref-share-action-btn wa" onclick="window.shareReferralOnWhatsApp && window.shareReferralOnWhatsApp()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <span>WhatsApp</span>
                   </button>
-                  <button type="button" class="ref-mini-btn qr" onclick="window.openPromoKitModal && window.openPromoKitModal()">
-                    📱 Show QR Code
+                  <button type="button" class="ref-share-action-btn qr" onclick="window.openPromoKitModal && window.openPromoKitModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Promo QR</span>
                   </button>
                 </div>
               </div>
@@ -2212,10 +2220,8 @@
                   <span class="hd-kpi-dot info"></span>
                 </div>
                 <div class="hd-kpi-val" id="ref-stat-wallet" style="color: #2563eb;">₹3,250.00</div>
-                <div style="margin-top: 6px;">
-                  <button type="button" class="btn-primary" id="btn-open-payout-modal" onclick="window.openPayoutModal && window.openPayoutModal()" style="font-size: 11.5px; padding: 4px 10px; width: 100%; justify-content: center; font-weight: 600;">
-                    Request Payout 💸
-                  </button>
+                <div class="hd-kpi-sub">
+                  <a href="javascript:void(0)" onclick="window.openPayoutModal && window.openPayoutModal()" style="color: #2563eb; text-decoration: none; font-weight: 600;">Request Payout &rarr;</a>
                 </div>
               </div>
 
@@ -2233,7 +2239,7 @@
                   <span class="hd-kpi-title">Referrals & Clicks</span>
                   <span class="hd-kpi-dot purple"></span>
                 </div>
-                <div class="hd-kpi-val" id="ref-stat-referrals">5 Paid <span style="font-size: 14px; font-weight: 500; color: #64748b;">/ 142 Clicks</span></div>
+                <div class="hd-kpi-val" id="ref-stat-referrals">5 Paid <span style="font-size: 13px; font-weight: 500; color: #64748b;">/ 142 Clicks</span></div>
                 <div class="hd-kpi-sub" style="color: #16a34a; font-weight: 600;">38.4% Conversion Rate</div>
               </div>
 
@@ -3562,7 +3568,7 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </button>
   </nav>
 
-  <script src="data-service.js?v=2.7"></script>
-  <script src="dashboard.js?v=2.7"></script>
+  <script src="data-service.js?v=2.8"></script>
+  <script src="dashboard.js?v=2.8"></script>
 </body>
 </html>
