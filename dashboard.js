@@ -4459,14 +4459,14 @@ document.addEventListener('DOMContentLoaded', () => {
           return `
             <tr>
               <td>
-                <a href="javascript:void(0)" class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}">${t.id}</a>
+                <a href="javascript:void(0)" class="hd-ticket-id-tag btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}">${t.id}</a>
               </td>
               <td>
                 <div style="font-weight: 600; color: #0f172a;">${t.clientName}</div>
                 <div style="font-size: 11px; color: #64748b;">${t.clientTier}</div>
               </td>
               <td class="hd-ticket-subject-cell">
-                <span class="hd-ticket-subject-link btn-open-workspace" data-ticket-id="${t.id}">
+                <span class="hd-ticket-subject-link btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="cursor: pointer;">
                   ${t.subject}
                 </span>
                 <span class="hd-ticket-meta-tag">
@@ -4496,7 +4496,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${slaBadge}
               </td>
               <td style="text-align: right;">
-                <button type="button" class="btn-secondary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 11.5px; padding: 4px 10px; font-weight: 600;">
+                <button type="button" class="btn-secondary btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="font-size: 11.5px; padding: 4px 10px; font-weight: 600; cursor: pointer;">
                   Open 🚀
                 </button>
               </td>
@@ -4542,12 +4542,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           const cardHtml = `
-            <div class="hd-kanban-card ${prioBorder}" data-ticket-id="${t.id}">
+            <div class="hd-kanban-card ${prioBorder}" data-ticket-id="${t.id}" onclick="if (!event.target.closest('button, a, input, select, textarea, .hd-kanban-move-btn')) { window.openTicketWorkspace && window.openTicketWorkspace('${t.id}'); }">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <span class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
+                <span class="hd-ticket-id-tag btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
                 <span class="hd-prio-chip ${t.priority.toLowerCase()}">${t.priority}</span>
               </div>
-              <div class="btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 6px; cursor: pointer;">
+              <div class="btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 6px; cursor: pointer;">
                 ${t.subject}
               </div>
               <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
@@ -4633,17 +4633,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const lastMsgText = lastMsg ? (lastMsg.sender === 'internal' ? 'Support specialist updated ticket notes' : lastMsg.text) : 'Ticket initiated';
 
           return `
-            <div class="hd-client-card" data-ticket-id="${t.id}">
+            <div class="hd-client-card" data-ticket-id="${t.id}" onclick="if (!event.target.closest('button, a, input, select, textarea')) { window.openTicketWorkspace && window.openTicketWorkspace('${t.id}'); }">
               <div>
                 <div class="hd-client-card-top">
-                  <span class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
+                  <span class="hd-ticket-id-tag btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span class="hd-prio-chip ${prioClass}">${t.priority}</span>
                     ${statusBadge}
                   </div>
                 </div>
 
-                <h4 class="hd-client-card-sub btn-open-workspace" data-ticket-id="${t.id}">${t.subject}</h4>
+                <h4 class="hd-client-card-sub btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}">${t.subject}</h4>
                 <div style="font-size: 11.5px; color: #64748b; margin-bottom: 12px;">
                   ${t.categoryIcon} ${t.category} • Created ${t.createdAt}
                 </div>
@@ -4663,7 +4663,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="font-size: 11.5px; color: #475569;">
                   ${t.status === 'Resolved' ? '⭐ Rating: 5 Stars' : `⏰ SLA: <strong style="color: ${t.slaRemainingMins <= 30 ? '#dc2626' : '#16a34a'};">${t.slaRemainingMins} mins</strong> remaining`}
                 </div>
-                <button type="button" class="btn-primary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 12px; padding: 6px 14px; cursor: pointer;">
+                <button type="button" class="btn-primary btn-open-workspace" onclick="window.openTicketWorkspace && window.openTicketWorkspace('${t.id}')" data-ticket-id="${t.id}" style="font-size: 12px; padding: 6px 14px; cursor: pointer;">
                   ${t.status === 'Resolved' ? 'View Summary' : 'View & Chat 💬'}
                 </button>
               </div>
@@ -5069,23 +5069,27 @@ document.addEventListener('DOMContentLoaded', () => {
           csatWrap.style.display = (hdState.role === 'client' && ticket.status === 'Resolved') ? 'block' : 'none';
         }
 
-        if (modalWorkspace) {
-          modalWorkspace.style.display = 'flex';
-          modalWorkspace.classList.add('show', 'open', 'active');
+        const modal = document.getElementById('modal-ticket-workspace');
+        if (modal) {
+          modal.style.setProperty('display', 'flex', 'important');
+          modal.classList.add('show', 'open', 'active');
         }
       }
 
       function closeTicketWorkspace() {
-        if (modalWorkspace) {
-          modalWorkspace.style.display = 'none';
-          modalWorkspace.classList.remove('show', 'open', 'active');
+        const modal = document.getElementById('modal-ticket-workspace');
+        if (modal) {
+          modal.style.setProperty('display', 'none', 'important');
+          modal.classList.remove('show', 'open', 'active');
         }
         hdState.activeTicketId = null;
         currentAttachment = null;
-        if (wsComposerAttWrap) wsComposerAttWrap.style.display = 'none';
-        if (wsReplyText) {
-          wsReplyText.value = '';
-          wsReplyText.classList.remove('internal-mode');
+        const attWrap = document.getElementById('ws-composer-att-wrap');
+        if (attWrap) attWrap.style.display = 'none';
+        const replyText = document.getElementById('ws-reply-text');
+        if (replyText) {
+          replyText.value = '';
+          replyText.classList.remove('internal-mode');
         }
       }
 
@@ -5580,16 +5584,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const priorityValInp = document.getElementById('nt-priority-val');
 
       function openRaiseTicketModal() {
-        if (modalRaiseTicket) {
-          modalRaiseTicket.style.display = 'flex';
-          modalRaiseTicket.classList.add('open', 'active');
+        const modal = document.getElementById('modal-raise-ticket');
+        if (modal) {
+          modal.style.setProperty('display', 'flex', 'important');
+          modal.classList.add('open', 'active', 'show');
         }
       }
 
       function closeRaiseTicketModal() {
-        if (modalRaiseTicket) {
-          modalRaiseTicket.style.display = 'none';
-          modalRaiseTicket.classList.remove('open', 'active');
+        const modal = document.getElementById('modal-raise-ticket');
+        if (modal) {
+          modal.style.setProperty('display', 'none', 'important');
+          modal.classList.remove('open', 'active', 'show');
         }
         if (formRaiseTicket) formRaiseTicket.reset();
         const attachedName = document.getElementById('nt-attached-filename');
