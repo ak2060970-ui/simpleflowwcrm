@@ -4629,10 +4629,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const lastMsgText = lastMsg ? (lastMsg.sender === 'internal' ? 'Support specialist updated ticket notes' : lastMsg.text) : 'Ticket initiated';
 
           return `
-            <div class="hd-client-card">
+            <div class="hd-client-card" data-ticket-id="${t.id}">
               <div>
                 <div class="hd-client-card-top">
-                  <span class="hd-ticket-id-tag">${t.id}</span>
+                  <span class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span class="hd-prio-chip ${prioClass}">${t.priority}</span>
                     ${statusBadge}
@@ -4659,7 +4659,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="font-size: 11.5px; color: #475569;">
                   ${t.status === 'Resolved' ? '⭐ Rating: 5 Stars' : `⏰ SLA: <strong style="color: ${t.slaRemainingMins <= 30 ? '#dc2626' : '#16a34a'};">${t.slaRemainingMins} mins</strong> remaining`}
                 </div>
-                <button type="button" class="btn-primary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 12px; padding: 6px 14px;">
+                <button type="button" class="btn-primary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 12px; padding: 6px 14px; cursor: pointer;">
                   ${t.status === 'Resolved' ? 'View Summary' : 'View & Chat 💬'}
                 </button>
               </div>
@@ -4875,10 +4875,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 9. Attach Listeners for Table & Kanban Cards
       function attachTicketActionListeners() {
-        document.querySelectorAll('.btn-open-workspace').forEach(btn => {
+        // Direct click on any .btn-open-workspace or [data-open-ticket]
+        document.querySelectorAll('.btn-open-workspace, [data-open-ticket]').forEach(btn => {
           btn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            const ticketId = btn.getAttribute('data-ticket-id');
+            const ticketId = btn.getAttribute('data-ticket-id') || btn.getAttribute('data-open-ticket');
+            if (ticketId) openTicketWorkspace(ticketId);
+          });
+        });
+
+        // Click anywhere on a client card (except inside buttons or inputs)
+        document.querySelectorAll('.hd-client-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('button, a, input, select, textarea')) return;
+            const ticketId = card.getAttribute('data-ticket-id');
+            if (ticketId) openTicketWorkspace(ticketId);
+          });
+        });
+
+        // Click anywhere on a kanban card (except inside buttons or select)
+        document.querySelectorAll('.hd-kanban-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('button, a, input, select, textarea, .hd-kanban-move-btn')) return;
+            const ticketId = card.getAttribute('data-ticket-id');
             if (ticketId) openTicketWorkspace(ticketId);
           });
         });
@@ -5045,11 +5065,17 @@ document.addEventListener('DOMContentLoaded', () => {
           csatWrap.style.display = (hdState.role === 'client' && ticket.status === 'Resolved') ? 'block' : 'none';
         }
 
-        if (modalWorkspace) modalWorkspace.classList.add('show');
+        if (modalWorkspace) {
+          modalWorkspace.style.display = 'flex';
+          modalWorkspace.classList.add('show', 'open', 'active');
+        }
       }
 
       function closeTicketWorkspace() {
-        if (modalWorkspace) modalWorkspace.classList.remove('show');
+        if (modalWorkspace) {
+          modalWorkspace.style.display = 'none';
+          modalWorkspace.classList.remove('show', 'open', 'active');
+        }
         hdState.activeTicketId = null;
         currentAttachment = null;
         if (wsComposerAttWrap) wsComposerAttWrap.style.display = 'none';
@@ -5059,7 +5085,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      if (wsBtnClose) wsBtnClose.addEventListener('click', closeTicketWorkspace);
+      if (wsBtnClose) {
+        wsBtnClose.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeTicketWorkspace();
+        });
+      }
+
+      // Close modal when clicking outside on backdrop
+      if (modalWorkspace) {
+        modalWorkspace.addEventListener('click', (e) => {
+          if (e.target === modalWorkspace) {
+            closeTicketWorkspace();
+          }
+        });
+      }
+
+      // Document-level Click Delegation for Help Desk
+      document.addEventListener('click', (e) => {
+        // Ignore interactions inside form inputs, dropdowns, kanban move buttons, notification dismiss, or modal close buttons
+        if (e.target.closest('select, input, textarea, .hd-kanban-move-btn, .hd-notif-close, #ws-btn-close, #modal-close-raise-ticket, #modal-cancel-raise-ticket')) {
+          return;
+        }
+
+        if (e.target === modalWorkspace) {
+          closeTicketWorkspace();
+          return;
+        }
+
+        const trigger = e.target.closest('.btn-open-workspace, [data-open-ticket], .hd-client-card, .hd-kanban-card');
+        if (trigger) {
+          const ticketId = trigger.getAttribute('data-ticket-id') || 
+                           trigger.getAttribute('data-open-ticket') ||
+                           trigger.querySelector('[data-ticket-id]')?.getAttribute('data-ticket-id');
+          if (ticketId) {
+            e.preventDefault();
+            e.stopPropagation();
+            openTicketWorkspace(ticketId);
+          }
+        }
+      });
+
+      // Global Escape key dismiss for drawers
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (modalWorkspace && (modalWorkspace.style.display === 'flex' || modalWorkspace.classList.contains('show'))) {
+            closeTicketWorkspace();
+          }
+          if (modalRaiseTicket && modalRaiseTicket.style.display === 'flex') {
+            closeRaiseTicketModal();
+          }
+        }
+      });
 
       // Composer Attachment button
       if (wsBtnAttachFile) {
@@ -5498,11 +5576,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const priorityValInp = document.getElementById('nt-priority-val');
 
       function openRaiseTicketModal() {
-        if (modalRaiseTicket) modalRaiseTicket.style.display = 'flex';
+        if (modalRaiseTicket) {
+          modalRaiseTicket.style.display = 'flex';
+          modalRaiseTicket.classList.add('open', 'active');
+        }
       }
 
       function closeRaiseTicketModal() {
-        if (modalRaiseTicket) modalRaiseTicket.style.display = 'none';
+        if (modalRaiseTicket) {
+          modalRaiseTicket.style.display = 'none';
+          modalRaiseTicket.classList.remove('open', 'active');
+        }
         if (formRaiseTicket) formRaiseTicket.reset();
         const attachedName = document.getElementById('nt-attached-filename');
         if (attachedName) attachedName.style.display = 'none';
@@ -5512,6 +5596,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnRaiseClient) btnRaiseClient.addEventListener('click', openRaiseTicketModal);
       if (modalCloseRaiseTicket) modalCloseRaiseTicket.addEventListener('click', closeRaiseTicketModal);
       if (modalCancelRaiseTicket) modalCancelRaiseTicket.addEventListener('click', closeRaiseTicketModal);
+      if (modalRaiseTicket) {
+        modalRaiseTicket.addEventListener('click', (e) => {
+          if (e.target === modalRaiseTicket) {
+            closeRaiseTicketModal();
+          }
+        });
+      }
 
       // Priority pill selector in Raise Ticket modal
       priorityPills.forEach(pill => {
