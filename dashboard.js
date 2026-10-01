@@ -5779,7 +5779,743 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openFeedbackModal = openFeedbackModal;
   }
 
+  // ==========================================================================
+  // MODULE: REFER & EARN (Partner Dashboard & Reseller Control Panel)
+  // ==========================================================================
+  function initReferAndEarnHub() {
+    const refState = {
+      activeView: 'partner', // 'partner' or 'reseller'
+      activeTableTab: 'clients', // 'clients', 'payouts', 'tiers'
+
+      // Master Reseller Configuration
+      config: {
+        activeModel: 'recurring', // 'recurring' | 'flat' | 'hybrid'
+        recurringPercent: 20,
+        flatBountyAmount: 1500,
+        hybridBounty: 500,
+        hybridPercent: 15,
+        minPayoutThreshold: 1000,
+        welcomeBonus: 'discount' // 'discount' | 'credits' | 'extended-trial'
+      },
+
+      // Logged-in Partner Profile
+      partner: {
+        id: 'PARTNER-9082',
+        name: 'Abhinandan Kumar',
+        email: 'abhinandan@simplefloww.com',
+        code: 'ak9082',
+        link: 'https://connect.simplefloww.com/ref/ak9082',
+        tier: 'Gold VIP (20%)',
+        walletBalance: 3250.00,
+        totalEarned: 18500.00,
+        pendingClearance: 1200.00,
+        totalClicks: 142
+      },
+
+      // Referred Clients
+      referredClients: [
+        {
+          id: 'REF-101',
+          name: 'Zenith Tech Solutions',
+          contact: 'Karan Mehra',
+          signupDate: '28 Sep 2026',
+          plan: 'Enterprise CRM Annual',
+          planValue: 24000,
+          recurringEarning: 4800,
+          flatEarning: 1500,
+          status: 'Active',
+          nextPayout: '15 Oct 2026'
+        },
+        {
+          id: 'REF-102',
+          name: 'NextGen Marketing Agency',
+          contact: 'Sneha Rao',
+          signupDate: '24 Sep 2026',
+          plan: 'Growth Pro Monthly',
+          planValue: 4999,
+          recurringEarning: 1000,
+          flatEarning: 1500,
+          status: 'Active',
+          nextPayout: '15 Oct 2026'
+        },
+        {
+          id: 'REF-103',
+          name: 'Apex Logistics Pvt Ltd',
+          contact: 'Vikram Joshi',
+          signupDate: '19 Sep 2026',
+          plan: 'Enterprise WABA Suite',
+          planValue: 36000,
+          recurringEarning: 7200,
+          flatEarning: 1500,
+          status: 'Active',
+          nextPayout: '15 Oct 2026'
+        },
+        {
+          id: 'REF-104',
+          name: 'FitPulse Wellness Club',
+          contact: 'Ananya Deshmukh',
+          signupDate: '30 Sep 2026',
+          plan: 'Starter Monthly',
+          planValue: 2499,
+          recurringEarning: 500,
+          flatEarning: 1500,
+          status: 'In Review (14d)',
+          nextPayout: 'Pending Clearance'
+        },
+        {
+          id: 'REF-105',
+          name: 'Global Exim Corp',
+          contact: 'Manish Chawla',
+          signupDate: '12 Aug 2026',
+          plan: 'Growth Pro Annual',
+          planValue: 25000,
+          recurringEarning: 5000,
+          flatEarning: 1500,
+          status: 'Active',
+          nextPayout: '15 Oct 2026'
+        }
+      ],
+
+      // Payout Requests (Managed by Reseller Desk)
+      payoutRequests: [
+        {
+          id: 'PAY-9041',
+          partnerName: 'Abhinandan Kumar',
+          partnerEmail: 'abhinandan@simplefloww.com',
+          date: '01 Oct 2026',
+          amount: 4500,
+          mode: 'UPI',
+          details: 'abhinandan@okhdfcbank',
+          status: 'Pending',
+          utr: '-'
+        },
+        {
+          id: 'PAY-8820',
+          partnerName: 'Rahul Verma (Growth Partner)',
+          partnerEmail: 'rahul.verma@growthpartners.in',
+          date: '25 Sep 2026',
+          amount: 8000,
+          mode: 'Bank IMPS',
+          details: 'A/C: 98127391823, HDFC000124',
+          status: 'Paid',
+          utr: 'CMS98217349182'
+        },
+        {
+          id: 'PAY-8750',
+          partnerName: 'Priya Sharma (Agency)',
+          partnerEmail: 'priya@socialscale.in',
+          date: '18 Sep 2026',
+          amount: 3200,
+          mode: 'UPI',
+          details: 'priya@paytm',
+          status: 'Paid',
+          utr: 'UPI9823104928'
+        }
+      ],
+
+      // All Registered Affiliates in Reseller Roster
+      partnersRoster: [
+        {
+          name: 'Abhinandan Kumar',
+          email: 'abhinandan@simplefloww.com',
+          tier: 'Gold VIP (20%)',
+          clicks: 142,
+          referrals: 5,
+          rate: '38.4%',
+          lifetime: 18500,
+          balance: 3250,
+          status: 'Active'
+        },
+        {
+          name: 'Rahul Verma',
+          email: 'rahul.verma@growthpartners.in',
+          tier: 'Gold VIP (20%)',
+          clicks: 310,
+          referrals: 12,
+          rate: '41.2%',
+          lifetime: 42000,
+          balance: 1200,
+          status: 'Active'
+        },
+        {
+          name: 'Priya Sharma (Agency)',
+          email: 'priya@socialscale.in',
+          tier: 'Silver (15%)',
+          clicks: 88,
+          referrals: 4,
+          rate: '32.1%',
+          lifetime: 9600,
+          balance: 850,
+          status: 'Active'
+        },
+        {
+          name: 'Devansh Oberoi',
+          email: 'dev@saasrocket.io',
+          tier: 'Bronze (10%)',
+          clicks: 34,
+          referrals: 1,
+          rate: '18.5%',
+          lifetime: 1500,
+          balance: 0,
+          status: 'Active'
+        }
+      ]
+    };
+
+    // Helper: Toast Notification
+    function showRefToast(msg, isSuccess = true) {
+      const container = document.getElementById('hd-notification-toast-container');
+      if (!container) {
+        alert(msg);
+        return;
+      }
+      const toast = document.createElement('div');
+      toast.className = 'hd-toast-card';
+      toast.style.borderColor = isSuccess ? '#bbf7d0' : '#fecaca';
+      toast.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      toast.innerHTML = `
+        <div style="font-size: 16px;">${isSuccess ? '✅' : '⚠️'}</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 13px; color: ${isSuccess ? '#15803d' : '#b91c1c'};">${msg}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // 1. Update Partner Dynamic Hero Banner and Math based on Reseller Active Model
+    function updatePartnerHeroAndStats() {
+      const m = refState.config.activeModel;
+      const chip = document.getElementById('ref-active-model-chip');
+      const title = document.getElementById('ref-hero-title');
+      const sub = document.getElementById('ref-hero-sub');
+      const tierVal = document.getElementById('ref-stat-tier');
+      const headerTag = document.getElementById('ref-header-active-model-tag');
+
+      if (m === 'recurring') {
+        const pct = refState.config.recurringPercent;
+        if (chip) chip.textContent = `🟢 Mode A: ${pct}% Recurring Lifetime`;
+        if (title) title.textContent = `Refer Clients & Earn ${pct}% Recurring Lifetime`;
+        if (sub) sub.textContent = `Share your personal partner link. Whenever an agency or business purchases any subscription, your CRM wallet is credited ${pct}% on every renewal. Referred businesses get an instant 10% Welcome Discount!`;
+        if (tierVal) tierVal.textContent = `Gold VIP (${pct}%)`;
+        if (headerTag) headerTag.textContent = `Model: ${pct}% Recurring`;
+      } else if (m === 'flat') {
+        const flat = refState.config.flatBountyAmount;
+        if (chip) chip.textContent = `🔵 Mode B: Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (title) title.textContent = `Refer & Earn Flat ₹${flat.toLocaleString('en-IN')} Cash on Every Business!`;
+        if (sub) sub.textContent = `Share your partner link. Get an instant ₹${flat.toLocaleString('en-IN')} cash bounty deposited straight into your wallet on every successful paid signup!`;
+        if (tierVal) tierVal.textContent = `Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (headerTag) headerTag.textContent = `Model: Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
+      } else {
+        const hb = refState.config.hybridBounty;
+        const hp = refState.config.hybridPercent;
+        if (chip) chip.textContent = `🟣 Mode C: Hybrid (₹${hb} + ${hp}%)`;
+        if (title) title.textContent = `Earn ₹${hb} Joining Bonus + ${hp}% Lifetime Recurring!`;
+        if (sub) sub.textContent = `Get the best of both worlds! Earn instant ₹${hb} cash upon client activation PLUS ${hp}% recurring lifetime royalties on every monthly renewal.`;
+        if (tierVal) tierVal.textContent = `Hybrid VIP (${hp}% + Bonus)`;
+        if (headerTag) headerTag.textContent = `Model: Hybrid (₹${hb} + ${hp}%)`;
+      }
+
+      // Update wallet balance values in DOM
+      const walletEl = document.getElementById('ref-stat-wallet');
+      if (walletEl) walletEl.textContent = `₹${refState.partner.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+      const modalWallet = document.getElementById('payout-modal-wallet-val');
+      if (modalWallet) modalWallet.textContent = `₹${refState.partner.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+      const minHint = document.getElementById('payout-min-hint');
+      if (minHint) minHint.textContent = `Minimum withdrawal: ₹${refState.config.minPayoutThreshold.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+      const amtInput = document.getElementById('payout-amount-input');
+      if (amtInput) {
+        amtInput.min = refState.config.minPayoutThreshold;
+        amtInput.max = refState.partner.walletBalance;
+      }
+    }
+
+    // 2. Switch Between Partner View and Reseller Admin Controls
+    function switchReferralView(view) {
+      refState.activeView = view;
+      const partnerView = document.getElementById('ref-partner-view');
+      const resellerView = document.getElementById('ref-reseller-view');
+      const tabPartner = document.getElementById('tab-ref-sub-partner');
+      const tabReseller = document.getElementById('tab-ref-sub-reseller');
+      const btnPartner = document.getElementById('btn-ref-switch-partner');
+      const btnReseller = document.getElementById('btn-ref-switch-reseller');
+
+      if (view === 'reseller') {
+        if (partnerView) partnerView.style.display = 'none';
+        if (resellerView) resellerView.style.display = 'block';
+        if (tabPartner) tabPartner.classList.remove('active');
+        if (tabReseller) tabReseller.classList.add('active');
+        if (btnPartner) btnPartner.classList.remove('active');
+        if (btnReseller) btnReseller.classList.add('active');
+        renderResellerPayouts();
+        renderResellerPartners();
+      } else {
+        if (partnerView) partnerView.style.display = 'block';
+        if (resellerView) resellerView.style.display = 'none';
+        if (tabPartner) tabPartner.classList.add('active');
+        if (tabReseller) tabReseller.classList.remove('active');
+        if (btnPartner) btnPartner.classList.add('active');
+        if (btnReseller) btnReseller.classList.remove('active');
+        renderPartnerClients();
+        renderPartnerPayouts();
+      }
+    }
+
+    // 3. Switch Table Tabs in Partner View
+    function switchPartnerTableTab(tab) {
+      refState.activeTableTab = tab;
+      const btnClients = document.getElementById('tab-ref-clients');
+      const btnPayouts = document.getElementById('tab-ref-payouts');
+      const btnTiers = document.getElementById('tab-ref-tiers');
+
+      const panelClients = document.getElementById('panel-ref-clients');
+      const panelPayouts = document.getElementById('panel-ref-payouts');
+      const panelTiers = document.getElementById('panel-ref-tiers');
+      const searchWrap = document.getElementById('ref-client-search-wrapper');
+
+      if (btnClients) btnClients.classList.toggle('active', tab === 'clients');
+      if (btnPayouts) btnPayouts.classList.toggle('active', tab === 'payouts');
+      if (btnTiers) btnTiers.classList.toggle('active', tab === 'tiers');
+
+      if (panelClients) panelClients.style.display = tab === 'clients' ? 'block' : 'none';
+      if (panelPayouts) panelPayouts.style.display = tab === 'payouts' ? 'block' : 'none';
+      if (panelTiers) panelTiers.style.display = tab === 'tiers' ? 'block' : 'none';
+      if (searchWrap) searchWrap.style.display = tab === 'clients' ? 'flex' : 'none';
+    }
+
+    // 4. Render Partner Referred Clients Table
+    function renderPartnerClients(searchQuery = '') {
+      const tbody = document.getElementById('ref-clients-tbody');
+      if (!tbody) return;
+
+      const q = searchQuery.toLowerCase().trim();
+      const filtered = refState.referredClients.filter(c => {
+        if (!q) return true;
+        return c.name.toLowerCase().includes(q) || c.plan.toLowerCase().includes(q) || c.contact.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 32px 14px; color: #64748b;">
+              <div style="font-size: 24px; margin-bottom: 6px;">🔍</div>
+              <div style="font-weight: 600; color: #0f172a;">No referred clients match your search</div>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      const m = refState.config.activeModel;
+
+      tbody.innerHTML = filtered.map(c => {
+        let earnVal = 0;
+        let typeBadge = '';
+
+        if (m === 'recurring') {
+          earnVal = Math.round((c.planValue * refState.config.recurringPercent) / 100);
+          typeBadge = `<span class="hd-prio-chip normal" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;">${refState.config.recurringPercent}% Recurring</span>`;
+        } else if (m === 'flat') {
+          earnVal = refState.config.flatBountyAmount;
+          typeBadge = `<span class="hd-prio-chip normal" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">Flat Bounty</span>`;
+        } else {
+          earnVal = refState.config.hybridBounty + Math.round((c.planValue * refState.config.hybridPercent) / 100);
+          typeBadge = `<span class="hd-prio-chip normal" style="background: #fdf4ff; color: #86198f; border: 1px solid #f5d0fe;">Hybrid (${refState.config.hybridPercent}% + ₹${refState.config.hybridBounty})</span>`;
+        }
+
+        const isPending = c.status.includes('Review');
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #0f172a;">${c.name}</div>
+              <div style="font-size: 11px; color: #64748b;">Contact: ${c.contact}</div>
+            </td>
+            <td style="color: #475569;">${c.signupDate}</td>
+            <td>
+              <span style="font-weight: 600; color: #1e3a8a;">${c.plan}</span>
+            </td>
+            <td style="font-weight: 600; color: #334155;">₹${c.planValue.toLocaleString('en-IN')}</td>
+            <td style="font-weight: 700; color: #16a34a; font-size: 13.5px;">+₹${earnVal.toLocaleString('en-IN')}</td>
+            <td>${typeBadge}</td>
+            <td>
+              <span class="status-chip ${isPending ? 'waiting' : 'resolved'}">
+                ${c.status}
+              </span>
+            </td>
+            <td style="font-size: 11.5px; color: ${isPending ? '#d97706' : '#16a34a'}; font-weight: 600;">
+              ${c.nextPayout}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 5. Render Partner Payout History Table
+    function renderPartnerPayouts() {
+      const tbody = document.getElementById('ref-payouts-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = refState.payoutRequests.map(p => {
+        const isPaid = p.status === 'Paid';
+        return `
+          <tr>
+            <td><strong style="font-family: monospace; color: #2563eb;">${p.id}</strong></td>
+            <td>${p.date}</td>
+            <td style="font-weight: 800; font-size: 13.5px; color: #0f172a;">₹${p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+            <td><span class="status-chip in-progress" style="font-size: 10.5px;">${p.mode}</span></td>
+            <td style="font-family: monospace; font-size: 11.5px; color: #475569;">${p.details}</td>
+            <td style="font-family: monospace; font-size: 11.5px; color: ${isPaid ? '#15803d' : '#94a3b8'};">
+              ${isPaid ? `✓ ${p.utr}` : 'Pending processing'}
+            </td>
+            <td>
+              <span class="status-chip ${isPaid ? 'resolved' : 'waiting'}">
+                ${p.status}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 6. Render Reseller Payouts Approval Table
+    function renderResellerPayouts() {
+      const tbody = document.getElementById('reseller-payouts-tbody');
+      if (!tbody) return;
+
+      const pendingCount = refState.payoutRequests.filter(p => p.status === 'Pending').length;
+      const countBadge = document.getElementById('reseller-payout-pending-count');
+      const tabBadge = document.getElementById('reseller-pending-badge');
+      if (countBadge) countBadge.textContent = `${pendingCount} Pending`;
+      if (tabBadge) tabBadge.textContent = pendingCount;
+
+      tbody.innerHTML = refState.payoutRequests.map(p => {
+        const isPending = p.status === 'Pending';
+        return `
+          <tr>
+            <td><strong style="font-family: monospace; color: #2563eb;">${p.id}</strong></td>
+            <td>
+              <div style="font-weight: 700; color: #0f172a;">${p.partnerName}</div>
+              <div style="font-size: 11px; color: #64748b;">${p.partnerEmail}</div>
+            </td>
+            <td>${p.date}</td>
+            <td style="font-weight: 800; color: #16a34a; font-size: 14px;">₹${p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+            <td><span class="status-chip in-progress">${p.mode}</span></td>
+            <td style="font-family: monospace; font-size: 11.5px;">${p.details}</td>
+            <td>
+              <span class="status-chip ${p.status === 'Paid' ? 'resolved' : (p.status === 'Pending' ? 'waiting' : 'open')}">
+                ${p.status}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              ${isPending ? `
+                <div style="display: inline-flex; align-items: center; gap: 6px;">
+                  <button type="button" class="btn-primary" onclick="window.openApprovePayoutModal && window.openApprovePayoutModal('${p.id}')" style="font-size: 11px; padding: 4px 8px; background: #16a34a; border-color: #15803d;">
+                    Approve & Pay ✓
+                  </button>
+                  <button type="button" class="btn-secondary" onclick="window.handleRejectPayout && window.handleRejectPayout('${p.id}')" style="font-size: 11px; padding: 4px 8px; color: #dc2626; border-color: #fca5a5;">
+                    Reject
+                  </button>
+                </div>
+              ` : `
+                <span style="font-size: 11.5px; color: #64748b; font-family: monospace;">Ref: ${p.utr}</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 7. Render Reseller Partners Roster Table
+    function renderResellerPartners() {
+      const tbody = document.getElementById('reseller-partners-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = refState.partnersRoster.map(prt => `
+        <tr>
+          <td>
+            <div style="font-weight: 700; color: #0f172a;">${prt.name}</div>
+            <div style="font-size: 11px; color: #64748b;">${prt.email}</div>
+          </td>
+          <td>
+            <span class="status-chip resolved" style="font-size: 11px;">${prt.tier}</span>
+          </td>
+          <td style="font-weight: 600; color: #334155;">${prt.clicks}</td>
+          <td style="font-weight: 700; color: #1e3a8a;">${prt.referrals}</td>
+          <td style="font-weight: 600; color: #16a34a;">${prt.rate}</td>
+          <td style="font-weight: 700; color: #0f172a;">₹${prt.lifetime.toLocaleString('en-IN')}</td>
+          <td style="font-weight: 700; color: #2563eb;">₹${prt.balance.toLocaleString('en-IN')}</td>
+          <td>
+            <span class="status-chip resolved">${prt.status}</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 8. Copy Partner Link with Visual Feedback
+    function copyPartnerReferralLink() {
+      const link = refState.partner.link;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+          showRefToast('Copied partner referral link to clipboard!');
+        }).catch(() => {
+          prompt('Copy your link:', link);
+        });
+      } else {
+        prompt('Copy your link:', link);
+      }
+    }
+
+    // 9. Share on WhatsApp
+    function shareReferralOnWhatsApp() {
+      const text = `Hey! 👋 Check out Simple Floww CRM for automated WhatsApp marketing, unified inbox & AI chatbots. Use my partner link to get 10% OFF:\n${refState.partner.link}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    // 10. Modals: Request Payout
+    function openPayoutModal() {
+      const modal = document.getElementById('modal-ref-payout');
+      if (modal) modal.style.display = 'flex';
+      updatePartnerHeroAndStats();
+    }
+
+    function closePayoutModal() {
+      const modal = document.getElementById('modal-ref-payout');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function setPayoutMode(mode) {
+      const btnUpi = document.getElementById('payout-btn-mode-upi');
+      const btnBank = document.getElementById('payout-btn-mode-bank');
+      const secUpi = document.getElementById('payout-section-upi');
+      const secBank = document.getElementById('payout-section-bank');
+      const hiddenVal = document.getElementById('payout-mode-val');
+
+      if (hiddenVal) hiddenVal.value = mode;
+
+      if (mode === 'upi') {
+        if (btnUpi) btnUpi.classList.add('active');
+        if (btnBank) btnBank.classList.remove('active');
+        if (secUpi) secUpi.style.display = 'block';
+        if (secBank) secBank.style.display = 'none';
+      } else {
+        if (btnUpi) btnUpi.classList.remove('active');
+        if (btnBank) btnBank.classList.add('active');
+        if (secUpi) secUpi.style.display = 'none';
+        if (secBank) secBank.style.display = 'flex';
+      }
+    }
+
+    function fillMaxPayoutAmount() {
+      const amtInput = document.getElementById('payout-amount-input');
+      if (amtInput) amtInput.value = Math.floor(refState.partner.walletBalance);
+    }
+
+    function handlePartnerPayoutSubmit(e) {
+      e.preventDefault();
+      const amtInput = document.getElementById('payout-amount-input');
+      const amount = parseFloat(amtInput ? amtInput.value : 0);
+      const minThreshold = refState.config.minPayoutThreshold;
+
+      if (isNaN(amount) || amount < minThreshold) {
+        showRefToast(`Withdrawal amount must be at least ₹${minThreshold}`, false);
+        return;
+      }
+
+      if (amount > refState.partner.walletBalance) {
+        showRefToast('Amount exceeds available wallet balance!', false);
+        return;
+      }
+
+      const modeVal = document.getElementById('payout-mode-val')?.value || 'upi';
+      let details = '';
+      if (modeVal === 'upi') {
+        details = document.getElementById('payout-upi-input')?.value.trim();
+        if (!details) {
+          showRefToast('Please enter your valid UPI ID', false);
+          return;
+        }
+      } else {
+        const acc = document.getElementById('payout-bank-acc')?.value.trim();
+        const ifsc = document.getElementById('payout-bank-ifsc')?.value.trim();
+        if (!acc || !ifsc) {
+          showRefToast('Please fill all bank account details', false);
+          return;
+        }
+        details = `A/C: ${acc}, ${ifsc.toUpperCase()}`;
+      }
+
+      // Deduct balance
+      refState.partner.walletBalance -= amount;
+
+      // Add payout request
+      const newPayId = `PAY-${Math.floor(1000 + Math.random() * 9000)}`;
+      refState.payoutRequests.unshift({
+        id: newPayId,
+        partnerName: refState.partner.name,
+        partnerEmail: refState.partner.email,
+        date: 'Just now',
+        amount: amount,
+        mode: modeVal === 'upi' ? 'UPI' : 'Bank IMPS',
+        details: details,
+        status: 'Pending',
+        utr: '-'
+      });
+
+      closePayoutModal();
+      updatePartnerHeroAndStats();
+      renderPartnerPayouts();
+      renderResellerPayouts();
+      showRefToast(`✅ Withdrawal request for ₹${amount.toLocaleString('en-IN')} submitted successfully!`);
+    }
+
+    // 11. Modals: Promo Kit
+    function openPromoKitModal() {
+      const modal = document.getElementById('modal-ref-promo-kit');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closePromoKitModal() {
+      const modal = document.getElementById('modal-ref-promo-kit');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function copyPromoText(elementId) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        navigator.clipboard.writeText(el.innerText).then(() => {
+          showRefToast('Promo text copied to clipboard!');
+        });
+      }
+    }
+
+    // 12. Reseller Config Settings Handlers
+    function selectResellerModel(model) {
+      refState.config.activeModel = model;
+      const cRec = document.getElementById('card-model-recurring');
+      const cFlat = document.getElementById('card-model-flat');
+      const cHyb = document.getElementById('card-model-hybrid');
+
+      if (cRec) cRec.classList.toggle('active', model === 'recurring');
+      if (cFlat) cFlat.classList.toggle('active', model === 'flat');
+      if (cHyb) cHyb.classList.toggle('active', model === 'hybrid');
+    }
+
+    function saveResellerConfig() {
+      const inRec = document.getElementById('reseller-cfg-recurring');
+      const inFlat = document.getElementById('reseller-cfg-flat');
+      const inMin = document.getElementById('reseller-cfg-minpayout');
+      const inWelcome = document.getElementById('reseller-cfg-welcome');
+
+      if (inRec) refState.config.recurringPercent = parseInt(inRec.value, 10) || 20;
+      if (inFlat) refState.config.flatBountyAmount = parseInt(inFlat.value, 10) || 1500;
+      if (inMin) refState.config.minPayoutThreshold = parseInt(inMin.value, 10) || 1000;
+      if (inWelcome) refState.config.welcomeBonus = inWelcome.value;
+
+      updatePartnerHeroAndStats();
+      renderPartnerClients();
+      showRefToast('✅ Reseller reward engine updated & deployed to all partners!');
+    }
+
+    // 13. Reseller Approval Modal & Actions
+    function openApprovePayoutModal(payId) {
+      const p = refState.payoutRequests.find(item => item.id === payId);
+      if (!p) return;
+
+      const modal = document.getElementById('modal-ref-approve-payout');
+      const inId = document.getElementById('approve-payout-id');
+      const pName = document.getElementById('approve-modal-partner-name');
+      const pAmt = document.getElementById('approve-modal-amount');
+      const pDest = document.getElementById('approve-modal-dest');
+
+      if (inId) inId.value = p.id;
+      if (pName) pName.textContent = p.partnerName;
+      if (pAmt) pAmt.textContent = `₹${p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (pDest) pDest.textContent = `${p.mode}: ${p.details}`;
+
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeApprovePayoutModal() {
+      const modal = document.getElementById('modal-ref-approve-payout');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleConfirmApprovePayout(e) {
+      e.preventDefault();
+      const inId = document.getElementById('approve-payout-id');
+      const inUtr = document.getElementById('approve-utr-input');
+      const payId = inId ? inId.value : '';
+      const utr = inUtr ? inUtr.value.trim() : 'CMS' + Date.now();
+
+      const p = refState.payoutRequests.find(item => item.id === payId);
+      if (p) {
+        p.status = 'Paid';
+        p.utr = utr;
+        closeApprovePayoutModal();
+        renderResellerPayouts();
+        renderPartnerPayouts();
+        showRefToast(`✅ Payout ${payId} marked as Paid with UTR ${utr}!`);
+      }
+    }
+
+    function handleRejectPayout(payId) {
+      const p = refState.payoutRequests.find(item => item.id === payId);
+      if (!p) return;
+      if (confirm(`Reject payout request ${payId} for ₹${p.amount}? The amount will be refunded to the partner's wallet.`)) {
+        p.status = 'Rejected';
+        p.utr = 'Cancelled / Refunded';
+        refState.partner.walletBalance += p.amount;
+        updatePartnerHeroAndStats();
+        renderResellerPayouts();
+        renderPartnerPayouts();
+        showRefToast(`Payout ${payId} rejected & refunded to partner's wallet.`, false);
+      }
+    }
+
+    // 14. Filter Referred Clients
+    function filterReferredClients() {
+      const search = document.getElementById('ref-client-search');
+      renderPartnerClients(search ? search.value : '');
+    }
+
+    // Initial render
+    updatePartnerHeroAndStats();
+    renderPartnerClients();
+    renderPartnerPayouts();
+    renderResellerPayouts();
+    renderResellerPartners();
+
+    // Export to window for click handlers
+    window.switchReferralView = switchReferralView;
+    window.switchPartnerTableTab = switchPartnerTableTab;
+    window.copyPartnerReferralLink = copyPartnerReferralLink;
+    window.shareReferralOnWhatsApp = shareReferralOnWhatsApp;
+    window.openPayoutModal = openPayoutModal;
+    window.closePayoutModal = closePayoutModal;
+    window.setPayoutMode = setPayoutMode;
+    window.fillMaxPayoutAmount = fillMaxPayoutAmount;
+    window.handlePartnerPayoutSubmit = handlePartnerPayoutSubmit;
+    window.openPromoKitModal = openPromoKitModal;
+    window.closePromoKitModal = closePromoKitModal;
+    window.copyPromoText = copyPromoText;
+    window.selectResellerModel = selectResellerModel;
+    window.saveResellerConfig = saveResellerConfig;
+    window.openApprovePayoutModal = openApprovePayoutModal;
+    window.closeApprovePayoutModal = closeApprovePayoutModal;
+    window.handleConfirmApprovePayout = handleConfirmApprovePayout;
+    window.handleRejectPayout = handleRejectPayout;
+    window.filterReferredClients = filterReferredClients;
+  }
+
   initHelpDesk();
+  initReferAndEarnHub();
   refreshDashboard(false);
 
 });
