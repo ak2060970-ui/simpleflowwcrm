@@ -985,6 +985,8 @@ document.addEventListener('DOMContentLoaded', () => {
           refreshDashboard(false);
         } else if (viewName === 'helpdesk') {
           if (window.renderHelpDeskAll) window.renderHelpDeskAll();
+        } else if (viewName === 'referral') {
+          if (window.switchReferralView) window.switchReferralView('partner');
         }
       }
 
@@ -2976,6 +2978,8 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshDashboard(false);
       } else if (rawHash === 'helpdesk') {
         if (window.renderHelpDeskAll) window.renderHelpDeskAll();
+      } else if (rawHash === 'referral') {
+        if (window.switchReferralView) window.switchReferralView('partner');
       }
     }
   }
