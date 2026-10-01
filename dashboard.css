@@ -5578,11 +5578,39 @@ html, body {
 #modal-ticket-workspace.show,
 #modal-ticket-workspace.open,
 #modal-ticket-workspace.active,
-#modal-ticket-workspace[style*="display: flex"] {
+#modal-ticket-workspace[style*="display: flex"],
+#modal-raise-ticket.show,
+#modal-raise-ticket.open,
+#modal-raise-ticket.active,
+#modal-raise-ticket[style*="display: flex"] {
   display: flex !important;
   z-index: 999999 !important;
   opacity: 1 !important;
   visibility: visible !important;
+}
+
+.modal-card {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid #e2e8f0 !important;
+  width: 100% !important;
+  max-width: 560px !important;
+  position: relative;
+  box-sizing: border-box !important;
+  animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(24px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .btn-open-workspace {

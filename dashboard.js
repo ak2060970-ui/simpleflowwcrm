@@ -983,6 +983,8 @@ document.addEventListener('DOMContentLoaded', () => {
         targetPanel.classList.add('active');
         if (viewName === 'dashboard') {
           refreshDashboard(false);
+        } else if (viewName === 'helpdesk') {
+          if (window.renderHelpDeskAll) window.renderHelpDeskAll();
         }
       }
 
@@ -2972,6 +2974,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (rawHash === 'dashboard') {
         refreshDashboard(false);
+      } else if (rawHash === 'helpdesk') {
+        if (window.renderHelpDeskAll) window.renderHelpDeskAll();
       }
     }
   }
@@ -5741,9 +5745,32 @@ document.addEventListener('DOMContentLoaded', () => {
       // Initial Render
       renderTeamTickets();
       renderClientTickets();
+
+      // Export methods to window for 100% click reliability
+      window.openRaiseTicketModal = openRaiseTicketModal;
+      window.closeRaiseTicketModal = closeRaiseTicketModal;
+      window.openTicketWorkspace = openTicketWorkspace;
+      window.closeTicketWorkspace = closeTicketWorkspace;
+      window.switchHelpdeskMainTab = switchMainTab;
+      window.switchHelpdeskRole = setRole;
+      window.setHelpdeskViewMode = setTeamViewMode;
+      window.setHelpdeskComposerMode = setComposerMode;
+      window.handleHelpdeskSendMessage = handleSendMessage;
+      window.handleHelpdeskMarkResolved = () => {
+        if (wsBtnMarkResolved) wsBtnMarkResolved.click();
+      };
+      window.renderHelpDeskAll = () => {
+        renderTeamTickets();
+        renderClientTickets();
+        if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
+      };
     }
 
     initHelpDeskTicketing();
+
+    window.openSupportWhatsApp = openSupportWhatsApp;
+    window.openFeatureRequestModal = openFeatureRequestModal;
+    window.openFeedbackModal = openFeedbackModal;
   }
 
   initHelpDesk();

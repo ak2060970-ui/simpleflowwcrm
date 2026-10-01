@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="dashboard.css?v=2.2" />
 </head>
 <body>
 
@@ -1411,17 +1411,17 @@
                 <span class="pulse-dot"></span>
                 <span>Meta API & Engine: 99.98% Operational</span>
               </div>
-              <button class="btn-primary" id="btn-raise-ticket-top" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); font-weight: 600;" title="Submit a new support ticket">
+              <button type="button" class="btn-primary" id="btn-raise-ticket-top" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); font-weight: 600;" title="Submit a new support ticket">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 + Raise New Ticket
               </button>
-              <button class="btn-secondary" id="btn-open-feature-request" title="Suggest a new tool or integration">
+              <button type="button" class="btn-secondary" id="btn-open-feature-request" onclick="window.openFeatureRequestModal && window.openFeatureRequestModal()" title="Suggest a new tool or integration">
                 💡 Request Feature
               </button>
-              <button class="btn-secondary" id="btn-open-feedback" title="Share suggestions and feedback">
+              <button type="button" class="btn-secondary" id="btn-open-feedback" onclick="window.openFeedbackModal && window.openFeedbackModal()" title="Share suggestions and feedback">
                 ⭐ Feedback
               </button>
-              <button class="btn-primary" id="btn-header-wa-support" style="background: #25D366; border-color: #25D366; color: #ffffff;" title="Direct WhatsApp Support">
+              <button type="button" class="btn-primary" id="btn-header-wa-support" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()" style="background: #25D366; border-color: #25D366; color: #ffffff;" title="Direct WhatsApp Support">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:-2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                 1-Click WhatsApp Support
               </button>
@@ -1430,12 +1430,12 @@
 
           <!-- Top Main Navigation Tabs: Support Tickets vs Video Knowledge Base -->
           <div class="helpdesk-main-tabs">
-            <button class="hd-main-tab-btn active" id="tab-hd-tickets" data-target="section-hd-tickets">
+            <button type="button" class="hd-main-tab-btn active" id="tab-hd-tickets" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('tickets')" data-target="section-hd-tickets">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               <span>Support Tickets Desk (Dual Portal)</span>
               <span class="hd-tab-count-badge" id="hd-ticket-total-badge">6</span>
             </button>
-            <button class="hd-main-tab-btn" id="tab-hd-kb" data-target="section-hd-kb">
+            <button type="button" class="hd-main-tab-btn" id="tab-hd-kb" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('kb')" data-target="section-hd-kb">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               <span>Video Knowledge Base & Guides</span>
               <span class="hd-tab-count-badge subtle">26</span>
@@ -1457,11 +1457,11 @@
                 <span class="hd-role-caption">Toggle between Client View (what customer sees) & Support Team Desk (internal triage, private notes & resolution).</span>
               </div>
               <div class="hd-role-buttons">
-                <button type="button" class="hd-role-btn active" id="btn-switch-team" data-role="team">
+                <button type="button" class="hd-role-btn active" id="btn-switch-team" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('team')" data-role="team">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                   <span>🛠️ Support Team Desk</span>
                 </button>
-                <button type="button" class="hd-role-btn" id="btn-switch-client" data-role="client">
+                <button type="button" class="hd-role-btn" id="btn-switch-client" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('client')" data-role="client">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   <span>👤 Client Portal (Customer View)</span>
                 </button>
@@ -1544,11 +1544,11 @@
                     </select>
 
                     <div class="hd-view-toggle">
-                      <button type="button" class="hd-view-toggle-btn active" id="btn-view-table" data-view="table">
+                      <button type="button" class="hd-view-toggle-btn active" id="btn-view-table" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('table')" data-view="table">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                         <span>Table</span>
                       </button>
-                      <button type="button" class="hd-view-toggle-btn" id="btn-view-kanban" data-view="kanban">
+                      <button type="button" class="hd-view-toggle-btn" id="btn-view-kanban" onclick="window.setHelpdeskViewMode && window.setHelpdeskViewMode('kanban')" data-view="kanban">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"></rect><rect x="14" y="3" width="7" height="11"></rect></svg>
                         <span>Kanban</span>
                       </button>
@@ -1692,7 +1692,7 @@
                     <div class="hd-client-stat-num" id="stat-client-resolved">1</div>
                     <div class="hd-client-stat-lbl">Resolved</div>
                   </div>
-                  <button type="button" class="btn-primary" id="btn-raise-ticket-client" style="background: #2563eb;">
+                  <button type="button" class="btn-primary" id="btn-raise-ticket-client" style="background: #2563eb;" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()">
                     + Raise New Ticket
                   </button>
                 </div>
@@ -2725,7 +2725,7 @@
             <option value="Waiting on Client">Waiting on Client</option>
             <option value="Resolved">Resolved</option>
           </select>
-          <button type="button" class="modal-close-btn" id="ws-btn-close">&times;</button>
+          <button type="button" class="modal-close-btn" id="ws-btn-close" onclick="window.closeTicketWorkspace && window.closeTicketWorkspace()">&times;</button>
         </div>
       </div>
 
@@ -2807,10 +2807,10 @@
                 </span>
               </div>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <button type="button" class="btn-secondary" id="ws-btn-mark-resolved" style="font-size: 12px; padding: 6px 12px; color: #15803d; border-color: #bbf7d0;">
+                <button type="button" class="btn-secondary" id="ws-btn-mark-resolved" style="font-size: 12px; padding: 6px 12px; color: #15803d; border-color: #bbf7d0;" onclick="window.handleHelpdeskMarkResolved && window.handleHelpdeskMarkResolved()">
                   ✓ Mark Resolved
                 </button>
-                <button type="button" class="btn-primary" id="ws-btn-send" style="font-size: 12px; padding: 6px 16px;">
+                <button type="button" class="btn-primary" id="ws-btn-send" style="font-size: 12px; padding: 6px 16px;" onclick="window.handleHelpdeskSendMessage && window.handleHelpdeskSendMessage()">
                   Send Reply 🚀
                 </button>
               </div>
@@ -2903,7 +2903,7 @@
             <span style="font-size: 12px; color: var(--sf-text-muted);">Our specialists will respond within 15 minutes</span>
           </div>
         </div>
-        <button type="button" class="modal-close-btn" id="modal-close-raise-ticket">&times;</button>
+        <button type="button" class="modal-close-btn" id="modal-close-raise-ticket" onclick="window.closeRaiseTicketModal && window.closeRaiseTicketModal()">&times;</button>
       </div>
 
       <form id="form-raise-ticket" style="padding-top: 6px;">
@@ -2950,7 +2950,7 @@
         </div>
 
         <div class="modal-footer" style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
-          <button type="button" class="btn-secondary" id="modal-cancel-raise-ticket">Cancel</button>
+          <button type="button" class="btn-secondary" id="modal-cancel-raise-ticket" onclick="window.closeRaiseTicketModal && window.closeRaiseTicketModal()">Cancel</button>
           <button type="submit" class="btn-primary" id="btn-submit-raise-ticket">Create Ticket 🚀</button>
         </div>
       </form>
@@ -2963,7 +2963,7 @@
   <!-- Mobile Bottom Navigation Bar (Native App Experience) -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <a href="#dashboard" class="mobile-nav-item active" data-nav="dashboard">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       <span>Overview</span>
     </a>
     <a href="#tasks" class="mobile-nav-item" data-nav="tasks">
@@ -2984,7 +2984,7 @@
     </button>
   </nav>
 
-  <script src="data-service.js"></script>
-  <script src="dashboard.js"></script>
+  <script src="data-service.js?v=2.2"></script>
+  <script src="dashboard.js?v=2.2"></script>
 </body>
 </html>
