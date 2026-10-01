@@ -2923,8 +2923,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // HASH ROUTING (Direct Link Support: e.g. #tasks, #inbox, #dashboard)
   // =========================================================================
   function handleHashRoute() {
-    const rawHash = window.location.hash.replace('#', '').trim();
+    let rawHash = window.location.hash.replace('#', '').trim();
     if (!rawHash) return;
+
+    if (rawHash === 'knowledgebase') {
+      const kbBtn = document.getElementById('tab-hd-kb');
+      if (kbBtn) kbBtn.click();
+      rawHash = 'helpdesk';
+    } else if (rawHash === 'helpdesk') {
+      const tkBtn = document.getElementById('tab-hd-tickets');
+      if (tkBtn) tkBtn.click();
+    }
 
     // Direct match with view panels
     const targetPanel = document.getElementById(`view-${rawHash}`);
@@ -2938,10 +2947,10 @@ document.addEventListener('DOMContentLoaded', () => {
                          document.querySelector(`.sidebar__nav [data-view="${rawHash}"]`);
       if (activeLink) activeLink.classList.add('active');
 
-  // Update top breadcrumb
+      // Update top breadcrumb
       if (topBreadcrumb) {
         if (rawHash === 'tasks') topBreadcrumb.textContent = 'Operations > Task Management';
-        else if (rawHash === 'helpdesk') topBreadcrumb.textContent = 'Support > Help Desk & Video Knowledge Base';
+        else if (rawHash === 'helpdesk') topBreadcrumb.textContent = window.location.hash === '#knowledgebase' ? 'Support > Video Knowledge Base & Guides' : 'Support > Help Desk & Support Desk';
         else if (rawHash === 'inbox') topBreadcrumb.textContent = 'Communication > Live Chat Inbox';
         else if (rawHash === 'dashboard') topBreadcrumb.textContent = 'Sales & Revenue Overview';
         else if (activeLink && activeLink.getAttribute('data-breadcrumb')) {
@@ -3991,11 +4000,1205 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnHeaderSupport) btnHeaderSupport.addEventListener('click', openSupportWhatsApp);
     if (btnRepChat) btnRepChat.addEventListener('click', openSupportWhatsApp);
+
+    // =========================================================================
+    // DUAL-PORTAL HELP DESK TICKETING SYSTEM ENGINE
+    // =========================================================================
+    const helpdeskTicketsData = [
+      {
+        id: 'TK-1082',
+        subject: 'Meta Cloud API Webhook Signature Verification Failing (401 Mismatch)',
+        clientName: 'TechNova Solutions',
+        clientEmail: 'contact@technova.in',
+        clientPhone: '+91 98201 44521',
+        clientTier: 'Enterprise Pro Plan',
+        category: 'WhatsApp Cloud API',
+        categoryIcon: '📱',
+        priority: 'Urgent',
+        status: 'In Progress',
+        assignedTo: 'Rahul Sharma',
+        avatar: 'RS',
+        createdAt: 'Today, 11:20 AM',
+        createdTimestamp: Date.now() - 2 * 3600 * 1000,
+        slaTargetMins: 120,
+        slaRemainingMins: 38,
+        slaStatus: 'warning',
+        clientVisible: true,
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Arjun Verma (TechNova)',
+            avatar: 'AV',
+            time: '11:20 AM',
+            text: 'Hi Team, our WhatsApp webhook verification started failing today with HTTP 401 unauthorized. We updated our app secret key on Meta developer dashboard yesterday night. Incoming leads are not getting synced to the CRM!'
+          },
+          {
+            id: 'msg-2',
+            sender: 'agent',
+            author: 'Rahul Sharma (Senior API Support)',
+            avatar: 'RS',
+            time: '11:28 AM',
+            text: 'Hello Arjun! Thanks for reporting this. Looking into this right away with highest priority. Could you please confirm if you updated the SHA-256 HMAC verification key in Simplefloww Settings > Webhooks as well?'
+          },
+          {
+            id: 'msg-3',
+            sender: 'internal',
+            author: 'Rahul Sharma',
+            avatar: 'RS',
+            time: '11:34 AM',
+            text: '🔒 [INTERNAL NOTE]: Checked Meta webhook ping logs for TechNova. Payload has valid signature from AppID 819203810, but their CRM endpoint was returning 401 due to secret key mismatch. I generated a refreshed test challenge ping.'
+          },
+          {
+            id: 'msg-4',
+            sender: 'client',
+            author: 'Arjun Verma (TechNova)',
+            avatar: 'AV',
+            time: '11:42 AM',
+            text: 'Just checked, we had not updated it on the Simplefloww side! Doing it right now.'
+          }
+        ]
+      },
+      {
+        id: 'TK-1081',
+        subject: 'Diwali Festive Broadcast Template Rejected by Meta (Format Error #132000)',
+        clientName: 'StyleAura Fashion',
+        clientEmail: 'ops@styleaura.com',
+        clientPhone: '+91 99342 11982',
+        clientTier: 'Growth Plan',
+        category: 'Broadcast & Campaigns',
+        categoryIcon: '📢',
+        priority: 'High',
+        status: 'Waiting on Client',
+        assignedTo: 'Priya Patel',
+        avatar: 'PP',
+        createdAt: 'Today, 09:45 AM',
+        createdTimestamp: Date.now() - 4 * 3600 * 1000,
+        slaTargetMins: 240,
+        slaRemainingMins: 110,
+        slaStatus: 'ok',
+        clientVisible: true,
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Kavita Roy (StyleAura)',
+            avatar: 'KR',
+            time: '09:45 AM',
+            text: 'We submitted our Diwali Mega Sale marketing template with discount coupon code {{1}}, but Meta rejected it within 10 minutes citing parameter format guidelines.'
+          },
+          {
+            id: 'msg-2',
+            sender: 'agent',
+            author: 'Priya Patel (Campaign Specialist)',
+            avatar: 'PP',
+            time: '10:02 AM',
+            text: 'Hi Kavita! Meta requires sample values for all dynamic curly brackets {{1}} before submission. Also, ensure coupon code does not contain special characters. We have pre-fixed your template draft in your account. Please approve the preview so we can re-trigger fast Meta approval.'
+          }
+        ]
+      },
+      {
+        id: 'TK-1080',
+        subject: 'Request for Custom GST Tax Invoice for September Billing Cycle',
+        clientName: 'Apex Real Estate LLP',
+        clientEmail: 'accounts@apexrealty.in',
+        clientPhone: '+91 98110 55219',
+        clientTier: 'Enterprise Pro Plan',
+        category: 'Billing & Invoices',
+        categoryIcon: '💳',
+        priority: 'Normal',
+        status: 'Resolved',
+        assignedTo: 'Aman Verma',
+        avatar: 'AV',
+        createdAt: 'Yesterday, 04:15 PM',
+        createdTimestamp: Date.now() - 22 * 3600 * 1000,
+        slaTargetMins: 480,
+        slaRemainingMins: 0,
+        slaStatus: 'ok',
+        clientVisible: true,
+        csat: 5,
+        csatComment: 'Super fast turnaround! Received updated GST invoice in under 20 minutes.',
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Suresh Singhania',
+            avatar: 'SS',
+            time: 'Yesterday 04:15 PM',
+            text: 'Please provide updated GST tax invoice with our newly registered Maharashtra GSTIN 27AAACA9812K1Z9 for September ₹14,999 Enterprise renewal.'
+          },
+          {
+            id: 'msg-2',
+            sender: 'agent',
+            author: 'Aman Verma (Billing Operations)',
+            avatar: 'AV',
+            time: 'Yesterday 04:35 PM',
+            text: 'Hello Suresh ji! Your GSTIN has been updated in your company profile and the amended tax invoice #INV-2026-09-881 is now attached. Thank you for choosing Simplefloww!'
+          }
+        ]
+      },
+      {
+        id: 'TK-1083',
+        subject: 'AI Chatbot auto-fallback triggering on Hindi/Hinglish buyer queries',
+        clientName: 'KwikCart E-Commerce',
+        clientEmail: 'support@kwikcart.in',
+        clientPhone: '+91 97120 33819',
+        clientTier: 'Pro Business Plan',
+        category: 'Chatbot & AI Agent',
+        categoryIcon: '🤖',
+        priority: 'Urgent',
+        status: 'Open',
+        assignedTo: 'Unassigned',
+        avatar: 'UN',
+        createdAt: 'Today, 12:40 PM',
+        createdTimestamp: Date.now() - 40 * 60 * 1000,
+        slaTargetMins: 60,
+        slaRemainingMins: 20,
+        slaStatus: 'warning',
+        clientVisible: true,
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Rohan Mehra (KwikCart)',
+            avatar: 'RM',
+            time: '12:40 PM',
+            text: 'When customers write in Hinglish like "Order kab tak aayega", AI bot is directly forwarding to human agent queue instead of answering shipping tracking status.'
+          }
+        ]
+      },
+      {
+        id: 'TK-1084',
+        subject: 'Auto-Assign round-robin rule skipping inactive telecallers during lunch break',
+        clientName: 'EduPro Learning Institute',
+        clientEmail: 'admin@edupro.co',
+        clientPhone: '+91 98450 11203',
+        clientTier: 'Growth Plan',
+        category: 'Auto Assign Rules',
+        categoryIcon: '👥',
+        priority: 'Normal',
+        status: 'In Progress',
+        assignedTo: 'Rahul Sharma',
+        avatar: 'RS',
+        createdAt: 'Today, 01:10 PM',
+        createdTimestamp: Date.now() - 30 * 60 * 1000,
+        slaTargetMins: 180,
+        slaRemainingMins: 150,
+        slaStatus: 'ok',
+        clientVisible: true,
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Pooja Hegde (EduPro)',
+            avatar: 'PH',
+            time: '01:10 PM',
+            text: 'We want the auto-assign engine to check agent "Away / Lunch" status toggle so leads are only given to online sales reps.'
+          },
+          {
+            id: 'msg-2',
+            sender: 'agent',
+            author: 'Rahul Sharma',
+            avatar: 'RS',
+            time: '01:18 PM',
+            text: 'Hi Pooja! You can enable "Strict Presence Check" inside Automation > Auto Assign Rules. I am configuring this rule right now for your team workspace.'
+          }
+        ]
+      },
+      {
+        id: 'TK-1085',
+        subject: 'WhatsApp Business API Phone Number Migration from Wati to Simplefloww',
+        clientName: 'HealthPlus Clinics',
+        clientEmail: 'tech@healthplus.org',
+        clientPhone: '+91 99100 88231',
+        clientTier: 'Enterprise Pro Plan',
+        category: 'WhatsApp Cloud API',
+        categoryIcon: '📱',
+        priority: 'High',
+        status: 'Open',
+        assignedTo: 'Unassigned',
+        avatar: 'UN',
+        createdAt: 'Today, 01:25 PM',
+        createdTimestamp: Date.now() - 15 * 60 * 1000,
+        slaTargetMins: 120,
+        slaRemainingMins: 105,
+        slaStatus: 'ok',
+        clientVisible: true,
+        messages: [
+          {
+            id: 'msg-1',
+            sender: 'client',
+            author: 'Dr. Sameer Kapoor',
+            avatar: 'SK',
+            time: '01:25 PM',
+            text: 'We want to migrate our existing verified WhatsApp number (+91 99100 88231) with Green Tick from Wati to Simplefloww Meta Cloud API. Please provide the 2-step verification PIN reset guide.'
+          }
+        ]
+      }
+    ];
+
+    const cannedTemplates = {
+      'meta-template': `Hi! We noticed that dynamic parameter {{1}} was missing a sample value in your Meta template submission. To fix this:\n1. Go to Campaigns > WhatsApp Templates\n2. Click Edit on your draft\n3. Under 'Sample Values', enter an example text (e.g. 'DIWALI20')\n4. Re-submit. Meta approves 95% of sample-provided templates within 15 minutes!`,
+      'qr-reconnect': `Hi! If your WhatsApp Web session got disconnected:\n1. Open Simplefloww Communication > WhatsApp Accounts\n2. Click 'Refresh QR Session'\n3. Open WhatsApp on your primary phone > Linked Devices > Link a Device\n4. Scan the QR code within 40 seconds. Your sync will immediately resume without lead loss.`,
+      'gst-invoice': `Hello! We have updated your GSTIN in the system records. Your revised B2B tax invoice with 18% input credit has been regenerated and sent to your registered billing email. You can also download it directly under Settings > Billing & Plans.`,
+      'webhook-verify': `Hi Team! The 401 Unauthorized webhook error happens when your application HMAC secret does not match the Meta app secret token. Please verify that the SHA-256 Secret Key under Developer > Webhooks matches the token set in your Meta App Dashboard > Webhooks > Edit Subscription.`,
+      'auto-assign': `Hello! To ensure telecallers away on lunch break do not receive auto-assigned incoming leads, please enable 'Strict Presence Check' in Automation > Auto Assign Rules. This automatically skips agents whose status toggle is set to Away.`
+    };
+
+    let hdState = {
+      role: 'team', // 'team' or 'client'
+      activeTab: 'tickets', // 'tickets' or 'kb'
+      teamViewMode: 'table', // 'table' or 'kanban'
+      teamPill: 'all',
+      clientPill: 'all',
+      teamSearch: '',
+      clientSearch: '',
+      categoryFilter: 'all',
+      priorityFilter: 'all',
+      activeTicketId: null,
+      composerMode: 'reply' // 'reply' or 'internal'
+    };
+
+    function initHelpDeskTicketing() {
+      // 1. Main Navigation Tabs (Tickets vs Knowledge Base)
+      const tabTickets = document.getElementById('tab-hd-tickets');
+      const tabKb = document.getElementById('tab-hd-kb');
+      const secTickets = document.getElementById('section-hd-tickets');
+      const secKb = document.getElementById('section-hd-kb');
+
+      function switchMainTab(target) {
+        hdState.activeTab = target;
+        if (target === 'tickets') {
+          if (tabTickets) tabTickets.classList.add('active');
+          if (tabKb) tabKb.classList.remove('active');
+          if (secTickets) secTickets.style.display = 'block';
+          if (secKb) secKb.style.display = 'none';
+        } else {
+          if (tabTickets) tabTickets.classList.remove('active');
+          if (tabKb) tabKb.classList.add('active');
+          if (secTickets) secTickets.style.display = 'none';
+          if (secKb) secKb.style.display = 'block';
+        }
+      }
+
+      if (tabTickets) tabTickets.addEventListener('click', () => switchMainTab('tickets'));
+      if (tabKb) tabKb.addEventListener('click', () => switchMainTab('kb'));
+
+      // 2. Dual-Role Switcher (Team vs Client)
+      const btnSwitchTeam = document.getElementById('btn-switch-team');
+      const btnSwitchClient = document.getElementById('btn-switch-client');
+      const teamViewContainer = document.getElementById('hd-team-view');
+      const clientViewContainer = document.getElementById('hd-client-view');
+      const roleNameEl = document.getElementById('hd-role-name');
+
+      function setRole(role) {
+        hdState.role = role;
+        if (role === 'team') {
+          if (btnSwitchTeam) btnSwitchTeam.classList.add('active');
+          if (btnSwitchClient) btnSwitchClient.classList.remove('active');
+          if (teamViewContainer) teamViewContainer.style.display = 'block';
+          if (clientViewContainer) clientViewContainer.style.display = 'none';
+          if (roleNameEl) roleNameEl.textContent = 'Support Team Desk (Internal Queue)';
+          renderTeamTickets();
+        } else {
+          if (btnSwitchTeam) btnSwitchTeam.classList.remove('active');
+          if (btnSwitchClient) btnSwitchClient.classList.add('active');
+          if (teamViewContainer) teamViewContainer.style.display = 'none';
+          if (clientViewContainer) clientViewContainer.style.display = 'block';
+          if (roleNameEl) roleNameEl.textContent = 'Client Portal (TechNova Solutions)';
+          renderClientTickets();
+        }
+      }
+
+      if (btnSwitchTeam) btnSwitchTeam.addEventListener('click', () => setRole('team'));
+      if (btnSwitchClient) btnSwitchClient.addEventListener('click', () => setRole('client'));
+
+      // 3. Team Triage Filters & Search
+      const teamSearchInp = document.getElementById('hd-team-search');
+      if (teamSearchInp) {
+        teamSearchInp.addEventListener('input', (e) => {
+          hdState.teamSearch = e.target.value.toLowerCase().trim();
+          renderTeamTickets();
+        });
+      }
+
+      const catFilterSel = document.getElementById('hd-filter-category');
+      if (catFilterSel) {
+        catFilterSel.addEventListener('change', (e) => {
+          hdState.categoryFilter = e.target.value;
+          renderTeamTickets();
+        });
+      }
+
+      const prioFilterSel = document.getElementById('hd-filter-priority');
+      if (prioFilterSel) {
+        prioFilterSel.addEventListener('change', (e) => {
+          hdState.priorityFilter = e.target.value;
+          renderTeamTickets();
+        });
+      }
+
+      // Quick Filter Pills (Team)
+      const teamPills = document.querySelectorAll('#hd-team-filter-pills .hd-pill-btn');
+      teamPills.forEach(btn => {
+        btn.addEventListener('click', () => {
+          teamPills.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          hdState.teamPill = btn.getAttribute('data-pill') || 'all';
+          renderTeamTickets();
+        });
+      });
+
+      // View Mode Toggle (Table vs Kanban)
+      const btnViewTable = document.getElementById('btn-view-table');
+      const btnViewKanban = document.getElementById('btn-view-kanban');
+      const tableWrap = document.getElementById('hd-team-table-container');
+      const kanbanWrap = document.getElementById('hd-team-kanban-container');
+
+      function setTeamViewMode(mode) {
+        hdState.teamViewMode = mode;
+        if (mode === 'table') {
+          if (btnViewTable) btnViewTable.classList.add('active');
+          if (btnViewKanban) btnViewKanban.classList.remove('active');
+          if (tableWrap) tableWrap.style.display = 'block';
+          if (kanbanWrap) kanbanWrap.style.display = 'none';
+        } else {
+          if (btnViewTable) btnViewTable.classList.remove('active');
+          if (btnViewKanban) btnViewKanban.classList.add('active');
+          if (tableWrap) tableWrap.style.display = 'none';
+          if (kanbanWrap) kanbanWrap.style.display = 'block';
+          renderKanbanBoard();
+        }
+      }
+
+      if (btnViewTable) btnViewTable.addEventListener('click', () => setTeamViewMode('table'));
+      if (btnViewKanban) btnViewKanban.addEventListener('click', () => setTeamViewMode('kanban'));
+
+      // 4. Client Search & Status Pills
+      const clientSearchInp = document.getElementById('hd-client-search');
+      if (clientSearchInp) {
+        clientSearchInp.addEventListener('input', (e) => {
+          hdState.clientSearch = e.target.value.toLowerCase().trim();
+          renderClientTickets();
+        });
+      }
+
+      const clientPills = document.querySelectorAll('#hd-client-filter-pills .hd-pill-btn');
+      clientPills.forEach(btn => {
+        btn.addEventListener('click', () => {
+          clientPills.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          hdState.clientPill = btn.getAttribute('data-client-pill') || 'all';
+          renderClientTickets();
+        });
+      });
+
+      // 5. Render Team Table
+      function renderTeamTickets() {
+        updateKPICounters();
+        const tbody = document.getElementById('hd-team-tickets-tbody');
+        if (!tbody) return;
+
+        const filtered = helpdeskTicketsData.filter(ticket => {
+          // Pill filter
+          if (hdState.teamPill === 'assigned-me' && ticket.assignedTo !== 'Rahul Sharma') return false;
+          if (hdState.teamPill === 'unassigned' && ticket.assignedTo !== 'Unassigned') return false;
+          if (hdState.teamPill === 'urgent' && ticket.priority !== 'Urgent') return false;
+          if (hdState.teamPill === 'sla-warning' && (ticket.slaRemainingMins > 40 || ticket.status === 'Resolved')) return false;
+          if (hdState.teamPill === 'waiting' && ticket.status !== 'Waiting on Client') return false;
+          if (hdState.teamPill === 'resolved' && ticket.status !== 'Resolved') return false;
+
+          // Dropdowns
+          if (hdState.categoryFilter !== 'all' && ticket.category !== hdState.categoryFilter) return false;
+          if (hdState.priorityFilter !== 'all' && ticket.priority !== hdState.priorityFilter) return false;
+
+          // Search
+          if (hdState.teamSearch) {
+            const q = hdState.teamSearch;
+            const match = ticket.id.toLowerCase().includes(q) ||
+                          ticket.subject.toLowerCase().includes(q) ||
+                          ticket.clientName.toLowerCase().includes(q) ||
+                          ticket.category.toLowerCase().includes(q) ||
+                          ticket.assignedTo.toLowerCase().includes(q);
+            if (!match) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 36px 20px; color: #64748b;">
+                <div style="font-size: 28px; margin-bottom: 8px;">🔍</div>
+                <div style="font-weight: 700; font-size: 14px; color: #0f172a;">No support tickets match your filter criteria</div>
+                <div style="font-size: 12px; margin-top: 4px;">Try clearing filters or search keyword</div>
+              </td>
+            </tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(t => {
+          const prioClass = t.priority === 'Urgent' ? 'urgent' : (t.priority === 'High' ? 'high' : 'normal');
+          const prioLabel = t.priority === 'Urgent' ? 'Urgent 🚨' : t.priority;
+          
+          let statusClass = 'open';
+          if (t.status === 'In Progress') statusClass = 'in-progress';
+          else if (t.status === 'Waiting on Client') statusClass = 'waiting';
+          else if (t.status === 'Resolved') statusClass = 'resolved';
+
+          const slaBadge = t.status === 'Resolved' 
+            ? `<span class="hd-sla-badge ok">✓ Resolved</span>` 
+            : (t.slaRemainingMins <= 30 
+                ? `<span class="hd-sla-badge warning">⏰ ${t.slaRemainingMins}m left!</span>` 
+                : `<span class="hd-sla-badge ok">${t.slaRemainingMins}m left</span>`);
+
+          return `
+            <tr>
+              <td>
+                <a href="javascript:void(0)" class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}">${t.id}</a>
+              </td>
+              <td>
+                <div style="font-weight: 600; color: #0f172a;">${t.clientName}</div>
+                <div style="font-size: 11px; color: #64748b;">${t.clientTier}</div>
+              </td>
+              <td class="hd-ticket-subject-cell">
+                <span class="hd-ticket-subject-link btn-open-workspace" data-ticket-id="${t.id}">
+                  ${t.subject}
+                </span>
+                <span class="hd-ticket-meta-tag">
+                  ${t.categoryIcon} ${t.category} • ${t.createdAt}
+                </span>
+              </td>
+              <td>
+                <span class="hd-prio-chip ${prioClass}">${prioLabel}</span>
+              </td>
+              <td>
+                <select class="hd-status-select ${statusClass} inline-status-change" data-ticket-id="${t.id}">
+                  <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
+                  <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                  <option value="Waiting on Client" ${t.status === 'Waiting on Client' ? 'selected' : ''}>Waiting on Client</option>
+                  <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                </select>
+              </td>
+              <td>
+                <select class="hd-select-compact inline-assign-change" data-ticket-id="${t.id}" style="font-size: 11px; padding: 3px 6px;">
+                  <option value="Rahul Sharma" ${t.assignedTo === 'Rahul Sharma' ? 'selected' : ''}>Rahul Sharma</option>
+                  <option value="Priya Patel" ${t.assignedTo === 'Priya Patel' ? 'selected' : ''}>Priya Patel</option>
+                  <option value="Aman Verma" ${t.assignedTo === 'Aman Verma' ? 'selected' : ''}>Aman Verma</option>
+                  <option value="Unassigned" ${t.assignedTo === 'Unassigned' ? 'selected' : ''}>🚨 Unassigned</option>
+                </select>
+              </td>
+              <td>
+                ${slaBadge}
+              </td>
+              <td style="text-align: right;">
+                <button type="button" class="btn-secondary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 11.5px; padding: 4px 10px; font-weight: 600;">
+                  Open 🚀
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        attachTicketActionListeners();
+      }
+
+      // 6. Render Team Kanban Board
+      function renderKanbanBoard() {
+        const colOpen = document.getElementById('kb-cards-open');
+        const colProgress = document.getElementById('kb-cards-progress');
+        const colWaiting = document.getElementById('kb-cards-waiting');
+        const colResolved = document.getElementById('kb-cards-resolved');
+
+        if (!colOpen || !colProgress || !colWaiting || !colResolved) return;
+
+        colOpen.innerHTML = '';
+        colProgress.innerHTML = '';
+        colWaiting.innerHTML = '';
+        colResolved.innerHTML = '';
+
+        helpdeskTicketsData.forEach(t => {
+          const prioBorder = t.priority === 'Urgent' ? 'urgent-border' : '';
+          const cardHtml = `
+            <div class="hd-kanban-card ${prioBorder} btn-open-workspace" data-ticket-id="${t.id}">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span class="hd-ticket-id-tag">${t.id}</span>
+                <span class="hd-prio-chip ${t.priority.toLowerCase()}">${t.priority}</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 6px;">
+                ${t.subject}
+              </div>
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+                ${t.clientName} • ${t.category}
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569;">
+                  <div class="hd-agent-avatar" style="width: 22px; height: 22px; font-size: 10px;">${t.avatar}</div>
+                  <span>${t.assignedTo.split(' ')[0]}</span>
+                </div>
+                <span class="hd-sla-badge ${t.status === 'Resolved' ? 'ok' : (t.slaRemainingMins <= 30 ? 'warning' : 'ok')}" style="font-size: 10px; padding: 2px 6px;">
+                  ${t.status === 'Resolved' ? '✓ Closed' : `${t.slaRemainingMins}m`}
+                </span>
+              </div>
+            </div>
+          `;
+
+          if (t.status === 'Open') colOpen.insertAdjacentHTML('beforeend', cardHtml);
+          else if (t.status === 'In Progress') colProgress.insertAdjacentHTML('beforeend', cardHtml);
+          else if (t.status === 'Waiting on Client') colWaiting.insertAdjacentHTML('beforeend', cardHtml);
+          else if (t.status === 'Resolved') colResolved.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        // Update column counts
+        const cntOpen = document.getElementById('kb-cnt-open');
+        const cntProgress = document.getElementById('kb-cnt-progress');
+        const cntWaiting = document.getElementById('kb-cnt-waiting');
+        const cntResolved = document.getElementById('kb-cnt-resolved');
+        if (cntOpen) cntOpen.textContent = helpdeskTicketsData.filter(t => t.status === 'Open').length;
+        if (cntProgress) cntProgress.textContent = helpdeskTicketsData.filter(t => t.status === 'In Progress').length;
+        if (cntWaiting) cntWaiting.textContent = helpdeskTicketsData.filter(t => t.status === 'Waiting on Client').length;
+        if (cntResolved) cntResolved.textContent = helpdeskTicketsData.filter(t => t.status === 'Resolved').length;
+
+        attachTicketActionListeners();
+      }
+
+      // 7. Render Client Portal Cards
+      function renderClientTickets() {
+        const container = document.getElementById('hd-client-cards-container');
+        if (!container) return;
+
+        const filtered = helpdeskTicketsData.filter(ticket => {
+          if (hdState.clientPill === 'active' && ticket.status !== 'In Progress' && ticket.status !== 'Open') return false;
+          if (hdState.clientPill === 'waiting' && ticket.status !== 'Waiting on Client') return false;
+          if (hdState.clientPill === 'resolved' && ticket.status !== 'Resolved') return false;
+
+          if (hdState.clientSearch) {
+            const q = hdState.clientSearch;
+            const match = ticket.id.toLowerCase().includes(q) ||
+                          ticket.subject.toLowerCase().includes(q) ||
+                          ticket.category.toLowerCase().includes(q);
+            if (!match) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px;">
+              <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+              <h4 style="margin: 0; color: #0f172a; font-size: 15px;">No tickets found</h4>
+              <p style="margin: 4px 0 14px 0; color: #64748b; font-size: 12.5px;">You have no tickets matching this search.</p>
+              <button type="button" class="btn-primary" id="btn-empty-raise" style="font-size: 12px;">+ Raise New Ticket</button>
+            </div>
+          `;
+          const btnEmpty = document.getElementById('btn-empty-raise');
+          if (btnEmpty) btnEmpty.addEventListener('click', openRaiseTicketModal);
+          return;
+        }
+
+        container.innerHTML = filtered.map(t => {
+          const prioClass = t.priority === 'Urgent' ? 'urgent' : (t.priority === 'High' ? 'high' : 'normal');
+          
+          let statusBadge = '<span class="status-chip in-progress">In Progress</span>';
+          if (t.status === 'Open') statusBadge = '<span class="status-chip open">Open & Queued</span>';
+          else if (t.status === 'Waiting on Client') statusBadge = '<span class="status-chip waiting">Action Required by You</span>';
+          else if (t.status === 'Resolved') statusBadge = '<span class="status-chip resolved">✓ Resolved</span>';
+
+          const lastMsg = t.messages[t.messages.length - 1];
+          const lastMsgText = lastMsg ? (lastMsg.sender === 'internal' ? 'Support specialist updated ticket notes' : lastMsg.text) : 'Ticket initiated';
+
+          return `
+            <div class="hd-client-card">
+              <div>
+                <div class="hd-client-card-top">
+                  <span class="hd-ticket-id-tag">${t.id}</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span class="hd-prio-chip ${prioClass}">${t.priority}</span>
+                    ${statusBadge}
+                  </div>
+                </div>
+
+                <h4 class="hd-client-card-sub btn-open-workspace" data-ticket-id="${t.id}">${t.subject}</h4>
+                <div style="font-size: 11.5px; color: #64748b; margin-bottom: 12px;">
+                  ${t.categoryIcon} ${t.category} • Created ${t.createdAt}
+                </div>
+
+                <div class="hd-client-agent-info">
+                  <div class="hd-agent-avatar">${t.avatar}</div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0f172a;">${t.assignedTo}</div>
+                    <div style="font-size: 11px; color: #64748b; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+                      "${lastMsgText}"
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px;">
+                <div style="font-size: 11.5px; color: #475569;">
+                  ${t.status === 'Resolved' ? '⭐ Rating: 5 Stars' : `⏰ SLA: <strong style="color: ${t.slaRemainingMins <= 30 ? '#dc2626' : '#16a34a'};">${t.slaRemainingMins} mins</strong> remaining`}
+                </div>
+                <button type="button" class="btn-primary btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 12px; padding: 6px 14px;">
+                  ${t.status === 'Resolved' ? 'View Summary' : 'View & Chat 💬'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        attachTicketActionListeners();
+      }
+
+      // 8. KPI Counter Updates
+      function updateKPICounters() {
+        const total = helpdeskTicketsData.length;
+        const unassigned = helpdeskTicketsData.filter(t => t.assignedTo === 'Unassigned' && t.status !== 'Resolved').length;
+        const active = helpdeskTicketsData.filter(t => t.status === 'In Progress').length;
+        const slaWarning = helpdeskTicketsData.filter(t => t.slaRemainingMins <= 40 && t.status !== 'Resolved').length;
+        const waiting = helpdeskTicketsData.filter(t => t.status === 'Waiting on Client').length;
+        const resolved = helpdeskTicketsData.filter(t => t.status === 'Resolved').length;
+        const assignedMe = helpdeskTicketsData.filter(t => t.assignedTo === 'Rahul Sharma' && t.status !== 'Resolved').length;
+
+        // Header total badge
+        const badgeTop = document.getElementById('hd-ticket-total-badge');
+        if (badgeTop) badgeTop.textContent = total;
+
+        // Team KPI cards
+        const elUnassigned = document.getElementById('kpi-team-unassigned');
+        const elActive = document.getElementById('kpi-team-active');
+        const elWarning = document.getElementById('kpi-team-sla-warning');
+        if (elUnassigned) elUnassigned.textContent = unassigned;
+        if (elActive) elActive.textContent = active;
+        if (elWarning) elWarning.textContent = slaWarning;
+
+        // Team Filter Pill badges
+        const pAll = document.getElementById('pill-cnt-all');
+        const pMe = document.getElementById('pill-cnt-me');
+        const pUn = document.getElementById('pill-cnt-unassigned');
+        const pUrg = document.getElementById('pill-cnt-urgent');
+        const pSla = document.getElementById('pill-cnt-sla');
+        const pWait = document.getElementById('pill-cnt-waiting');
+        const pRes = document.getElementById('pill-cnt-resolved');
+        if (pAll) pAll.textContent = total;
+        if (pMe) pMe.textContent = assignedMe;
+        if (pUn) pUn.textContent = unassigned;
+        if (pUrg) pUrg.textContent = helpdeskTicketsData.filter(t => t.priority === 'Urgent').length;
+        if (pSla) pSla.textContent = slaWarning;
+        if (pWait) pWait.textContent = waiting;
+        if (pRes) pRes.textContent = resolved;
+
+        // Client Stats
+        const sCliAct = document.getElementById('stat-client-active');
+        const sCliWait = document.getElementById('stat-client-waiting');
+        const sCliRes = document.getElementById('stat-client-resolved');
+        if (sCliAct) sCliAct.textContent = helpdeskTicketsData.filter(t => t.status === 'In Progress' || t.status === 'Open').length;
+        if (sCliWait) sCliWait.textContent = waiting;
+        if (sCliRes) sCliRes.textContent = resolved;
+      }
+
+      // 9. Attach Listeners for Table & Cards
+      function attachTicketActionListeners() {
+        document.querySelectorAll('.btn-open-workspace').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const ticketId = btn.getAttribute('data-ticket-id');
+            if (ticketId) openTicketWorkspace(ticketId);
+          });
+        });
+
+        // Inline status select
+        document.querySelectorAll('.inline-status-change').forEach(sel => {
+          sel.addEventListener('change', (e) => {
+            const ticketId = sel.getAttribute('data-ticket-id');
+            const newStatus = sel.value;
+            const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
+            if (ticket) {
+              ticket.status = newStatus;
+              showToast(`Ticket ${ticketId} status changed to "${newStatus}"`);
+              renderTeamTickets();
+            }
+          });
+        });
+
+        // Inline assignee select
+        document.querySelectorAll('.inline-assign-change').forEach(sel => {
+          sel.addEventListener('change', (e) => {
+            const ticketId = sel.getAttribute('data-ticket-id');
+            const newAssignee = sel.value;
+            const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
+            if (ticket) {
+              ticket.assignedTo = newAssignee;
+              ticket.avatar = newAssignee === 'Unassigned' ? 'UN' : newAssignee.split(' ').map(n => n[0]).join('');
+              showToast(`Ticket ${ticketId} reassigned to ${newAssignee}`);
+              renderTeamTickets();
+            }
+          });
+        });
+      }
+
+      // 10. Resolution Workspace Modal / Drawer Logic
+      const modalWorkspace = document.getElementById('modal-ticket-workspace');
+      const wsBtnClose = document.getElementById('ws-btn-close');
+      const wsTabReply = document.getElementById('ws-tab-reply');
+      const wsTabInternal = document.getElementById('ws-tab-internal');
+      const wsReplyText = document.getElementById('ws-reply-text');
+      const wsCannedSelect = document.getElementById('ws-canned-select');
+      const wsCannedWrapper = document.getElementById('ws-canned-wrapper');
+      const wsComposerTabs = document.getElementById('ws-composer-tabs');
+      const wsBtnSend = document.getElementById('ws-btn-send');
+      const wsBtnMarkResolved = document.getElementById('ws-btn-mark-resolved');
+      const wsStatusSelect = document.getElementById('ws-ticket-status-select');
+      const wsAssigneeSelect = document.getElementById('ws-assignee-select');
+      const wsPrioritySelect = document.getElementById('ws-priority-select');
+
+      function openTicketWorkspace(ticketId) {
+        const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
+        if (!ticket) return;
+
+        hdState.activeTicketId = ticketId;
+
+        // Populate Workspace Header
+        const wsId = document.getElementById('ws-ticket-id');
+        const wsSubject = document.getElementById('ws-ticket-subject');
+        const wsCategory = document.getElementById('ws-ticket-category');
+        const wsPriority = document.getElementById('ws-ticket-priority');
+        if (wsId) wsId.textContent = `#${ticket.id}`;
+        if (wsSubject) wsSubject.textContent = ticket.subject;
+        if (wsCategory) wsCategory.textContent = `${ticket.categoryIcon} ${ticket.category}`;
+        if (wsPriority) {
+          wsPriority.className = `hd-prio-chip ${ticket.priority.toLowerCase()}`;
+          wsPriority.textContent = ticket.priority === 'Urgent' ? 'Urgent 🚨' : ticket.priority;
+        }
+
+        // Set status and properties dropdowns
+        if (wsStatusSelect) wsStatusSelect.value = ticket.status;
+        if (wsAssigneeSelect) wsAssigneeSelect.value = ticket.assignedTo;
+        if (wsPrioritySelect) wsPrioritySelect.value = ticket.priority;
+
+        // SLA Card
+        const wsSlaBadge = document.getElementById('ws-sla-badge');
+        const wsSlaProgress = document.getElementById('ws-sla-progress');
+        const wsSlaCreated = document.getElementById('ws-sla-created-time');
+        if (wsSlaBadge) {
+          wsSlaBadge.textContent = ticket.status === 'Resolved' ? '✓ Resolved' : `${ticket.slaRemainingMins}m remaining`;
+          wsSlaBadge.className = `hd-sla-badge ${ticket.status === 'Resolved' ? 'ok' : (ticket.slaRemainingMins <= 30 ? 'warning' : 'ok')}`;
+        }
+        if (wsSlaProgress) {
+          const pct = Math.max(10, Math.min(100, Math.round((ticket.slaRemainingMins / ticket.slaTargetMins) * 100)));
+          wsSlaProgress.style.width = `${pct}%`;
+        }
+        if (wsSlaCreated) wsSlaCreated.textContent = `Opened ${ticket.createdAt}`;
+
+        // Customer details
+        const wsClientCompany = document.getElementById('ws-client-company');
+        const wsClientEmail = document.getElementById('ws-client-email');
+        const wsClientPhone = document.getElementById('ws-client-phone');
+        const wsClientTier = document.getElementById('ws-client-tier');
+        const wsClientAvatar = document.getElementById('ws-client-avatar');
+        if (wsClientCompany) wsClientCompany.textContent = ticket.clientName;
+        if (wsClientEmail) wsClientEmail.textContent = ticket.clientEmail;
+        if (wsClientPhone) wsClientPhone.textContent = ticket.clientPhone;
+        if (wsClientTier) wsClientTier.textContent = ticket.clientTier;
+        if (wsClientAvatar) wsClientAvatar.textContent = ticket.clientName.slice(0, 2).toUpperCase();
+
+        // Dual-View Mode Adaptation
+        if (hdState.role === 'client') {
+          if (wsComposerTabs) wsComposerTabs.style.display = 'none';
+          if (wsCannedWrapper) wsCannedWrapper.style.display = 'none';
+          if (wsAssigneeSelect) wsAssigneeSelect.disabled = true;
+          if (wsPrioritySelect) wsPrioritySelect.disabled = true;
+        } else {
+          if (wsComposerTabs) wsComposerTabs.style.display = 'flex';
+          if (wsCannedWrapper) wsCannedWrapper.style.display = 'flex';
+          if (wsAssigneeSelect) wsAssigneeSelect.disabled = false;
+          if (wsPrioritySelect) wsPrioritySelect.disabled = false;
+        }
+
+        renderWorkspaceMessages(ticket);
+
+        // CSAT Rating Card (shows in client mode if resolved)
+        const csatWrap = document.getElementById('ws-csat-container');
+        if (csatWrap) {
+          csatWrap.style.display = (hdState.role === 'client' && ticket.status === 'Resolved') ? 'block' : 'none';
+        }
+
+        if (modalWorkspace) modalWorkspace.classList.add('show');
+      }
+
+      function closeTicketWorkspace() {
+        if (modalWorkspace) modalWorkspace.classList.remove('show');
+        hdState.activeTicketId = null;
+        if (wsReplyText) {
+          wsReplyText.value = '';
+          wsReplyText.classList.remove('internal-mode');
+        }
+      }
+
+      if (wsBtnClose) wsBtnClose.addEventListener('click', closeTicketWorkspace);
+
+      // Composer Tab: Reply vs Private Note
+      function setComposerMode(mode) {
+        hdState.composerMode = mode;
+        const hint = document.getElementById('ws-composer-hint');
+        if (mode === 'internal') {
+          if (wsTabReply) wsTabReply.className = 'hd-comp-tab-btn';
+          if (wsTabInternal) wsTabInternal.className = 'hd-comp-tab-btn active-internal';
+          if (wsReplyText) {
+            wsReplyText.classList.add('internal-mode');
+            wsReplyText.placeholder = '🔒 Type private note... (Visible ONLY to support team reps, hidden from customer)';
+          }
+          if (wsBtnSend) wsBtnSend.textContent = 'Save Internal Note 🔒';
+          if (hint) hint.innerHTML = '<span style="color: #b45309; font-weight: 600;">🔒 Yellow Private Note: Confidential to team</span>';
+        } else {
+          if (wsTabReply) wsTabReply.className = 'hd-comp-tab-btn active-reply';
+          if (wsTabInternal) wsTabInternal.className = 'hd-comp-tab-btn';
+          if (wsReplyText) {
+            wsReplyText.classList.remove('internal-mode');
+            wsReplyText.placeholder = 'Type your reply to customer...';
+          }
+          if (wsBtnSend) wsBtnSend.textContent = 'Send Reply 🚀';
+          if (hint) hint.textContent = 'Customer will receive email & WhatsApp alert';
+        }
+      }
+
+      if (wsTabReply) wsTabReply.addEventListener('click', () => setComposerMode('reply'));
+      if (wsTabInternal) wsTabInternal.addEventListener('click', () => setComposerMode('internal'));
+
+      // Canned Response auto-populate
+      if (wsCannedSelect) {
+        wsCannedSelect.addEventListener('change', () => {
+          const val = wsCannedSelect.value;
+          if (val && cannedTemplates[val]) {
+            if (wsReplyText) {
+              wsReplyText.value = cannedTemplates[val];
+              wsReplyText.focus();
+            }
+          }
+        });
+      }
+
+      // Render Messages in Workspace
+      function renderWorkspaceMessages(ticket) {
+        const msgContainer = document.getElementById('ws-messages-container');
+        if (!msgContainer) return;
+
+        // If in Client mode, hide internal notes
+        const visibleMsgs = ticket.messages.filter(m => {
+          if (hdState.role === 'client' && m.sender === 'internal') return false;
+          return true;
+        });
+
+        msgContainer.innerHTML = visibleMsgs.map(m => {
+          if (m.sender === 'internal') {
+            return `
+              <div class="hd-msg-bubble internal">
+                <div class="hd-msg-content">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <strong style="color: #854d0e;">🔒 Private Internal Note • ${m.author}</strong>
+                    <span style="font-size: 11px; color: #a16207;">${m.time}</span>
+                  </div>
+                  <div>${m.text}</div>
+                </div>
+              </div>
+            `;
+          }
+
+          const isClient = m.sender === 'client';
+          const bubbleClass = isClient ? 'client' : 'agent';
+          return `
+            <div class="hd-msg-bubble ${bubbleClass}">
+              <div class="hd-msg-meta">
+                <strong>${m.author}</strong> • <span>${m.time}</span>
+              </div>
+              <div class="hd-msg-content">
+                ${m.text}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Scroll to bottom
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+      }
+
+      // Send Message Handler
+      if (wsBtnSend) {
+        wsBtnSend.addEventListener('click', () => {
+          const text = wsReplyText ? wsReplyText.value.trim() : '';
+          if (!text) {
+            showToast('Please enter a message before sending.');
+            return;
+          }
+
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+
+          const isInternal = hdState.composerMode === 'internal';
+          const isClientRole = hdState.role === 'client';
+
+          const newMsg = {
+            id: `msg-${ticket.messages.length + 1}`,
+            sender: isInternal ? 'internal' : (isClientRole ? 'client' : 'agent'),
+            author: isInternal ? 'Rahul Sharma' : (isClientRole ? `${ticket.clientName} (Client)` : 'Rahul Sharma (Support Agent)'),
+            avatar: isClientRole ? 'CL' : 'RS',
+            time: 'Just now',
+            text: text
+          };
+
+          ticket.messages.push(newMsg);
+
+          // Update status if client replied or agent replied
+          if (isClientRole) {
+            if (ticket.status === 'Waiting on Client') ticket.status = 'In Progress';
+          } else if (!isInternal) {
+            if (ticket.status === 'Open' || ticket.status === 'In Progress') ticket.status = 'Waiting on Client';
+          }
+
+          renderWorkspaceMessages(ticket);
+          if (wsReplyText) wsReplyText.value = '';
+
+          showToast(isInternal ? '🔒 Private internal note saved.' : '🚀 Reply dispatched to thread.');
+          renderTeamTickets();
+          renderClientTickets();
+        });
+      }
+
+      // Mark Resolved
+      if (wsBtnMarkResolved) {
+        wsBtnMarkResolved.addEventListener('click', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+
+          ticket.status = 'Resolved';
+          if (wsStatusSelect) wsStatusSelect.value = 'Resolved';
+          showToast(`✓ Ticket ${ticket.id} marked as Resolved!`);
+          renderWorkspaceMessages(ticket);
+          renderTeamTickets();
+          renderClientTickets();
+
+          const csatWrap = document.getElementById('ws-csat-container');
+          if (csatWrap && hdState.role === 'client') {
+            csatWrap.style.display = 'block';
+          }
+        });
+      }
+
+      // Workspace Status Change
+      if (wsStatusSelect) {
+        wsStatusSelect.addEventListener('change', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+          ticket.status = wsStatusSelect.value;
+          showToast(`Ticket status updated to ${ticket.status}`);
+          renderTeamTickets();
+          renderClientTickets();
+        });
+      }
+
+      // Workspace Assignee Change
+      if (wsAssigneeSelect) {
+        wsAssigneeSelect.addEventListener('change', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+          ticket.assignedTo = wsAssigneeSelect.value;
+          ticket.avatar = ticket.assignedTo === 'Unassigned' ? 'UN' : ticket.assignedTo.split(' ').map(n => n[0]).join('');
+          showToast(`Assigned specialist changed to ${ticket.assignedTo}`);
+          renderTeamTickets();
+        });
+      }
+
+      // Workspace Priority Change
+      if (wsPrioritySelect) {
+        wsPrioritySelect.addEventListener('change', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+          ticket.priority = wsPrioritySelect.value;
+          const wsPriority = document.getElementById('ws-ticket-priority');
+          if (wsPriority) {
+            wsPriority.className = `hd-prio-chip ${ticket.priority.toLowerCase()}`;
+            wsPriority.textContent = ticket.priority === 'Urgent' ? 'Urgent 🚨' : ticket.priority;
+          }
+          showToast(`Priority updated to ${ticket.priority}`);
+          renderTeamTickets();
+        });
+      }
+
+      // CSAT Stars in Workspace
+      const wsCsatStars = document.querySelectorAll('#ws-csat-stars .hd-csat-star');
+      const wsCsatLabel = document.getElementById('ws-csat-label');
+      const csatComments = {
+        '1': '1 - Needs serious improvement',
+        '2': '2 - Below expectations',
+        '3': '3 - Average resolution',
+        '4': '4 - Great support & quick turnaround',
+        '5': '5 - Superb! Five-star experience.'
+      };
+
+      wsCsatStars.forEach(star => {
+        star.addEventListener('click', () => {
+          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
+          wsCsatStars.forEach(s => {
+            const val = parseInt(s.getAttribute('data-rating') || '0', 10);
+            if (val <= r) s.classList.add('active');
+            else s.classList.remove('active');
+          });
+          if (wsCsatLabel) wsCsatLabel.textContent = csatComments[r] || `${r} Stars`;
+          showToast(`⭐ Thank you for rating ${r} stars on ticket ${hdState.activeTicketId}!`);
+        });
+      });
+
+      // Quick WhatsApp client button in workspace
+      const wsBtnWaClient = document.getElementById('ws-btn-wa-client');
+      if (wsBtnWaClient) {
+        wsBtnWaClient.addEventListener('click', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (ticket) {
+            const phone = ticket.clientPhone.replace(/[^0-9]/g, '');
+            const msg = encodeURIComponent(`Hello ${ticket.clientName}, Simplefloww Support is following up on your ticket ${ticket.id}: "${ticket.subject}".`);
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+          }
+        });
+      }
+
+      // Escalate to Tier-2 Engineering
+      const wsBtnEscalate = document.getElementById('ws-btn-escalate');
+      if (wsBtnEscalate) {
+        wsBtnEscalate.addEventListener('click', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (ticket) {
+            ticket.priority = 'Urgent';
+            ticket.messages.push({
+              id: `msg-${ticket.messages.length + 1}`,
+              sender: 'internal',
+              author: 'Rahul Sharma',
+              avatar: 'RS',
+              time: 'Just now',
+              text: '🛡️ [SYSTEM ESCALATION]: Ticket escalated to Tier-2 Cloud Infrastructure Engineering. Priority set to Urgent with expedited 30-min SLA timer.'
+            });
+            showToast(`🛡️ Ticket ${ticket.id} escalated to Tier-2 Engineering!`);
+            renderWorkspaceMessages(ticket);
+            renderTeamTickets();
+          }
+        });
+      }
+
+      // 11. Modal: Raise New Ticket
+      const btnRaiseTop = document.getElementById('btn-raise-ticket-top');
+      const btnRaiseClient = document.getElementById('btn-raise-ticket-client');
+      const modalRaiseTicket = document.getElementById('modal-raise-ticket');
+      const modalCloseRaiseTicket = document.getElementById('modal-close-raise-ticket');
+      const modalCancelRaiseTicket = document.getElementById('modal-cancel-raise-ticket');
+      const formRaiseTicket = document.getElementById('form-raise-ticket');
+      const priorityPills = document.querySelectorAll('#nt-priority-options .hd-pill-btn');
+      const priorityValInp = document.getElementById('nt-priority-val');
+
+      function openRaiseTicketModal() {
+        if (modalRaiseTicket) modalRaiseTicket.style.display = 'flex';
+      }
+
+      function closeRaiseTicketModal() {
+        if (modalRaiseTicket) modalRaiseTicket.style.display = 'none';
+        if (formRaiseTicket) formRaiseTicket.reset();
+        const attachedName = document.getElementById('nt-attached-filename');
+        if (attachedName) attachedName.style.display = 'none';
+      }
+
+      if (btnRaiseTop) btnRaiseTop.addEventListener('click', openRaiseTicketModal);
+      if (btnRaiseClient) btnRaiseClient.addEventListener('click', openRaiseTicketModal);
+      if (modalCloseRaiseTicket) modalCloseRaiseTicket.addEventListener('click', closeRaiseTicketModal);
+      if (modalCancelRaiseTicket) modalCancelRaiseTicket.addEventListener('click', closeRaiseTicketModal);
+
+      // Priority pill selector in Raise Ticket modal
+      priorityPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          priorityPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const prio = pill.getAttribute('data-priority') || 'High';
+          if (priorityValInp) priorityValInp.value = prio;
+        });
+      });
+
+      // Mock Dropzone in Raise Ticket
+      const ntDropzone = document.getElementById('nt-dropzone');
+      const ntAttachedName = document.getElementById('nt-attached-filename');
+      if (ntDropzone) {
+        ntDropzone.addEventListener('click', () => {
+          if (ntAttachedName) {
+            ntAttachedName.style.display = 'block';
+            ntAttachedName.textContent = '✓ Attachment ready: error_screenshot_log.png (1.2 MB)';
+          }
+        });
+      }
+
+      // Form submit: Raise ticket
+      if (formRaiseTicket) {
+        formRaiseTicket.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const category = document.getElementById('nt-category')?.value || 'WhatsApp Cloud API';
+          const subject = document.getElementById('nt-subject')?.value || 'Issue Report';
+          const priority = priorityValInp ? priorityValInp.value : 'High';
+          const description = document.getElementById('nt-description')?.value || '';
+
+          const newIdNumber = 1086 + helpdeskTicketsData.length - 6;
+          const newTicketId = `TK-${newIdNumber}`;
+
+          let catIcon = '📱';
+          if (category.includes('Broadcast')) catIcon = '📢';
+          else if (category.includes('Chatbot')) catIcon = '🤖';
+          else if (category.includes('Billing')) catIcon = '💳';
+          else if (category.includes('Auto Assign')) catIcon = '👥';
+
+          const newTicket = {
+            id: newTicketId,
+            subject: subject,
+            clientName: 'TechNova Solutions',
+            clientEmail: 'contact@technova.in',
+            clientPhone: '+91 98201 44521',
+            clientTier: 'Enterprise Pro Plan',
+            category: category,
+            categoryIcon: catIcon,
+            priority: priority,
+            status: 'Open',
+            assignedTo: 'Unassigned',
+            avatar: 'UN',
+            createdAt: 'Just now',
+            createdTimestamp: Date.now(),
+            slaTargetMins: priority === 'Urgent' ? 60 : (priority === 'High' ? 120 : 240),
+            slaRemainingMins: priority === 'Urgent' ? 60 : (priority === 'High' ? 120 : 240),
+            slaStatus: 'ok',
+            clientVisible: true,
+            messages: [
+              {
+                id: 'msg-1',
+                sender: 'client',
+                author: 'TechNova Solutions',
+                avatar: 'TN',
+                time: 'Just now',
+                text: description
+              }
+            ]
+          };
+
+          helpdeskTicketsData.unshift(newTicket);
+          closeRaiseTicketModal();
+          showToast(`🎉 Ticket #${newTicketId} created successfully! SLA resolution timer started.`);
+          renderTeamTickets();
+          renderClientTickets();
+          openTicketWorkspace(newTicketId);
+        });
+      }
+
+      // Initial Render
+      renderTeamTickets();
+      renderClientTickets();
+    }
+
+    initHelpDeskTicketing();
   }
 
   initHelpDesk();
   refreshDashboard(false);
 
 });
+
 
 
