@@ -4519,13 +4519,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         helpdeskTicketsData.forEach(t => {
           const prioBorder = t.priority === 'Urgent' ? 'urgent-border' : '';
+          
+          let moveButtons = '';
+          if (t.status === 'Open') {
+            moveButtons = `<button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="In Progress">➔ Start Working</button>`;
+          } else if (t.status === 'In Progress') {
+            moveButtons = `
+              <button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="Waiting on Client">➔ Ask Client</button>
+              <button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="Resolved" style="color: #15803d; border-color: #bbf7d0;">✓ Resolve</button>
+            `;
+          } else if (t.status === 'Waiting on Client') {
+            moveButtons = `
+              <button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="In Progress">➔ In Progress</button>
+              <button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="Resolved" style="color: #15803d; border-color: #bbf7d0;">✓ Resolve</button>
+            `;
+          } else if (t.status === 'Resolved') {
+            moveButtons = `<button type="button" class="hd-kanban-move-btn" data-move-id="${t.id}" data-move-to="In Progress">↺ Re-Open</button>`;
+          }
+
           const cardHtml = `
-            <div class="hd-kanban-card ${prioBorder} btn-open-workspace" data-ticket-id="${t.id}">
+            <div class="hd-kanban-card ${prioBorder}" data-ticket-id="${t.id}">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <span class="hd-ticket-id-tag">${t.id}</span>
+                <span class="hd-ticket-id-tag btn-open-workspace" data-ticket-id="${t.id}" style="cursor: pointer;">${t.id}</span>
                 <span class="hd-prio-chip ${t.priority.toLowerCase()}">${t.priority}</span>
               </div>
-              <div style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 6px;">
+              <div class="btn-open-workspace" data-ticket-id="${t.id}" style="font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 6px; cursor: pointer;">
                 ${t.subject}
               </div>
               <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
@@ -4539,6 +4557,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="hd-sla-badge ${t.status === 'Resolved' ? 'ok' : (t.slaRemainingMins <= 30 ? 'warning' : 'ok')}" style="font-size: 10px; padding: 2px 6px;">
                   ${t.status === 'Resolved' ? '✓ Closed' : `${t.slaRemainingMins}m`}
                 </span>
+              </div>
+              <div class="hd-kanban-quick-actions">
+                ${moveButtons}
               </div>
             </div>
           `;
@@ -4696,10 +4717,167 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sCliRes) sCliRes.textContent = resolved;
       }
 
-      // 9. Attach Listeners for Table & Cards
+      // =======================================================================
+      // AUDIO SOUND EFFECTS ENGINE (Web Audio API - Zero Asset Dependency)
+      // =======================================================================
+      function playHelpdeskSound(type = 'message') {
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          const ctx = new AudioCtx();
+          const now = ctx.currentTime;
+
+          if (type === 'message') {
+            // Smooth harmonic two-tone notification chime (E5 -> A5)
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(659.25, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.42);
+          } else if (type === 'alert') {
+            // Urgent double-pulse chime (880Hz)
+            [0, 0.14].forEach(delay => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(880, now + delay);
+              gain.gain.setValueAtTime(0.22, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.12);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.12);
+            });
+          } else if (type === 'success') {
+            // Tri-tone celebratory chime (C5 -> E5 -> G5)
+            [523.25, 659.25, 783.99].forEach((freq, idx) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+              gain.gain.setValueAtTime(0.18, now + idx * 0.09);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.38);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + idx * 0.09);
+              osc.stop(now + idx * 0.09 + 0.38);
+            });
+          }
+        } catch (e) {
+          // AudioContext might be waiting for user gesture
+        }
+      }
+
+      // =======================================================================
+      // LIVE NOTIFICATION POPUP GENERATOR
+      // =======================================================================
+      function showHelpdeskNotification({ title, sender, text, ticketId, type = 'message' }) {
+        playHelpdeskSound(type === 'alert' ? 'alert' : (type === 'success' ? 'success' : 'message'));
+
+        // Update header bell badge
+        const bellBadge = document.getElementById('header-bell-badge');
+        if (bellBadge) {
+          const cur = parseInt(bellBadge.textContent || '0', 10);
+          bellBadge.textContent = cur + 1;
+          bellBadge.style.display = 'inline-flex';
+        }
+
+        const container = document.getElementById('hd-notification-toast-container');
+        if (!container) return;
+
+        const card = document.createElement('div');
+        card.className = `hd-notif-card ${type}`;
+        card.innerHTML = `
+          <div class="hd-notif-avatar">${sender ? sender.slice(0, 2).toUpperCase() : '🔔'}</div>
+          <div class="hd-notif-content">
+            <div class="hd-notif-header">
+              <strong class="hd-notif-sender">${sender}</strong>
+              <span class="hd-notif-ticket">${ticketId ? '#' + ticketId : ''}</span>
+            </div>
+            <div class="hd-notif-text">${text}</div>
+            ${ticketId ? `<button type="button" class="hd-notif-action" data-ticket="${ticketId}">View Ticket 💬</button>` : ''}
+          </div>
+          <button type="button" class="hd-notif-close">&times;</button>
+        `;
+
+        container.appendChild(card);
+
+        const viewBtn = card.querySelector('.hd-notif-action');
+        if (viewBtn) {
+          viewBtn.addEventListener('click', () => {
+            openTicketWorkspace(ticketId);
+            card.remove();
+          });
+        }
+
+        const closeBtn = card.querySelector('.hd-notif-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => card.remove());
+        }
+
+        setTimeout(() => {
+          if (card.parentNode) {
+            card.classList.add('fade-out');
+            setTimeout(() => card.remove(), 280);
+          }
+        }, 5500);
+      }
+
+      // Header Notification Bell Click Handler
+      const headerBellBtn = document.getElementById('header-bell-btn');
+      if (headerBellBtn) {
+        headerBellBtn.addEventListener('click', () => {
+          const bellBadge = document.getElementById('header-bell-badge');
+          if (bellBadge) {
+            bellBadge.textContent = '0';
+            bellBadge.style.display = 'none';
+          }
+          showToast('🔔 Notification Center: All support ticket alerts marked as read.');
+        });
+      }
+
+      // Context-aware Smart Auto-Reply Generator
+      function getSmartAutoReply(ticket, userMsg, isClientRole) {
+        const q = (userMsg || '').toLowerCase();
+        const cat = (ticket.category || '').toLowerCase();
+
+        if (isClientRole) {
+          // Client sent a message -> Support Agent replies
+          if (cat.includes('whatsapp') || q.includes('401') || q.includes('webhook') || q.includes('token')) {
+            return `Hello Arjun! We ran a live diagnostic ping against Meta Graph API v21.0. Your webhook signature is now validated and returning HTTP 200 OK. Incoming leads from WhatsApp are syncing in real time!`;
+          }
+          if (cat.includes('broadcast') || q.includes('template') || q.includes('diwali') || q.includes('reject')) {
+            return `Hi! We checked the template formatting. All variables {{1}} have been tagged with marketing sample previews and submitted to Meta's expedited approval pipeline. It will be active within 15 minutes!`;
+          }
+          if (cat.includes('billing') || q.includes('gst') || q.includes('invoice') || q.includes('tax')) {
+            return `Hello! Your Maharashtra GSTIN 27AAACA9812K1Z9 is updated in company billing records. Amended tax invoice #INV-2026-09-881 is generated with 18% ITC credit.`;
+          }
+          if (cat.includes('chatbot') || q.includes('ai') || q.includes('hinglish') || q.includes('hindi')) {
+            return `Hi! We enabled Multilingual NLU embedding for Hindi and Hinglish queries. The chatbot will now directly answer shipping and delivery queries in colloquial Hindi without triggering manual agent fallback.`;
+          }
+          return `Hello! Thank you for the update. Our support engineering team has reviewed your log trace and updated your account configuration. Please verify and let us know if any further help is needed.`;
+        } else {
+          // Agent sent a public message -> Customer replies
+          if (q.includes('fixed') || q.includes('approve') || q.includes('updated') || q.includes('check')) {
+            return `Thanks Rahul! We just tested it on our live customer dashboard and verified everything is working smoothly now. Appreciate the super fast turnaround!`;
+          }
+          return `Understood, thank you for looking into this so quickly! We will monitor the dashboard and let you know if anything else comes up.`;
+        }
+      }
+
+      // 9. Attach Listeners for Table & Kanban Cards
       function attachTicketActionListeners() {
         document.querySelectorAll('.btn-open-workspace').forEach(btn => {
-          btn.addEventListener('click', () => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             const ticketId = btn.getAttribute('data-ticket-id');
             if (ticketId) openTicketWorkspace(ticketId);
           });
@@ -4713,8 +4891,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
             if (ticket) {
               ticket.status = newStatus;
-              showToast(`Ticket ${ticketId} status changed to "${newStatus}"`);
+              playHelpdeskSound('message');
+              showHelpdeskNotification({
+                title: 'Ticket Status Updated',
+                sender: 'System Dispatcher',
+                text: `Ticket #${ticketId} status changed to "${newStatus}"`,
+                ticketId: ticketId,
+                type: newStatus === 'Resolved' ? 'success' : 'message'
+              });
               renderTeamTickets();
+              if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
             }
           });
         });
@@ -4728,7 +4914,38 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ticket) {
               ticket.assignedTo = newAssignee;
               ticket.avatar = newAssignee === 'Unassigned' ? 'UN' : newAssignee.split(' ').map(n => n[0]).join('');
-              showToast(`Ticket ${ticketId} reassigned to ${newAssignee}`);
+              playHelpdeskSound('message');
+              showHelpdeskNotification({
+                title: 'Ticket Reassigned',
+                sender: newAssignee,
+                text: `Ticket #${ticketId} assigned to specialist ${newAssignee}`,
+                ticketId: ticketId,
+                type: 'message'
+              });
+              renderTeamTickets();
+              if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
+            }
+          });
+        });
+
+        // Kanban Quick Advance buttons
+        document.querySelectorAll('.hd-kanban-move-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const ticketId = btn.getAttribute('data-move-id');
+            const moveTo = btn.getAttribute('data-move-to');
+            const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
+            if (ticket && moveTo) {
+              ticket.status = moveTo;
+              playHelpdeskSound(moveTo === 'Resolved' ? 'success' : 'message');
+              showHelpdeskNotification({
+                title: 'Kanban Move',
+                sender: 'Support Queue',
+                text: `Moved #${ticketId} to "${moveTo}"`,
+                ticketId: ticketId,
+                type: moveTo === 'Resolved' ? 'success' : 'message'
+              });
+              renderKanbanBoard();
               renderTeamTickets();
             }
           });
@@ -4749,6 +4966,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const wsStatusSelect = document.getElementById('ws-ticket-status-select');
       const wsAssigneeSelect = document.getElementById('ws-assignee-select');
       const wsPrioritySelect = document.getElementById('ws-priority-select');
+      const wsBtnAttachFile = document.getElementById('ws-btn-attach-file');
+      const wsComposerAttWrap = document.getElementById('ws-composer-att-wrap');
+      const wsBtnRemoveAtt = document.getElementById('ws-btn-remove-att');
+      const wsBtnSubmitCsat = document.getElementById('ws-btn-submit-csat');
+      const wsCsatReviewInp = document.getElementById('ws-csat-review-inp');
+
+      let currentAttachment = null;
 
       function openTicketWorkspace(ticketId) {
         const ticket = helpdeskTicketsData.find(t => t.id === ticketId);
@@ -4827,6 +5051,8 @@ document.addEventListener('DOMContentLoaded', () => {
       function closeTicketWorkspace() {
         if (modalWorkspace) modalWorkspace.classList.remove('show');
         hdState.activeTicketId = null;
+        currentAttachment = null;
+        if (wsComposerAttWrap) wsComposerAttWrap.style.display = 'none';
         if (wsReplyText) {
           wsReplyText.value = '';
           wsReplyText.classList.remove('internal-mode');
@@ -4834,6 +5060,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (wsBtnClose) wsBtnClose.addEventListener('click', closeTicketWorkspace);
+
+      // Composer Attachment button
+      if (wsBtnAttachFile) {
+        wsBtnAttachFile.addEventListener('click', () => {
+          currentAttachment = 'webhook_trace_error.png (1.2 MB)';
+          if (wsComposerAttWrap) {
+            wsComposerAttWrap.style.display = 'block';
+            const attName = document.getElementById('ws-composer-att-name');
+            if (attName) attName.textContent = currentAttachment;
+          }
+          showToast('📎 Attached screenshot: webhook_trace_error.png');
+        });
+      }
+
+      if (wsBtnRemoveAtt) {
+        wsBtnRemoveAtt.addEventListener('click', () => {
+          currentAttachment = null;
+          if (wsComposerAttWrap) wsComposerAttWrap.style.display = 'none';
+        });
+      }
 
       // Composer Tab: Reply vs Private Note
       function setComposerMode(mode) {
@@ -4853,7 +5099,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (wsTabInternal) wsTabInternal.className = 'hd-comp-tab-btn';
           if (wsReplyText) {
             wsReplyText.classList.remove('internal-mode');
-            wsReplyText.placeholder = 'Type your reply to customer...';
+            wsReplyText.placeholder = 'Type your reply... (Enter sends reply, supports markdown)';
           }
           if (wsBtnSend) wsBtnSend.textContent = 'Send Reply 🚀';
           if (hint) hint.textContent = 'Customer will receive email & WhatsApp alert';
@@ -4904,13 +5150,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const isClient = m.sender === 'client';
           const bubbleClass = isClient ? 'client' : 'agent';
+          
+          let attachmentHtml = '';
+          if (m.attachments && m.attachments.length > 0) {
+            attachmentHtml = m.attachments.map(att => `
+              <div class="hd-msg-attachment" title="Click to view file">
+                <span class="hd-att-icon">📎</span>
+                <div>
+                  <div class="hd-att-title">${att}</div>
+                  <div class="hd-att-meta">Attached File • Click to preview</div>
+                </div>
+              </div>
+            `).join('');
+          }
+
           return `
             <div class="hd-msg-bubble ${bubbleClass}">
               <div class="hd-msg-meta">
                 <strong>${m.author}</strong> • <span>${m.time}</span>
               </div>
               <div class="hd-msg-content">
-                ${m.text}
+                <div>${m.text}</div>
+                ${attachmentHtml}
               </div>
             </div>
           `;
@@ -4920,49 +5181,135 @@ document.addEventListener('DOMContentLoaded', () => {
         msgContainer.scrollTop = msgContainer.scrollHeight;
       }
 
-      // Send Message Handler
-      if (wsBtnSend) {
-        wsBtnSend.addEventListener('click', () => {
-          const text = wsReplyText ? wsReplyText.value.trim() : '';
-          if (!text) {
-            showToast('Please enter a message before sending.');
-            return;
+      // Send Message Handler with Real-Time Simulated Auto-Reply & Sound Chimes
+      function handleSendMessage() {
+        const text = wsReplyText ? wsReplyText.value.trim() : '';
+        if (!text && !currentAttachment) {
+          showToast('Please enter a message or attach a file before sending.');
+          return;
+        }
+
+        const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+        if (!ticket) return;
+
+        const isInternal = hdState.composerMode === 'internal';
+        const isClientRole = hdState.role === 'client';
+
+        const newMsg = {
+          id: `msg-${ticket.messages.length + 1}`,
+          sender: isInternal ? 'internal' : (isClientRole ? 'client' : 'agent'),
+          author: isInternal ? 'Rahul Sharma' : (isClientRole ? `${ticket.clientName} (Client)` : `${ticket.assignedTo} (Support Rep)`),
+          avatar: isClientRole ? 'CL' : 'RS',
+          time: 'Just now',
+          text: text || '(Attachment sent)',
+          attachments: currentAttachment ? [currentAttachment] : undefined
+        };
+
+        ticket.messages.push(newMsg);
+
+        // Play sent sound
+        playHelpdeskSound('message');
+
+        // Reset composer & attachments
+        if (wsReplyText) wsReplyText.value = '';
+        currentAttachment = null;
+        if (wsComposerAttWrap) wsComposerAttWrap.style.display = 'none';
+
+        // Update ticket status
+        if (isClientRole) {
+          if (ticket.status === 'Waiting on Client' || ticket.status === 'Resolved') ticket.status = 'In Progress';
+        } else if (!isInternal) {
+          if (ticket.status === 'Open' || ticket.status === 'In Progress') ticket.status = 'Waiting on Client';
+        }
+
+        renderWorkspaceMessages(ticket);
+        renderTeamTickets();
+        renderClientTickets();
+        if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
+
+        showToast(isInternal ? '🔒 Private internal note saved.' : '🚀 Reply sent successfully!');
+
+        // TRIGGER SIMULATED LIVE AUTO-REPLY IF NOT INTERNAL NOTE
+        if (!isInternal) {
+          const msgContainer = document.getElementById('ws-messages-container');
+          const responderName = isClientRole ? (ticket.assignedTo === 'Unassigned' ? 'Rahul Sharma (API Specialist)' : ticket.assignedTo) : ticket.clientName;
+          const responderAvatar = isClientRole ? 'RS' : 'TN';
+
+          // Show typing indicator
+          if (msgContainer) {
+            const typingEl = document.createElement('div');
+            typingEl.className = 'hd-typing-wrap';
+            typingEl.id = 'ws-typing-indicator';
+            typingEl.innerHTML = `
+              <div class="hd-agent-avatar" style="width: 26px; height: 26px; font-size: 11px;">${responderAvatar}</div>
+              <div class="hd-typing-dots">
+                <span class="hd-typing-dot"></span>
+                <span class="hd-typing-dot"></span>
+                <span class="hd-typing-dot"></span>
+              </div>
+              <span class="hd-typing-label">${responderName} is typing a reply...</span>
+            `;
+            msgContainer.appendChild(typingEl);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
           }
 
-          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
-          if (!ticket) return;
+          // Delay for realistic typing
+          const delayMs = isClientRole ? 2200 : 3200;
+          setTimeout(() => {
+            // Remove typing indicator
+            const typingEl = document.getElementById('ws-typing-indicator');
+            if (typingEl) typingEl.remove();
 
-          const isInternal = hdState.composerMode === 'internal';
-          const isClientRole = hdState.role === 'client';
+            const replyContent = getSmartAutoReply(ticket, text, isClientRole);
 
-          const newMsg = {
-            id: `msg-${ticket.messages.length + 1}`,
-            sender: isInternal ? 'internal' : (isClientRole ? 'client' : 'agent'),
-            author: isInternal ? 'Rahul Sharma' : (isClientRole ? `${ticket.clientName} (Client)` : 'Rahul Sharma (Support Agent)'),
-            avatar: isClientRole ? 'CL' : 'RS',
-            time: 'Just now',
-            text: text
-          };
+            const autoReplyMsg = {
+              id: `msg-${ticket.messages.length + 1}`,
+              sender: isClientRole ? 'agent' : 'client',
+              author: isClientRole ? `${ticket.assignedTo} (Support Specialist)` : `${ticket.clientName} (Client)`,
+              avatar: responderAvatar,
+              time: 'Just now',
+              text: replyContent
+            };
 
-          ticket.messages.push(newMsg);
+            ticket.messages.push(autoReplyMsg);
 
-          // Update status if client replied or agent replied
-          if (isClientRole) {
-            if (ticket.status === 'Waiting on Client') ticket.status = 'In Progress';
-          } else if (!isInternal) {
-            if (ticket.status === 'Open' || ticket.status === 'In Progress') ticket.status = 'Waiting on Client';
+            if (isClientRole) {
+              ticket.status = 'Waiting on Client';
+            } else {
+              ticket.status = 'In Progress';
+            }
+
+            // Re-render chat
+            renderWorkspaceMessages(ticket);
+            renderTeamTickets();
+            renderClientTickets();
+            if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
+
+            // TRIGGER AUDIO CHIME & FLOATING NOTIFICATION BANNER!
+            showHelpdeskNotification({
+              title: isClientRole ? 'New Support Reply' : 'New Client Reply',
+              sender: responderName,
+              text: replyContent,
+              ticketId: ticket.id,
+              type: 'message'
+            });
+          }, delayMs);
+        }
+      }
+
+      if (wsBtnSend) wsBtnSend.addEventListener('click', handleSendMessage);
+
+      // Enter key shortcut in composer (Enter to send, Shift+Enter for newline)
+      if (wsReplyText) {
+        wsReplyText.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
           }
-
-          renderWorkspaceMessages(ticket);
-          if (wsReplyText) wsReplyText.value = '';
-
-          showToast(isInternal ? '🔒 Private internal note saved.' : '🚀 Reply dispatched to thread.');
-          renderTeamTickets();
-          renderClientTickets();
         });
       }
 
-      // Mark Resolved
+      // Mark Resolved Handler
       if (wsBtnMarkResolved) {
         wsBtnMarkResolved.addEventListener('click', () => {
           const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
@@ -4970,15 +5317,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
           ticket.status = 'Resolved';
           if (wsStatusSelect) wsStatusSelect.value = 'Resolved';
-          showToast(`✓ Ticket ${ticket.id} marked as Resolved!`);
+          playHelpdeskSound('success');
+          showHelpdeskNotification({
+            title: 'Ticket Resolved',
+            sender: 'Resolution Bot',
+            text: `Ticket #${ticket.id} marked as resolved! Satisfaction rating survey unlocked.`,
+            ticketId: ticket.id,
+            type: 'success'
+          });
+
           renderWorkspaceMessages(ticket);
           renderTeamTickets();
           renderClientTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
 
           const csatWrap = document.getElementById('ws-csat-container');
           if (csatWrap && hdState.role === 'client') {
             csatWrap.style.display = 'block';
           }
+        });
+      }
+
+      // CSAT Stars Click Handler
+      let currentCsatRating = 5;
+      const wsCsatStars = document.querySelectorAll('#ws-csat-stars .hd-csat-star');
+      const wsCsatLabel = document.getElementById('ws-csat-label');
+      const csatComments = {
+        '1': '1 - Disappointed (Needs serious improvement)',
+        '2': '2 - Below expectations',
+        '3': '3 - Average resolution',
+        '4': '4 - Great support & fast turnaround!',
+        '5': '5 - Superb! Five-star experience.'
+      };
+
+      wsCsatStars.forEach(star => {
+        star.addEventListener('click', () => {
+          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
+          currentCsatRating = r;
+          wsCsatStars.forEach(s => {
+            const val = parseInt(s.getAttribute('data-rating') || '0', 10);
+            if (val <= r) s.classList.add('active');
+            else s.classList.remove('active');
+          });
+          if (wsCsatLabel) wsCsatLabel.textContent = csatComments[r] || `${r} Stars`;
+        });
+      });
+
+      // CSAT Review Submit Handler
+      if (wsBtnSubmitCsat) {
+        wsBtnSubmitCsat.addEventListener('click', () => {
+          const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+          if (!ticket) return;
+
+          const comment = wsCsatReviewInp ? wsCsatReviewInp.value.trim() : '';
+          ticket.csat = currentCsatRating;
+          ticket.csatComment = comment || 'Excellent support service!';
+
+          playHelpdeskSound('success');
+          showHelpdeskNotification({
+            title: 'CSAT Rating Submitted',
+            sender: 'Customer Feedback',
+            text: `Client gave ${currentCsatRating}-Star rating on #${ticket.id}! "${ticket.csatComment}"`,
+            ticketId: ticket.id,
+            type: 'success'
+          });
+
+          const csatWrap = document.getElementById('ws-csat-container');
+          if (csatWrap) {
+            csatWrap.innerHTML = `
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 12px; text-align: center; color: #065f46;">
+                <div style="font-weight: 700; font-size: 13.5px;">✓ Thank you! Rating of ${currentCsatRating} Stars Saved.</div>
+                <div style="font-size: 11.5px; margin-top: 2px;">Your feedback helps us continuously improve our API and support response times.</div>
+              </div>
+            `;
+          }
+
+          // Recalculate and update team CSAT
+          updateKPICounters();
         });
       }
 
@@ -4988,9 +5403,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
           if (!ticket) return;
           ticket.status = wsStatusSelect.value;
-          showToast(`Ticket status updated to ${ticket.status}`);
+          playHelpdeskSound(ticket.status === 'Resolved' ? 'success' : 'message');
+          showToast(`Ticket status updated to "${ticket.status}"`);
           renderTeamTickets();
           renderClientTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
         });
       }
 
@@ -5001,8 +5418,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!ticket) return;
           ticket.assignedTo = wsAssigneeSelect.value;
           ticket.avatar = ticket.assignedTo === 'Unassigned' ? 'UN' : ticket.assignedTo.split(' ').map(n => n[0]).join('');
+          playHelpdeskSound('message');
           showToast(`Assigned specialist changed to ${ticket.assignedTo}`);
           renderTeamTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
         });
       }
 
@@ -5012,39 +5431,18 @@ document.addEventListener('DOMContentLoaded', () => {
           const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
           if (!ticket) return;
           ticket.priority = wsPrioritySelect.value;
+          ticket.slaTargetMins = ticket.priority === 'Urgent' ? 60 : (ticket.priority === 'High' ? 120 : 240);
           const wsPriority = document.getElementById('ws-ticket-priority');
           if (wsPriority) {
             wsPriority.className = `hd-prio-chip ${ticket.priority.toLowerCase()}`;
             wsPriority.textContent = ticket.priority === 'Urgent' ? 'Urgent 🚨' : ticket.priority;
           }
-          showToast(`Priority updated to ${ticket.priority}`);
+          playHelpdeskSound(ticket.priority === 'Urgent' ? 'alert' : 'message');
+          showToast(`Priority updated to ${ticket.priority} (${ticket.slaTargetMins / 60}h SLA)`);
           renderTeamTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
         });
       }
-
-      // CSAT Stars in Workspace
-      const wsCsatStars = document.querySelectorAll('#ws-csat-stars .hd-csat-star');
-      const wsCsatLabel = document.getElementById('ws-csat-label');
-      const csatComments = {
-        '1': '1 - Needs serious improvement',
-        '2': '2 - Below expectations',
-        '3': '3 - Average resolution',
-        '4': '4 - Great support & quick turnaround',
-        '5': '5 - Superb! Five-star experience.'
-      };
-
-      wsCsatStars.forEach(star => {
-        star.addEventListener('click', () => {
-          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
-          wsCsatStars.forEach(s => {
-            const val = parseInt(s.getAttribute('data-rating') || '0', 10);
-            if (val <= r) s.classList.add('active');
-            else s.classList.remove('active');
-          });
-          if (wsCsatLabel) wsCsatLabel.textContent = csatComments[r] || `${r} Stars`;
-          showToast(`⭐ Thank you for rating ${r} stars on ticket ${hdState.activeTicketId}!`);
-        });
-      });
 
       // Quick WhatsApp client button in workspace
       const wsBtnWaClient = document.getElementById('ws-btn-wa-client');
@@ -5074,9 +5472,17 @@ document.addEventListener('DOMContentLoaded', () => {
               time: 'Just now',
               text: '🛡️ [SYSTEM ESCALATION]: Ticket escalated to Tier-2 Cloud Infrastructure Engineering. Priority set to Urgent with expedited 30-min SLA timer.'
             });
-            showToast(`🛡️ Ticket ${ticket.id} escalated to Tier-2 Engineering!`);
+            playHelpdeskSound('alert');
+            showHelpdeskNotification({
+              title: 'Incident Escalated',
+              sender: 'Engineering Tier-2',
+              text: `Ticket #${ticket.id} escalated to Cloud Infrastructure Engineering!`,
+              ticketId: ticket.id,
+              type: 'alert'
+            });
             renderWorkspaceMessages(ticket);
             renderTeamTickets();
+            if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
           }
         });
       }
@@ -5173,19 +5579,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 author: 'TechNova Solutions',
                 avatar: 'TN',
                 time: 'Just now',
-                text: description
+                text: description,
+                attachments: ntAttachedName && ntAttachedName.style.display !== 'none' ? ['error_screenshot_log.png (1.2 MB)'] : undefined
               }
             ]
           };
 
           helpdeskTicketsData.unshift(newTicket);
           closeRaiseTicketModal();
-          showToast(`🎉 Ticket #${newTicketId} created successfully! SLA resolution timer started.`);
+
+          playHelpdeskSound('alert');
+          showHelpdeskNotification({
+            title: 'New Ticket Raised',
+            sender: 'TechNova Solutions',
+            text: `New ${priority} Priority Ticket #${newTicketId}: "${subject}"`,
+            ticketId: newTicketId,
+            type: priority === 'Urgent' ? 'alert' : 'message'
+          });
+
           renderTeamTickets();
           renderClientTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
           openTicketWorkspace(newTicketId);
         });
       }
+
+      // 12. REAL-TIME SLA TICKER & WARNING SYSTEM (Runs every 30s)
+      setInterval(() => {
+        let changed = false;
+        helpdeskTicketsData.forEach(t => {
+          if (t.status !== 'Resolved' && t.slaRemainingMins > 0) {
+            t.slaRemainingMins -= 1;
+            changed = true;
+            if (t.slaRemainingMins === 30) {
+              // Trigger SLA warning notification & sound!
+              showHelpdeskNotification({
+                title: 'SLA Breach Warning',
+                sender: 'SLA Guard Engine',
+                text: `Ticket #${t.id} has reached 30 mins to breach! Escalate immediately.`,
+                ticketId: t.id,
+                type: 'alert'
+              });
+            }
+          }
+        });
+        if (changed) {
+          renderTeamTickets();
+          renderClientTickets();
+          if (hdState.teamViewMode === 'kanban') renderKanbanBoard();
+
+          // If active ticket is open, update SLA timer
+          if (hdState.activeTicketId) {
+            const ticket = helpdeskTicketsData.find(t => t.id === hdState.activeTicketId);
+            if (ticket) {
+              const wsSlaBadge = document.getElementById('ws-sla-badge');
+              const wsSlaProgress = document.getElementById('ws-sla-progress');
+              if (wsSlaBadge) {
+                wsSlaBadge.textContent = ticket.status === 'Resolved' ? '✓ Resolved' : `${ticket.slaRemainingMins}m remaining`;
+                wsSlaBadge.className = `hd-sla-badge ${ticket.status === 'Resolved' ? 'ok' : (ticket.slaRemainingMins <= 30 ? 'warning' : 'ok')}`;
+              }
+              if (wsSlaProgress) {
+                const pct = Math.max(10, Math.min(100, Math.round((ticket.slaRemainingMins / ticket.slaTargetMins) * 100)));
+                wsSlaProgress.style.width = `${pct}%`;
+              }
+            }
+          }
+        }
+      }, 30000);
 
       // Initial Render
       renderTeamTickets();

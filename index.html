@@ -264,6 +264,12 @@
             <span class="search-shortcut">⌘J</span>
           </div>
 
+          <!-- Notification Bell -->
+          <button class="theme-btn" id="header-bell-btn" aria-label="Notifications" style="position: relative;" title="Support & Ticket Notifications">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="nav-badge red" id="header-bell-badge" style="position: absolute; top: -4px; right: -4px; min-width: 17px; height: 17px; padding: 0 4px; font-size: 10px; display: none;">0</span>
+          </button>
+
           <!-- Moon / Theme Toggle -->
           <button class="theme-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -2734,8 +2740,8 @@
 
           <!-- CSAT Rating Card (Shows only if ticket is Resolved in Client View) -->
           <div id="ws-csat-container" style="display: none; padding: 12px 20px; background: #fffbeb; border-top: 1px solid #fde68a;">
-            <div class="hd-csat-card" style="padding: 10px 14px;">
-              <div style="font-size: 13px; font-weight: 700; color: #92400e;">⭐ How satisfied are you with this ticket resolution?</div>
+            <div class="hd-csat-card" style="padding: 12px 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: #92400e;">⭐ How satisfied are you with this ticket resolution?</div>
               <div class="hd-csat-stars" id="ws-csat-stars">
                 <span class="hd-csat-star active" data-rating="1">★</span>
                 <span class="hd-csat-star active" data-rating="2">★</span>
@@ -2743,7 +2749,13 @@
                 <span class="hd-csat-star active" data-rating="4">★</span>
                 <span class="hd-csat-star active" data-rating="5">★</span>
               </div>
-              <div id="ws-csat-label" style="font-size: 11.5px; font-weight: 600; color: #b45309;">5 - Superb! Quick turnaround.</div>
+              <div id="ws-csat-label" style="font-size: 12px; font-weight: 600; color: #b45309; margin-bottom: 6px;">5 - Superb! Quick turnaround.</div>
+              <div style="display: flex; gap: 8px; width: 100%; max-width: 480px;">
+                <input type="text" id="ws-csat-review-inp" class="form-input" style="font-size: 12px; padding: 6px 10px;" placeholder="Optional: Leave a comment for the support team..." />
+                <button type="button" class="btn-primary" id="ws-btn-submit-csat" style="font-size: 12px; padding: 6px 14px; white-space: nowrap; background: #f59e0b; border-color: #f59e0b;">
+                  Submit CSAT ⭐
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2774,11 +2786,25 @@
               </select>
             </div>
 
-            <textarea class="hd-composer-textarea" id="ws-reply-text" placeholder="Type your reply to customer... (supports markdown, shortcuts)"></textarea>
+            <!-- Composer Attachment Chip Preview (Hidden by default) -->
+            <div id="ws-composer-att-wrap" style="display: none;">
+              <span class="hd-composer-att-chip">
+                <span>📎</span>
+                <span id="ws-composer-att-name">screenshot_error_debug.png (1.2 MB)</span>
+                <button type="button" class="chip-remove" id="ws-btn-remove-att">&times;</button>
+              </span>
+            </div>
+
+            <textarea class="hd-composer-textarea" id="ws-reply-text" placeholder="Type your reply... (Enter sends reply, supports markdown)"></textarea>
 
             <div class="hd-composer-actions">
-              <div style="font-size: 11.5px; color: #94a3b8;" id="ws-composer-hint">
-                Customer will receive email & WhatsApp alert
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="btn-secondary" id="ws-btn-attach-file" title="Attach screenshot or file" style="font-size: 12px; padding: 5px 10px;">
+                  📎 Attach
+                </button>
+                <span style="font-size: 11.5px; color: #94a3b8;" id="ws-composer-hint">
+                  Customer will receive email & WhatsApp alert
+                </span>
               </div>
               <div style="display: flex; align-items: center; gap: 8px;">
                 <button type="button" class="btn-secondary" id="ws-btn-mark-resolved" style="font-size: 12px; padding: 6px 12px; color: #15803d; border-color: #bbf7d0;">
@@ -2930,6 +2956,9 @@
       </form>
     </div>
   </div>
+
+  <!-- Floating Live Notification Toast Container -->
+  <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
   <!-- Mobile Bottom Navigation Bar (Native App Experience) -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
