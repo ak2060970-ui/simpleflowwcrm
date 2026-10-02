@@ -6957,6 +6957,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       closeWhitelabelApplicationModal();
       showRefToast(`🚀 White-Label instance request received for ${brand} (${domain})! Provisioning portal.`);
+    }
+
     // 19. Interactive Earnings & ROI Calculator Engine
     let calcActiveTrack = 'affiliate'; // 'affiliate' | 'advisor' | 'whitelabel'
 
