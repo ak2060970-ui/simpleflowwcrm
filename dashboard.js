@@ -6022,14 +6022,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (m === 'recurring') {
         const pct = refState.config.recurringPercent;
         if (chip) chip.textContent = `${pct}% Recurring`;
-        if (title) title.textContent = `Refer Clients & Earn ${pct}% Recurring`;
+        if (title) title.textContent = `Your Referral Link`;
         if (sub) sub.textContent = `Clients receive a 10% welcome discount. 20% recurring royalty credits after 7-day refund clearance.`;
         if (tierVal) tierVal.textContent = `Gold VIP (${pct}%)`;
         if (headerTag) headerTag.textContent = `${pct}% Recurring`;
       } else {
         const flat = refState.config.flatBountyAmount;
-        if (chip) chip.textContent = `₹${flat.toLocaleString('en-IN')} Flat Bounty`;
-        if (title) title.textContent = `Refer Clients & Earn ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (chip) chip.textContent = `Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (title) title.textContent = `Your Referral Link`;
         if (sub) sub.textContent = `Earn pure ₹${flat.toLocaleString('en-IN')} cash bounty once per paid signup (no recurring). Credits after 7-day refund clearance.`;
         if (tierVal) tierVal.textContent = `Flat Bounty (₹${flat.toLocaleString('en-IN')})`;
         if (headerTag) headerTag.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
