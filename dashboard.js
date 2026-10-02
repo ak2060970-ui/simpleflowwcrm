@@ -6175,19 +6175,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const btnClients = document.getElementById('tab-ref-clients');
       const btnPayouts = document.getElementById('tab-ref-payouts');
       const btnTiers = document.getElementById('tab-ref-tiers');
+      const btnCalc = document.getElementById('tab-ref-calc');
 
       const panelClients = document.getElementById('panel-ref-clients');
       const panelPayouts = document.getElementById('panel-ref-payouts');
       const panelTiers = document.getElementById('panel-ref-tiers');
+      const panelCalc = document.getElementById('panel-ref-calc');
       const searchWrap = document.getElementById('ref-client-search-wrapper');
 
       if (btnClients) btnClients.classList.toggle('active', tab === 'clients');
       if (btnPayouts) btnPayouts.classList.toggle('active', tab === 'payouts');
       if (btnTiers) btnTiers.classList.toggle('active', tab === 'tiers');
+      if (btnCalc) btnCalc.classList.toggle('active', tab === 'calc');
 
       if (panelClients) panelClients.style.display = tab === 'clients' ? 'block' : 'none';
       if (panelPayouts) panelPayouts.style.display = tab === 'payouts' ? 'block' : 'none';
       if (panelTiers) panelTiers.style.display = tab === 'tiers' ? 'block' : 'none';
+      if (panelCalc) {
+        panelCalc.style.display = tab === 'calc' ? 'block' : 'none';
+        if (tab === 'calc') updateCalcMath();
+      }
       if (searchWrap) searchWrap.style.display = tab === 'clients' ? 'flex' : 'none';
     }
 
@@ -6950,6 +6957,150 @@ document.addEventListener('DOMContentLoaded', () => {
 
       closeWhitelabelApplicationModal();
       showRefToast(`🚀 White-Label instance request received for ${brand} (${domain})! Provisioning portal.`);
+    // 19. Interactive Earnings & ROI Calculator Engine
+    let calcActiveTrack = 'affiliate'; // 'affiliate' | 'advisor' | 'whitelabel'
+
+    function setCalcProgram(track) {
+      calcActiveTrack = track;
+      const btnAff = document.getElementById('calc-btn-affiliate');
+      const btnAdv = document.getElementById('calc-btn-advisor');
+      const btnWL = document.getElementById('calc-btn-whitelabel');
+
+      const affGroup = document.getElementById('calc-affiliate-mode-group');
+      const wlGroup = document.getElementById('calc-wl-markup-group');
+
+      if (btnAff) btnAff.classList.toggle('active', track === 'affiliate');
+      if (btnAdv) btnAdv.classList.toggle('active', track === 'advisor');
+      if (btnWL) btnWL.classList.toggle('active', track === 'whitelabel');
+
+      if (affGroup) affGroup.style.display = track === 'affiliate' ? 'block' : 'none';
+      if (wlGroup) wlGroup.style.display = track === 'whitelabel' ? 'block' : 'none';
+
+      const ctaBtn = document.getElementById('calc-cta-btn');
+      if (ctaBtn) {
+        if (track === 'affiliate') {
+          ctaBtn.innerHTML = '<span>Start as Affiliate (Instant Free) ➔</span>';
+          ctaBtn.onclick = () => switchPartnerTableTab('clients');
+          ctaBtn.style.background = '#2563eb';
+        } else if (track === 'advisor') {
+          ctaBtn.innerHTML = '<span>Apply as Certified Advisor (₹5,000/yr) ➔</span>';
+          ctaBtn.onclick = () => openAdvisorApplicationModal();
+          ctaBtn.style.background = '#7e22ce';
+        } else {
+          ctaBtn.innerHTML = '<span>Request White-Label Portal ➔</span>';
+          ctaBtn.onclick = () => openWhitelabelApplicationModal();
+          ctaBtn.style.background = '#16a34a';
+        }
+      }
+
+      updateCalcMath();
+    }
+
+    function updateCalcMath() {
+      const clientsSlider = document.getElementById('calc-slider-clients');
+      const priceSlider = document.getElementById('calc-slider-price');
+      const wlPriceSlider = document.getElementById('calc-slider-wl-price');
+
+      const clients = clientsSlider ? parseInt(clientsSlider.value, 10) : 5;
+      const price = priceSlider ? parseInt(priceSlider.value, 10) : 4999;
+      const wlPrice = wlPriceSlider ? parseInt(wlPriceSlider.value, 10) : 9999;
+
+      const badgeClients = document.getElementById('calc-badge-clients');
+      if (badgeClients) badgeClients.textContent = `${clients} Client${clients > 1 ? 's' : ''}`;
+
+      const badgePrice = document.getElementById('calc-badge-price');
+      if (badgePrice) badgePrice.textContent = `₹${price.toLocaleString('en-IN')} / mo`;
+
+      const badgeWl = document.getElementById('calc-badge-wl-price');
+      if (badgeWl) badgeWl.textContent = `₹${wlPrice.toLocaleString('en-IN')} / mo`;
+
+      const gmvVal = clients * price;
+      const heroLabel = document.getElementById('calc-hero-label');
+      const monthlyEl = document.getElementById('calc-monthly-val');
+      const annualEl = document.getElementById('calc-annual-val');
+      const gmvEl = document.getElementById('calc-gmv-val');
+      const rateSubEl = document.getElementById('calc-rate-sub');
+      const formulaEl = document.getElementById('calc-formula-desc');
+
+      if (gmvEl) gmvEl.textContent = `₹${gmvVal.toLocaleString('en-IN')}/mo`;
+
+      if (calcActiveTrack === 'affiliate') {
+        const rewardTypeRadio = document.querySelector('input[name="calc-reward-type"]:checked');
+        const isFlat = rewardTypeRadio && rewardTypeRadio.value === 'flat';
+
+        if (isFlat) {
+          const flatEarn = clients * refState.config.flatBountyAmount;
+          if (heroLabel) heroLabel.textContent = 'One-Time Cash Bounty Earnings';
+          if (monthlyEl) {
+            monthlyEl.textContent = `₹${flatEarn.toLocaleString('en-IN')}`;
+            monthlyEl.className = 'calc-result-amount';
+          }
+          if (rateSubEl) rateSubEl.textContent = `Flat ₹${refState.config.flatBountyAmount} bounty per paid client (no renewals)`;
+          if (annualEl) annualEl.textContent = `₹${flatEarn.toLocaleString('en-IN')} (One-Time)`;
+          if (formulaEl) {
+            formulaEl.innerHTML = `💡 <strong>Bounty Math:</strong> ₹${refState.config.flatBountyAmount} × ${clients} clients = ₹${flatEarn.toLocaleString('en-IN')} direct payout after 7-day refund clearance.`;
+          }
+        } else {
+          // Tiered Recurring: 10% for 1-2, 15% for 3-5, 20% for 6+
+          let pct = 10;
+          let tierName = 'Bronze (10%)';
+          if (clients >= 6) {
+            pct = 20;
+            tierName = 'Gold VIP (20%)';
+          } else if (clients >= 3) {
+            pct = 15;
+            tierName = 'Silver (15%)';
+          }
+
+          const monthlyEarn = Math.round((gmvVal * pct) / 100);
+          const annualEarn = monthlyEarn * 12;
+
+          if (heroLabel) heroLabel.textContent = 'Estimated Monthly Recurring Royalty';
+          if (monthlyEl) {
+            monthlyEl.textContent = `₹${monthlyEarn.toLocaleString('en-IN')}`;
+            monthlyEl.className = 'calc-result-amount';
+          }
+          if (rateSubEl) rateSubEl.textContent = `Applied Milestone: ${tierName} Royalty`;
+          if (annualEl) annualEl.textContent = `₹${annualEarn.toLocaleString('en-IN')}/yr`;
+          if (formulaEl) {
+            formulaEl.innerHTML = `💡 <strong>Tiered Royalty:</strong> With ${clients} clients, you unlock ${tierName}. Earn <strong>${pct}% royalty</strong> every month on renewals as long as clients stay subscribed!`;
+          }
+        }
+      } else if (calcActiveTrack === 'advisor') {
+        // Advisor: 50% flat commission! Simple Floww handles all tech & onboarding
+        const monthlyEarn = Math.round(gmvVal * 0.50);
+        const annualEarn = monthlyEarn * 12;
+
+        if (heroLabel) heroLabel.textContent = 'Certified Advisor Monthly Earnings';
+        if (monthlyEl) {
+          monthlyEl.textContent = `₹${monthlyEarn.toLocaleString('en-IN')}`;
+          monthlyEl.className = 'calc-result-amount';
+        }
+        if (rateSubEl) rateSubEl.textContent = 'Huge 50% Revenue Share (Leads & Sales Training Provided)';
+        if (annualEl) annualEl.textContent = `₹${annualEarn.toLocaleString('en-IN')}/yr`;
+        if (formulaEl) {
+          formulaEl.innerHTML = `💼 <strong>Advisor Model:</strong> You close deals using our sales training & qualified buyer leads. You pocket <strong>50% (₹${monthlyEarn.toLocaleString('en-IN')}/mo)</strong>, while we manage all tech support, onboarding, and servers!`;
+        }
+      } else {
+        // White-Label: Retainer minus Simple Floww platform wholesale cost (e.g., base wholesale is price)
+        // Partner charges wlPrice to clients, pays base price to platform, keeps 100% margin!
+        const effectiveBilling = Math.max(wlPrice, price);
+        const wholesaleCost = price * clients;
+        const totalBilled = effectiveBilling * clients;
+        const monthlyProfit = totalBilled - wholesaleCost;
+        const annualProfit = monthlyProfit * 12;
+
+        if (heroLabel) heroLabel.textContent = 'Your Monthly Agency SaaS Net Profit';
+        if (monthlyEl) {
+          monthlyEl.textContent = `₹${monthlyProfit.toLocaleString('en-IN')}`;
+          monthlyEl.className = 'calc-result-amount green';
+        }
+        if (rateSubEl) rateSubEl.textContent = `100% Brand Margin • Charge ₹${effectiveBilling.toLocaleString('en-IN')}/client`;
+        if (annualEl) annualEl.textContent = `₹${annualProfit.toLocaleString('en-IN')}/yr`;
+        if (formulaEl) {
+          formulaEl.innerHTML = `🏢 <strong>White-Label Freedom:</strong> You bill your clients directly at ₹${effectiveBilling.toLocaleString('en-IN')}/mo. After our fixed per-client wholesale fee, you keep <strong>₹${monthlyProfit.toLocaleString('en-IN')} pure monthly profit</strong>!`;
+        }
+      }
     }
 
     // Initial render
@@ -6989,6 +7140,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openWhitelabelApplicationModal = openWhitelabelApplicationModal;
     window.closeWhitelabelApplicationModal = closeWhitelabelApplicationModal;
     window.handleWhitelabelAppSubmit = handleWhitelabelAppSubmit;
+    window.setCalcProgram = setCalcProgram;
+    window.updateCalcMath = updateCalcMath;
   }
 
   initHelpDesk();

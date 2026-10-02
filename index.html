@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.4" />
+  <link rel="stylesheet" href="dashboard.css?v=3.5" />
 </head>
 <body>
 
@@ -2315,6 +2315,9 @@
                   <button type="button" class="hd-main-tab-btn" id="tab-ref-tiers" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('tiers')">
                     <span>Partnership Tracks</span>
                   </button>
+                  <button type="button" class="hd-main-tab-btn" id="tab-ref-calc" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('calc')">
+                    <span>⚡ Earnings Calculator</span>
+                  </button>
                 </div>
 
                 <div id="ref-client-search-wrapper" style="display: flex; align-items: center; gap: 8px;">
@@ -2437,6 +2440,121 @@
                     <button type="button" class="btn-primary" style="width: 100%; justify-content: center; background: #16a34a; border-color: #15803d;" onclick="window.openWhitelabelApplicationModal && window.openWhitelabelApplicationModal()">
                       <span>Inquire for White-Label ➔</span>
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Tab 4: Interactive Earnings Projection Calculator -->
+              <div id="panel-ref-calc" class="ref-tab-panel" style="display: none; padding: 22px;">
+                <div style="margin-bottom: 20px;">
+                  <h4 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 800; color: #0f172a;">Partner Earnings & ROI Calculator</h4>
+                  <p style="margin: 0; font-size: 12.5px; color: #64748b;">Simulate your monthly & annual earnings across Affiliate (10%-20%), Certified Advisor (50%), and White-Label tracks.</p>
+                </div>
+
+                <div class="calc-container">
+                  <!-- Left: Interactive Controls -->
+                  <div class="calc-controls-card">
+                    <!-- Track Selection -->
+                    <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 8px;">Select Partnership Track</div>
+                    <div class="calc-mode-selector">
+                      <button type="button" class="calc-mode-btn active" id="calc-btn-affiliate" onclick="window.setCalcProgram && window.setCalcProgram('affiliate')">
+                        Affiliate (10-20%)
+                      </button>
+                      <button type="button" class="calc-mode-btn" id="calc-btn-advisor" onclick="window.setCalcProgram && window.setCalcProgram('advisor')">
+                        Advisor (50%)
+                      </button>
+                      <button type="button" class="calc-mode-btn" id="calc-btn-whitelabel" onclick="window.setCalcProgram && window.setCalcProgram('whitelabel')">
+                        White-Label (100%)
+                      </button>
+                    </div>
+
+                    <!-- Slider 1: Active Paid Clients -->
+                    <div class="calc-field-group">
+                      <div class="calc-field-header">
+                        <span class="calc-field-label">Active Paying Clients:</span>
+                        <span class="calc-field-val-badge" id="calc-badge-clients">5 Clients</span>
+                      </div>
+                      <input type="range" class="calc-range-slider" id="calc-slider-clients" min="1" max="50" value="5" oninput="window.updateCalcMath && window.updateCalcMath()" />
+                      <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px;">
+                        <span>1 client</span>
+                        <span>25 clients</span>
+                        <span>50 clients</span>
+                      </div>
+                    </div>
+
+                    <!-- Slider 2: Average Plan Value per Client -->
+                    <div class="calc-field-group">
+                      <div class="calc-field-header">
+                        <span class="calc-field-label">Avg. Monthly Plan Subscription:</span>
+                        <span class="calc-field-val-badge" id="calc-badge-price">₹4,999 / mo</span>
+                      </div>
+                      <input type="range" class="calc-range-slider" id="calc-slider-price" min="1500" max="25000" step="500" value="4999" oninput="window.updateCalcMath && window.updateCalcMath()" />
+                      <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px;">
+                        <span>₹1,500 (Starter)</span>
+                        <span>₹4,999 (Growth Pro)</span>
+                        <span>₹25,000 (Enterprise)</span>
+                      </div>
+                    </div>
+
+                    <!-- Affiliate Sub-option: Recurring vs Flat (Only in affiliate mode) -->
+                    <div class="calc-field-group" id="calc-affiliate-mode-group">
+                      <label style="display: block; font-size: 12.5px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Affiliate Reward Type:</label>
+                      <div style="display: flex; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer;">
+                          <input type="radio" name="calc-reward-type" value="recurring" checked onchange="window.updateCalcMath && window.updateCalcMath()" />
+                          <span>Tiered Recurring (10% ➔ 15% ➔ 20%)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer;">
+                          <input type="radio" name="calc-reward-type" value="flat" onchange="window.updateCalcMath && window.updateCalcMath()" />
+                          <span>Flat ₹500 Bounty</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Whitelabel Markup Option (Only in Whitelabel mode) -->
+                    <div class="calc-field-group" id="calc-wl-markup-group" style="display: none;">
+                      <div class="calc-field-header">
+                        <span class="calc-field-label">Your Client Retainer Billing:</span>
+                        <span class="calc-field-val-badge" id="calc-badge-wl-price">₹9,999 / mo</span>
+                      </div>
+                      <input type="range" class="calc-range-slider" id="calc-slider-wl-price" min="3000" max="40000" step="1000" value="9999" oninput="window.updateCalcMath && window.updateCalcMath()" />
+                      <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px;">
+                        <span>₹3,000/mo</span>
+                        <span>₹9,999/mo (Agency)</span>
+                        <span>₹40,000/mo</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: High-Impact Projected Output Card -->
+                  <div class="calc-results-card">
+                    <div>
+                      <div class="calc-result-hero">
+                        <div class="calc-result-title" id="calc-hero-label">Estimated Monthly Recurring Royalty</div>
+                        <div class="calc-result-amount" id="calc-monthly-val">₹3,749</div>
+                        <div class="calc-result-sub" id="calc-rate-sub">Applied Tier: 15% Silver Tier Royalty</div>
+                      </div>
+
+                      <div class="calc-breakdown-grid">
+                        <div>
+                          <div class="calc-mini-stat-label">Projected Annual Earnings</div>
+                          <div class="calc-mini-stat-val" id="calc-annual-val" style="color: #4ade80;">₹44,988/yr</div>
+                        </div>
+                        <div>
+                          <div class="calc-mini-stat-label">Client GMV Generated</div>
+                          <div class="calc-mini-stat-val" id="calc-gmv-val">₹24,995/mo</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="calc-formula-tag" id="calc-formula-desc">
+                        💡 <strong>Tiered Royalty:</strong> With 5 clients, you unlock Silver Tier (15%). Earn 15% royalty every month on client renewals after 7-day refund policy.
+                      </div>
+                      <button type="button" class="btn-primary" id="calc-cta-btn" onclick="window.switchPartnerTableTab('clients')" style="width: 100%; margin-top: 14px; justify-content: center; background: #2563eb;">
+                        <span>Start Earning Now ➔</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3889,6 +4007,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.4"></script>
+  <script src="dashboard.js?v=3.5"></script>
 </body>
 </html>
