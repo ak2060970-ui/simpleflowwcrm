@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.6" />
+  <link rel="stylesheet" href="dashboard.css?v=3.7" />
 </head>
 <body>
 
@@ -164,7 +164,7 @@
         </a>
 
         <!-- 11. KNOWLEDGE BASE (26+ Step-by-Step Guides & Videos) -->
-        <a href="#knowledgebase" class="nav-item" data-view="helpdesk" data-breadcrumb="Support > Video Knowledge Base & Guides" id="nav-item-kb">
+        <a href="#knowledgebase" class="nav-item" data-view="knowledgebase" data-breadcrumb="Support > Video Knowledge Base & Guides" id="nav-item-kb">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
           <span>Knowledge Base</span>
           <span class="nav-badge subtle">26</span>
@@ -1406,7 +1406,7 @@
                   <span class="pulse-dot"></span> Operational 99.98%
                 </span>
               </div>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Manage customer support tickets, live resolution & knowledge base.</p>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Manage customer support tickets, SLAs, live resolution and reseller partner queue.</p>
             </div>
             <div class="module-actions-row">
               <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-raise-ticket-top" onclick="window.openRaiseTicketModal && window.openRaiseTicketModal()" title="Submit a new support ticket">
@@ -1426,29 +1426,29 @@
             </div>
           </div>
 
-          <!-- Sleek Combined Navigation Bar: Tabs + Role Switcher -->
-          <div class="hd-nav-row">
-            <div class="helpdesk-main-tabs">
-              <button type="button" class="hd-main-tab-btn active" id="tab-hd-tickets" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('tickets')" data-target="section-hd-tickets">
-                <span>Tickets</span>
-                <span class="hd-tab-count-badge" id="hd-ticket-total-badge">6</span>
-              </button>
-              <button type="button" class="hd-main-tab-btn" id="tab-hd-kb" onclick="window.switchHelpdeskMainTab && window.switchHelpdeskMainTab('kb')" data-target="section-hd-kb">
-                <span>Knowledge Base</span>
-                <span class="hd-tab-count-badge subtle">26</span>
-              </button>
+          <!-- Top Portal Switcher: Client Portal vs Reseller Portal -->
+          <div class="hd-nav-row" style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 12px 18px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 700; color: #1e293b; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                Switch Portal:
+              </span>
+              <div class="hd-role-segmented" id="hd-portal-segmented">
+                <button type="button" class="hd-segmented-btn active" id="btn-switch-client" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('client')" data-role="client">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Client Portal</span>
+                </button>
+                <button type="button" class="hd-segmented-btn" id="btn-switch-team" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('team')" data-role="team">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  <span>Reseller Portal</span>
+                </button>
+              </div>
             </div>
 
-            <!-- Sleek Segmented Role Switcher -->
-            <div class="hd-role-segmented">
-              <button type="button" class="hd-segmented-btn active" id="btn-switch-team" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('team')" data-role="team">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                <span>Team Desk</span>
-              </button>
-              <button type="button" class="hd-segmented-btn" id="btn-switch-client" onclick="window.switchHelpdeskRole && window.switchHelpdeskRole('client')" data-role="client">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Client View</span>
-              </button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="hd-portal-status-pill" style="font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 4px 12px; border-radius: 999px; border: 1px solid #bfdbfe;">
+                👤 Client Portal Active
+              </span>
             </div>
           </div>
 
@@ -1712,182 +1712,375 @@
           </div>
           <!-- END SECTION A: SUPPORT TICKETS DESK -->
 
-          <!-- ================================================================
-               SECTION B: VIDEO KNOWLEDGE BASE (26+ Guides & Walkthroughs)
-               ================================================================ -->
-          <div class="hd-main-section" id="section-hd-kb" style="display: none;">
+        </div>
+      </div><!-- End view-helpdesk -->
 
-
-          <!-- Hero Search & Quick Action Section -->
-          <div class="helpdesk-hero">
-            <div class="helpdesk-hero-title">
-              <span>🔍 How can we help you today?</span>
-            </div>
-            <div class="helpdesk-hero-sub">
-              Search 26+ step-by-step guides with 45-second inline video walkthroughs, or pick a trending query below.
-            </div>
-            
-            <div class="helpdesk-search-wrapper">
-              <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" class="helpdesk-search-input" id="helpdesk-search-input" placeholder="Type your question or error (e.g. QR disconnect, Meta template, 10k broadcast, auto assign, GST invoice)..." autocomplete="off" />
-              <button type="button" class="helpdesk-search-clear" id="helpdesk-search-clear">&times;</button>
-            </div>
-
-            <div class="helpdesk-trending-row">
-              <span class="helpdesk-trending-label">Popular:</span>
-              <span class="helpdesk-trend-pill" data-query="QR">⚡ Connect WhatsApp QR</span>
-              <span class="helpdesk-trend-pill" data-query="Template">🚫 Meta Template Rejection</span>
-              <span class="helpdesk-trend-pill" data-query="Broadcast">📢 10,000 Safe Broadcast</span>
-              <span class="helpdesk-trend-pill" data-query="Auto Assign">👥 Auto-Assign Telecallers</span>
-              <span class="helpdesk-trend-pill" data-query="Invoice">💳 Download GST Invoice</span>
-              <span class="helpdesk-trend-pill" data-query="Green Tick">✅ Meta Green Tick</span>
-            </div>
-          </div>
-
-          <!-- Sub-filter Type Switcher (Troubleshooting vs How-To Guides) -->
-          <div class="helpdesk-subfilter-bar" id="helpdesk-type-filters">
-            <button class="helpdesk-subfilter-btn active" data-type="all">All Content (<span id="hd-type-all">26</span>)</button>
-            <button class="helpdesk-subfilter-btn" data-type="troubleshoot">⚡ Troubleshooting & Fixes (<span id="hd-type-troubleshoot">14</span>)</button>
-            <button class="helpdesk-subfilter-btn" data-type="guide">📖 Feature How-To Guides (<span id="hd-type-guide">12</span>)</button>
-          </div>
-
-          <!-- Category Filter Tabs -->
-          <div class="helpdesk-tabs-bar" id="helpdesk-cat-tabs">
-            <button class="helpdesk-tab-btn active" data-cat="all">
-              <span>All Guides</span>
-              <span class="helpdesk-tab-count" id="hd-count-all">26</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="whatsapp">
-              <span>📱 WhatsApp & API</span>
-              <span class="helpdesk-tab-count" id="hd-count-whatsapp">4</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="broadcast">
-              <span>📢 Broadcast & Campaigns</span>
-              <span class="helpdesk-tab-count" id="hd-count-broadcast">4</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="chatbot">
-              <span>🤖 AI & Chatbot</span>
-              <span class="helpdesk-tab-count" id="hd-count-chatbot">4</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="crm">
-              <span>👥 CRM & Leads</span>
-              <span class="helpdesk-tab-count" id="hd-count-crm">4</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="team">
-              <span>📋 Tasks & Operations</span>
-              <span class="helpdesk-tab-count" id="hd-count-team">3</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="developer">
-              <span>⚙️ Integrations & APIs</span>
-              <span class="helpdesk-tab-count" id="hd-count-developer">3</span>
-            </button>
-            <button class="helpdesk-tab-btn" data-cat="billing">
-              <span>💳 Billing & GST</span>
-              <span class="helpdesk-tab-count" id="hd-count-billing">4</span>
-            </button>
-          </div>
-
-          <!-- Main Help Desk Content Grid (Left FAQs, Right Support/Status) -->
-          <div class="helpdesk-grid">
-            
-            <!-- Left Column: Interactive FAQ Accordion List -->
-            <div class="faq-accordion-list" id="faq-accordion-list">
-              <!-- Rendered Dynamically via dashboard.js with step-by-step guides & inline video player -->
-            </div>
-
-            <!-- Right Column: Live Status & Account Manager Contact -->
-            <div class="helpdesk-sidebar">
-
-              <!-- 1. Live System Status Radar -->
-              <div class="helpdesk-side-card">
-                <div class="helpdesk-side-title">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                  Live System Health Status
-                </div>
-                <div class="status-indicator-row">
-                  <span style="color: var(--sf-text-main); font-weight: 500;">Meta Cloud API (WABA)</span>
-                  <span class="status-pill-green">🟢 99.98% Active</span>
-                </div>
-                <div class="status-indicator-row">
-                  <span style="color: var(--sf-text-main); font-weight: 500;">SimpleFloww Webhook</span>
-                  <span class="status-pill-green">🟢 38ms Fast</span>
-                </div>
-                <div class="status-indicator-row">
-                  <span style="color: var(--sf-text-main); font-weight: 500;">Payment Gateway (Razorpay)</span>
-                  <span class="status-pill-green">🟢 Operational</span>
-                </div>
-                <div class="status-indicator-row">
-                  <span style="color: var(--sf-text-main); font-weight: 500;">Round-Robin Lead Engine</span>
-                  <span class="status-pill-green">🟢 Normal</span>
-                </div>
-                <div style="margin-top: 10px; font-size: 11px; color: var(--sf-text-muted); text-align: right;">
-                  Updated 2 mins ago • Zero ongoing incidents
-                </div>
+      <!-- ====================================================================
+           VIEW: KNOWLEDGE BASE & RESELLER PLAYBOOKS (Separated Module)
+           ==================================================================== -->
+      <div class="view-panel" id="view-knowledgebase">
+        <div class="module-page">
+          
+          <!-- Module Header -->
+          <div class="module-header-row hd-clean-header">
+            <div class="module-title-box">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;">Knowledge Base & Playbooks</h2>
+                <span class="hd-status-pill">
+                  <span class="pulse-dot"></span> 26+ Guides & Videos
+                </span>
               </div>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Step-by-step resolution guides, screen walkthroughs, and reseller partner playbooks.</p>
+            </div>
+            <div class="module-actions-row">
+              <button type="button" class="btn-primary hd-clean-btn-primary" onclick="const inp = document.getElementById('helpdesk-search-input'); if(inp){ inp.focus(); inp.scrollIntoView({behavior:'smooth'}); }" title="Quick search guides">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Search Guides</span>
+              </button>
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()" title="Direct WhatsApp Support">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366" style="vertical-align: -2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>Partner Line</span>
+              </button>
+            </div>
+          </div>
 
-              <!-- 2. Dedicated Account Manager Support -->
-              <div class="helpdesk-side-card" style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
-                <div class="helpdesk-side-title">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  Your Dedicated Account Rep
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                  <div style="width: 44px; height: 44px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid #bfdbfe;">
-                    RS
-                  </div>
-                  <div>
-                    <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: var(--sf-text-main);">Rahul Sharma</h4>
-                    <span style="font-size: 11.5px; color: var(--sf-text-muted);">Senior WhatsApp Specialist</span>
-                  </div>
-                </div>
-                <div style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                  ⚡ <strong>Fast SLA:</strong> Response in under 15 minutes during business hours (10 AM - 7 PM).
-                </div>
-                <button type="button" class="btn-primary" id="btn-rep-wa-chat" style="width: 100%; justify-content: center; background: #25D366; border-color: #25D366;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                  Chat with Rahul on WhatsApp
+          <!-- Sleek Top Switcher: Client Portal vs Reseller Portal -->
+          <div class="hd-nav-row" style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 12px 18px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 700; color: #1e293b; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                Switch Portal:
+              </span>
+              <div class="hd-role-segmented" id="kb-portal-segmented">
+                <button type="button" class="hd-segmented-btn active" id="btn-kb-client" onclick="window.switchKbPortal && window.switchKbPortal('client')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Client Portal</span>
+                </button>
+                <button type="button" class="hd-segmented-btn" id="btn-kb-reseller" onclick="window.switchKbPortal && window.switchKbPortal('reseller')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  <span>Reseller Portal</span>
                 </button>
               </div>
+            </div>
 
-              <!-- 3. My Active Support Tickets -->
-              <div class="helpdesk-side-card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                  <div class="helpdesk-side-title" style="margin-bottom: 0;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                    My Support Tickets
-                  </div>
-                  <span style="font-size: 11px; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 700;">2 Active</span>
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                      <strong style="color: var(--sf-text-main);">#TK-1082</strong>
-                      <span class="status-chip in-progress" style="font-size: 10px; padding: 1px 6px;">In Investigation</span>
-                    </div>
-                    <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Webhook HMAC Signature Mismatch</div>
-                    <span style="font-size: 11px; color: #dc2626; font-weight: 600;">⏰ SLA: 18 mins remaining</span>
-                  </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="kb-portal-status-pill" style="font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 4px 12px; border-radius: 999px; border: 1px solid #bfdbfe;">
+                👤 Client Self-Service Guides
+              </span>
+            </div>
+          </div>
 
-                  <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                      <strong style="color: var(--sf-text-main);">#TK-1081</strong>
-                      <span class="status-chip open" style="font-size: 10px; padding: 1px 6px;">Meta Reviewing</span>
-                    </div>
-                    <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Diwali Marketing Template Expedite</div>
-                    <span style="font-size: 11px; color: var(--sf-text-muted);">Logged 1h ago</span>
+          <!-- SUB-VIEW 1: CLIENT SELF-SERVICE GUIDES & VIDEO TUTORIALS -->
+          <div id="kb-client-view">
+            <!-- Hero Search & Quick Action Section -->
+            <div class="helpdesk-hero">
+              <div class="helpdesk-hero-title">
+                <span>🔍 How can we help you today?</span>
+              </div>
+              <div class="helpdesk-hero-sub">
+                Search 26+ step-by-step guides with 45-second inline video walkthroughs, or pick a trending query below.
+              </div>
+              
+              <div class="helpdesk-search-wrapper">
+                <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="helpdesk-search-input" id="helpdesk-search-input" placeholder="Type your question or error (e.g. QR disconnect, Meta template, 10k broadcast, auto assign, GST invoice)..." autocomplete="off" />
+                <button type="button" class="helpdesk-search-clear" id="helpdesk-search-clear">&times;</button>
+              </div>
+
+              <div class="helpdesk-trending-row">
+                <span class="helpdesk-trending-label">Popular:</span>
+                <span class="helpdesk-trend-pill" data-query="QR">⚡ Connect WhatsApp QR</span>
+                <span class="helpdesk-trend-pill" data-query="Template">🚫 Meta Template Rejection</span>
+                <span class="helpdesk-trend-pill" data-query="Broadcast">📢 10,000 Safe Broadcast</span>
+                <span class="helpdesk-trend-pill" data-query="Auto Assign">👥 Auto-Assign Telecallers</span>
+                <span class="helpdesk-trend-pill" data-query="Invoice">💳 Download GST Invoice</span>
+                <span class="helpdesk-trend-pill" data-query="Green Tick">✅ Meta Green Tick</span>
+              </div>
+            </div>
+
+            <!-- Sub-filter Type Switcher (Troubleshooting vs How-To Guides) -->
+            <div class="helpdesk-subfilter-bar" id="helpdesk-type-filters">
+              <button class="helpdesk-subfilter-btn active" data-type="all">All Content (<span id="hd-type-all">26</span>)</button>
+              <button class="helpdesk-subfilter-btn" data-type="troubleshoot">⚡ Troubleshooting & Fixes (<span id="hd-type-troubleshoot">14</span>)</button>
+              <button class="helpdesk-subfilter-btn" data-type="guide">📖 Feature How-To Guides (<span id="hd-type-guide">12</span>)</button>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="helpdesk-tabs-bar" id="helpdesk-cat-tabs">
+              <button class="helpdesk-tab-btn active" data-cat="all">
+                <span>All Guides</span>
+                <span class="helpdesk-tab-count" id="hd-count-all">26</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="whatsapp">
+                <span>📱 WhatsApp & API</span>
+                <span class="helpdesk-tab-count" id="hd-count-whatsapp">4</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="broadcast">
+                <span>📢 Broadcast & Campaigns</span>
+                <span class="helpdesk-tab-count" id="hd-count-broadcast">4</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="chatbot">
+                <span>🤖 AI & Chatbot</span>
+                <span class="helpdesk-tab-count" id="hd-count-chatbot">4</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="crm">
+                <span>👥 CRM & Leads</span>
+                <span class="helpdesk-tab-count" id="hd-count-crm">4</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="team">
+                <span>📋 Tasks & Operations</span>
+                <span class="helpdesk-tab-count" id="hd-count-team">3</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="developer">
+                <span>⚙️ Integrations & APIs</span>
+                <span class="helpdesk-tab-count" id="hd-count-developer">3</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-cat="billing">
+                <span>💳 Billing & GST</span>
+                <span class="helpdesk-tab-count" id="hd-count-billing">4</span>
+              </button>
+            </div>
+
+            <!-- Main Help Desk Content Grid (Left FAQs, Right Support/Status) -->
+            <div class="helpdesk-grid">
+              
+              <!-- Left Column: Interactive FAQ Accordion List -->
+              <div class="faq-accordion-list" id="faq-accordion-list">
+                <!-- Rendered Dynamically via dashboard.js with step-by-step guides & inline video player -->
+              </div>
+
+              <!-- Right Column: Live Status & Account Manager Contact -->
+              <div class="helpdesk-sidebar">
+
+                <!-- 1. Live System Status Radar -->
+                <div class="helpdesk-side-card">
+                  <div class="helpdesk-side-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                    Live System Health Status
+                  </div>
+                  <div class="status-indicator-row">
+                    <span style="color: var(--sf-text-main); font-weight: 500;">Meta Cloud API (WABA)</span>
+                    <span class="status-pill-green">🟢 99.98% Active</span>
+                  </div>
+                  <div class="status-indicator-row">
+                    <span style="color: var(--sf-text-main); font-weight: 500;">SimpleFloww Webhook</span>
+                    <span class="status-pill-green">🟢 38ms Fast</span>
+                  </div>
+                  <div class="status-indicator-row">
+                    <span style="color: var(--sf-text-main); font-weight: 500;">Payment Gateway (Razorpay)</span>
+                    <span class="status-pill-green">🟢 Operational</span>
+                  </div>
+                  <div class="status-indicator-row">
+                    <span style="color: var(--sf-text-main); font-weight: 500;">Round-Robin Lead Engine</span>
+                    <span class="status-pill-green">🟢 Normal</span>
+                  </div>
+                  <div style="margin-top: 10px; font-size: 11px; color: var(--sf-text-muted); text-align: right;">
+                    Updated 2 mins ago • Zero ongoing incidents
                   </div>
                 </div>
+
+                <!-- 2. Dedicated Account Manager Support -->
+                <div class="helpdesk-side-card" style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
+                  <div class="helpdesk-side-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Your Dedicated Account Rep
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid #bfdbfe;">
+                      RS
+                    </div>
+                    <div>
+                      <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: var(--sf-text-main);">Rahul Sharma</h4>
+                      <span style="font-size: 11.5px; color: var(--sf-text-muted);">Senior WhatsApp Specialist</span>
+                    </div>
+                  </div>
+                  <div style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    ⚡ <strong>Fast SLA:</strong> Response in under 15 minutes during business hours (10 AM - 7 PM).
+                  </div>
+                  <button type="button" class="btn-primary" id="btn-rep-wa-chat" style="width: 100%; justify-content: center; background: #25D366; border-color: #25D366;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    Chat with Rahul on WhatsApp
+                  </button>
+                </div>
+
+                <!-- 3. My Active Support Tickets -->
+                <div class="helpdesk-side-card">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <div class="helpdesk-side-title" style="margin-bottom: 0;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                      My Support Tickets
+                    </div>
+                    <span style="font-size: 11px; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 700;">2 Active</span>
+                  </div>
+                  
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="color: var(--sf-text-main);">#TK-1082</strong>
+                        <span class="status-chip in-progress" style="font-size: 10px; padding: 1px 6px;">In Investigation</span>
+                      </div>
+                      <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Webhook HMAC Signature Mismatch</div>
+                      <span style="font-size: 11px; color: #dc2626; font-weight: 600;">⏰ SLA: 18 mins remaining</span>
+                    </div>
+
+                    <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="color: var(--sf-text-main);">#TK-1081</strong>
+                        <span class="status-chip open" style="font-size: 10px; padding: 1px 6px;">Meta Reviewing</span>
+                      </div>
+                      <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Diwali Marketing Template Expedite</div>
+                      <span style="font-size: 11px; color: var(--sf-text-muted);">Logged 1h ago</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
             </div>
-
           </div>
-          <!-- END SECTION B: VIDEO KNOWLEDGE BASE -->
+          <!-- END SUB-VIEW 1 -->
+
+          <!-- SUB-VIEW 2: RESELLER & PARTNER PLAYBOOKS -->
+          <div id="kb-reseller-view" style="display: none;">
+            <!-- Partner Hero Banner -->
+            <div class="helpdesk-hero" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%); color: #ffffff;">
+              <div class="helpdesk-hero-title" style="color: #ffffff;">
+                <span>💼 Reseller & White-Label Partner Playbooks</span>
+              </div>
+              <div class="helpdesk-hero-sub" style="color: #c7d2fe;">
+                Step-by-step master playbooks to launch your SaaS agency, onboard client Meta Cloud APIs, configure white-label custom domains, and scale recurring MRR.
+              </div>
+              
+              <div class="helpdesk-search-wrapper" style="background: rgba(255, 255, 255, 0.95);">
+                <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="helpdesk-search-input" id="reseller-search-input" placeholder="Search partner playbooks (e.g. CNAME domain, ₹2999 pricing, Meta WABA signup, objections, number warmup)..." autocomplete="off" />
+                <button type="button" class="helpdesk-search-clear" id="reseller-search-clear">&times;</button>
+              </div>
+
+              <div class="helpdesk-trending-row" style="color: #e0e7ff;">
+                <span class="helpdesk-trending-label" style="color: #a5b4fc;">Fast Track:</span>
+                <span class="helpdesk-trend-pill" data-reseller-query="domain" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">🌐 White-Label CNAME</span>
+                <span class="helpdesk-trend-pill" data-reseller-query="pricing" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">💰 100% Margin Pricing</span>
+                <span class="helpdesk-trend-pill" data-reseller-query="meta" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">📱 Client WABA Onboarding</span>
+                <span class="helpdesk-trend-pill" data-reseller-query="objection" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">🎯 SME Closing Scripts</span>
+                <span class="helpdesk-trend-pill" data-reseller-query="warmup" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">🛡️ Number Warmup Protocol</span>
+              </div>
+            </div>
+
+            <!-- Reseller Topic Filter Tabs -->
+            <div class="helpdesk-tabs-bar" id="reseller-cat-tabs">
+              <button class="helpdesk-tab-btn active" data-reseller-cat="all">
+                <span>All Playbooks</span>
+                <span class="helpdesk-tab-count" id="rpb-cnt-all">6</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="whitelabel">
+                <span>🏢 White-Label & Domain</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="pricing">
+                <span>💰 Pricing & Margins</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="meta">
+                <span>📱 Meta Cloud API</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="sales">
+                <span>🎯 Sales & Closing</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="compliance">
+                <span>🛡️ Ban Prevention</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+              <button class="helpdesk-tab-btn" data-reseller-cat="subaccounts">
+                <span>👥 Sub-Accounts</span>
+                <span class="helpdesk-tab-count">1</span>
+              </button>
+            </div>
+
+            <!-- Reseller Main Content Grid -->
+            <div class="helpdesk-grid">
+              
+              <!-- Left Column: Reseller Playbooks Accordion List -->
+              <div class="faq-accordion-list" id="reseller-accordion-list">
+                <!-- Rendered dynamically via dashboard.js -->
+              </div>
+
+              <!-- Right Column: Partner Resource Toolkit & VIP Manager -->
+              <div class="helpdesk-sidebar">
+                
+                <!-- 1. Partner Resource Toolkit -->
+                <div class="helpdesk-side-card" style="border-top: 3px solid #6366f1;">
+                  <div class="helpdesk-side-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Partner Resource Toolkit
+                  </div>
+                  
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button type="button" class="btn-secondary" onclick="window.downloadPartnerAsset && window.downloadPartnerAsset('deck')" style="justify-content: flex-start; text-align: left; font-size: 12px; padding: 8px 10px;">
+                      <span>📊 SME Pitch Deck (.pptx)</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.downloadPartnerAsset && window.downloadPartnerAsset('agreement')" style="justify-content: flex-start; text-align: left; font-size: 12px; padding: 8px 10px;">
+                      <span>📄 Client Service Agreement (Word)</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.downloadPartnerAsset && window.downloadPartnerAsset('calculator')" style="justify-content: flex-start; text-align: left; font-size: 12px; padding: 8px 10px;">
+                      <span>🧮 ROI & Margin Calculator (.xlsx)</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.downloadPartnerAsset && window.downloadPartnerAsset('templates')" style="justify-content: flex-start; text-align: left; font-size: 12px; padding: 8px 10px;">
+                      <span>📢 50 Pre-Approved WhatsApp Templates</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2. VIP Reseller Partner Manager -->
+                <div class="helpdesk-side-card" style="background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%); border-top: 3px solid #7c3aed;">
+                  <div class="helpdesk-side-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Dedicated Partner Success Manager
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid #ddd6fe;">
+                      VM
+                    </div>
+                    <div>
+                      <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: var(--sf-text-main);">Vikram Malhotra</h4>
+                      <span style="font-size: 11.5px; color: var(--sf-text-muted);">Head of Reseller & Alliances</span>
+                    </div>
+                  </div>
+                  <div style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    ⭐ <strong>Direct Escalation:</strong> Direct WhatsApp channel for priority Meta ticket escalations and custom pricing requests.
+                  </div>
+                  <button type="button" class="btn-primary" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()" style="width: 100%; justify-content: center; background: #25D366; border-color: #25D366;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    Partner VIP WhatsApp Line
+                  </button>
+                </div>
+
+                <!-- 3. Weekly Partner Masterclass Card -->
+                <div class="helpdesk-side-card" style="background: #ffffff;">
+                  <div class="helpdesk-side-title" style="color: #b45309;">
+                    🎓 Weekly Live Partner Workshop
+                  </div>
+                  <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">
+                    <strong>Topic:</strong> "How to Close 5 Lakh/mo SME Retainers with WhatsApp Automation & AI Bots"
+                  </div>
+                  <div style="font-size: 11.5px; color: #64748b; margin-bottom: 12px;">
+                    📅 Every Thursday • 5:00 PM IST (Zoom Live)
+                  </div>
+                  <button type="button" class="btn-secondary" onclick="showToast('✅ Registered for Thursday Workshop! Zoom link sent to your email.')" style="width: 100%; justify-content: center; font-size: 12px;">
+                    Register for Free (Live Q&A)
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+          <!-- END SUB-VIEW 2 -->
 
         </div>
       </div>
-    </div><!-- End view-helpdesk -->
 
       <!-- ====================================================================
            VIEW 6: TASKS & FOLLOW-UPS
@@ -4007,6 +4200,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.6"></script>
+  <script src="dashboard.js?v=3.7"></script>
 </body>
 </html>

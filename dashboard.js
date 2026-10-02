@@ -985,6 +985,8 @@ document.addEventListener('DOMContentLoaded', () => {
           refreshDashboard(false);
         } else if (viewName === 'helpdesk') {
           if (window.renderHelpDeskAll) window.renderHelpDeskAll();
+        } else if (viewName === 'knowledgebase') {
+          if (window.renderKnowledgeBaseAll) window.renderKnowledgeBaseAll();
         } else if (viewName === 'referral') {
           if (window.switchReferralView) window.switchReferralView('partner');
         }
@@ -2930,15 +2932,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawHash = window.location.hash.replace('#', '').trim();
     if (!rawHash) return;
 
-    if (rawHash === 'knowledgebase') {
-      const kbBtn = document.getElementById('tab-hd-kb');
-      if (kbBtn) kbBtn.click();
-      rawHash = 'helpdesk';
-    } else if (rawHash === 'helpdesk') {
-      const tkBtn = document.getElementById('tab-hd-tickets');
-      if (tkBtn) tkBtn.click();
-    }
-
     // Direct match with view panels
     const targetPanel = document.getElementById(`view-${rawHash}`);
     if (targetPanel) {
@@ -2954,9 +2947,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update top breadcrumb
       if (topBreadcrumb) {
         if (rawHash === 'tasks') topBreadcrumb.textContent = 'Operations > Task Management';
-        else if (rawHash === 'helpdesk') topBreadcrumb.textContent = window.location.hash === '#knowledgebase' ? 'Support > Video Knowledge Base & Guides' : 'Support > Help Desk & Support Desk';
+        else if (rawHash === 'helpdesk') topBreadcrumb.textContent = 'Support > Help Desk & Support Desk';
+        else if (rawHash === 'knowledgebase') topBreadcrumb.textContent = 'Support > Video Knowledge Base & Guides';
         else if (rawHash === 'inbox') topBreadcrumb.textContent = 'Communication > Live Chat Inbox';
         else if (rawHash === 'dashboard') topBreadcrumb.textContent = 'Sales & Revenue Overview';
+        else if (rawHash === 'referral') topBreadcrumb.textContent = 'Growth > Refer & Earn';
         else if (activeLink && activeLink.getAttribute('data-breadcrumb')) {
           topBreadcrumb.textContent = activeLink.getAttribute('data-breadcrumb');
         }
@@ -2978,6 +2973,8 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshDashboard(false);
       } else if (rawHash === 'helpdesk') {
         if (window.renderHelpDeskAll) window.renderHelpDeskAll();
+      } else if (rawHash === 'knowledgebase') {
+        if (window.renderKnowledgeBaseAll) window.renderKnowledgeBaseAll();
       } else if (rawHash === 'referral') {
         if (window.switchReferralView) window.switchReferralView('partner');
       }
@@ -4010,6 +4007,319 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnRepChat) btnRepChat.addEventListener('click', openSupportWhatsApp);
 
     // =========================================================================
+    // RESELLER & PARTNER KNOWLEDGE BASE / PLAYBOOKS ENGINE
+    // =========================================================================
+    const resellerPlaybooksData = [
+      {
+        id: 'rpb-1',
+        cat: 'whitelabel',
+        catLabel: '🏢 White-Label & Domain',
+        badgeClass: 'badge-purple',
+        title: 'How to setup Custom Domain CNAME & White-Label SSL (portal.yourdomain.com)',
+        duration: '4:20',
+        summary: 'Complete DNS setup to remove SimpleFloww branding and map your own agency domain with automated SSL.',
+        steps: [
+          'Log in to your DNS provider (Cloudflare, GoDaddy, Hostinger, AWS Route53).',
+          'Add a CNAME record: Host = portal (or crm), Target = whitelabel.simplefloww.com, TTL = Auto (or 3600s).',
+          'Go to SimpleFloww Settings > White-Label Portal > Custom Domain, enter portal.yourdomain.com and click "Verify DNS".',
+          'Our system automatically issues an enterprise Cloudflare SSL certificate within 3 to 10 minutes.',
+          'Upload your custom SVG logo, favicon, portal brand color (#HEX), and custom footer copyright text.',
+          'Configure your transactional SMTP credentials (SendGrid, AWS SES, or custom SMTP) so password resets and notifications come from support@yourdomain.com.'
+        ],
+        tip: 'Pro Tip: Using Cloudflare with DNS Proxy (Orange Cloud turned OFF initially for SSL handshake) enables sub-30ms DNS resolution across India.'
+      },
+      {
+        id: 'rpb-2',
+        cat: 'pricing',
+        catLabel: '💰 Pricing & Margins',
+        badgeClass: 'badge-green',
+        title: 'Packaging & Pricing Strategy: Charging Clients ₹2,999/mo with 100% Retained Margin',
+        duration: '5:15',
+        summary: 'How to package SimpleFloww features for local Indian businesses and maximize lifetime client retention.',
+        steps: [
+          'White-Label Partners pay SimpleFloww flat ₹25,000/year (₹2,083/mo). There is zero per-seat royalty or revenue cut to SimpleFloww.',
+          'Standard Package for SMEs: Charge ₹2,999/month (or ₹29,999/year upfront) including WhatsApp CRM + 5 telecaller logins + Round-Robin auto assignment.',
+          'Premium Automation Package: Charge ₹5,999/month including AI Auto-Reply Bot + Shopify/WooCommerce lead sync + unlimited broadcast campaigns.',
+          'Setup & Onboarding Fee: Charge a 1-time ₹5,000 - ₹10,000 onboarding fee for Meta Business verification, green tick application, and chatbot flow design.',
+          'Meta Conversation Charges: Bill client on actuals (Utility: ~₹0.11, Marketing: ~₹0.78 per message) with a 15-20% management markup or let them link their own credit card directly to Meta.'
+        ],
+        tip: 'With just 10 active clients on ₹2,999/mo, your agency generates ₹3,60,000/yr gross revenue against a ₹25,000 cost — a 1,340% annual ROI!'
+      },
+      {
+        id: 'rpb-3',
+        cat: 'meta',
+        catLabel: '📱 Meta Cloud API',
+        badgeClass: 'badge-blue',
+        title: 'Client WhatsApp Cloud API Onboarding & Embedded Signup Playbook',
+        duration: '6:30',
+        summary: 'Effortlessly onboard client phone numbers into official Meta WABA without technical friction.',
+        steps: [
+          'Ensure the client phone number is NOT currently registered on WhatsApp personal or WhatsApp Business App (delete existing account from app settings if already used).',
+          'Have client ready with their Meta Business Manager admin login and official business documents (GST Certificate, MSME Udyam, or Certificate of Incorporation).',
+          'From your white-label portal, click "+ Onboard Client WABA" which launches Meta Embedded Signup popup.',
+          'Select or create the client Business Manager, verify OTP on the client SIM card, and accept Meta Cloud API terms.',
+          'Meta will instantly grant 250 conversations/24h Tier. Submit legal business documents under Meta Business Settings > Security Center for permanent 1,000 - 100,000 limit.',
+          'Webhook HMAC handshake is auto-completed by SimpleFloww backend with 0 code required.'
+        ],
+        tip: 'Always advise clients to use a dedicated SIM (e.g. Jio/Airtel ₹149 plan) rather than personal numbers to avoid personal WhatsApp data loss.'
+      },
+      {
+        id: 'rpb-4',
+        cat: 'sales',
+        catLabel: '🎯 Sales & Closing',
+        badgeClass: 'badge-orange',
+        title: 'Objection Handling Playbook: Closing Against Wati, Interakt & Aisensy',
+        duration: '4:50',
+        summary: 'Proven scripts and counter-arguments to win SME deals when clients compare with competing tools.',
+        steps: [
+          'Objection: "Wati / Interakt charges ₹2,499/mo, why should I buy from you?" -> Response: "Wati charges per-user seat fees (₹1,000 extra per agent). With us, you get unlimited telecaller seats and automated round-robin lead distribution included."',
+          'Objection: "Can I send 50,000 messages in 1 hour without getting banned?" -> Response: "No platform can guarantee zero ban if guidelines are violated. But we provide an algorithmic smart-throttling queue and warmed-up template rotators that keep your Meta number rating in High Green."',
+          'Objection: "Who will train my sales staff?" -> Response: "Unlike self-serve tools where you talk to bots, you get a dedicated WhatsApp support group with our certified technical engineers for 1-on-1 team training."',
+          'Objection: "Do you integrate with my website or Google Sheets?" -> Response: "Yes, we connect directly via Webhook, Zapier, Pabbly, or direct Google Sheet two-way sync within 5 minutes."'
+        ],
+        tip: 'Focus on lead response time: Show the prospect how answering leads within 60 seconds increases conversion by 391% compared to manual calling.'
+      },
+      {
+        id: 'rpb-5',
+        cat: 'compliance',
+        catLabel: '🛡️ Ban Prevention',
+        badgeClass: 'badge-red',
+        title: 'Meta Broadcast Ban Prevention & Number Warm-Up Schedule',
+        duration: '3:45',
+        summary: 'Strict step-by-step warmup protocol to protect client WhatsApp phone numbers and maintain High Green rating.',
+        steps: [
+          'Day 1 to 3: Maximum 50 messages/day. Send only high-intent utility or transaction messages to past buyers who have saved the business contact.',
+          'Day 4 to 7: Scale to 250-500 messages/day. Ensure every marketing broadcast template has a clear "STOP" or "Unsubscribe" quick-reply button.',
+          'Week 2: Scale to 1,000 - 2,500 messages/day across segmented lists. Monitor Meta Quality Rating in real time under WABA health.',
+          'Week 3+: Once Meta promotes phone number to Tier 2 (10,000 msg/day) or Tier 3 (100,000 msg/day), run larger scheduled campaigns.',
+          'Golden Rule: Never blast cold purchased contact lists. Meta algorithms detect rapid user blocks/reports and will downgrade quality to Red within 2 hours.'
+        ],
+        tip: 'Include client name and personalized details in parameters {{1}} and {{2}} to prevent Meta spam pattern heuristics from flagging identical bulk payloads.'
+      },
+      {
+        id: 'rpb-6',
+        cat: 'subaccounts',
+        catLabel: '👥 Sub-Accounts',
+        badgeClass: 'badge-cyan',
+        title: 'Managing Client Sub-Tenants, Telecaller Seats & Wallet Balances',
+        duration: '4:10',
+        summary: 'How to administer multiple businesses under one master partner command center.',
+        steps: [
+          'From Reseller Portal > Sub-Accounts, click "Add Organization" and assign the client their custom login URL.',
+          'Set permission scopes: Admin (full access), Manager (campaigns & leads), Telecaller (assigned leads and live inbox chat only).',
+          'Configure lead assignment rule: Round-Robin (equal distribution), Weighted (by closer seniority), or Region-wise routing.',
+          'Recharge conversation wallet: Set automated low-balance email alerts when client wallet falls below ₹500.',
+          'Export audit logs: Generate monthly telecaller activity reports and campaign conversion metrics with your agency logo.'
+        ],
+        tip: 'Restrict Telecallers from exporting full phone number CSVs in User Roles to prevent telecallers from stealing client lead databases.'
+      }
+    ];
+
+    const resellerKbState = {
+      cat: 'all',
+      search: '',
+      openPlaybookId: 'rpb-1'
+    };
+
+    function renderResellerPlaybooks() {
+      const container = document.getElementById('reseller-accordion-list');
+      if (!container) return;
+
+      const filtered = resellerPlaybooksData.filter(pb => {
+        const matchCat = resellerKbState.cat === 'all' || pb.cat === resellerKbState.cat;
+        if (!matchCat) return false;
+        if (!resellerKbState.search) return true;
+        const q = resellerKbState.search.toLowerCase();
+        return pb.title.toLowerCase().includes(q) ||
+               pb.summary.toLowerCase().includes(q) ||
+               pb.steps.some(s => s.toLowerCase().includes(q));
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background:#fff; border:1px solid var(--sf-border); border-radius:12px; padding:40px 20px; text-align:center;">
+            <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+            <h4 style="font-size:15px; font-weight:700; color:var(--sf-text-main); margin-bottom:4px;">No matching playbook found for "${resellerKbState.search}"</h4>
+            <p style="font-size:12.5px; color:var(--sf-text-muted); margin-bottom:14px;">Try searching broader keywords like "domain", "pricing", or "warmup".</p>
+            <button type="button" class="btn-secondary" id="btn-reset-rpb-search" style="font-size:12px;">Clear Search</button>
+          </div>
+        `;
+        const btnReset = document.getElementById('btn-reset-rpb-search');
+        if (btnReset) {
+          btnReset.addEventListener('click', () => {
+            resellerKbState.search = '';
+            const inp = document.getElementById('reseller-search-input');
+            if (inp) inp.value = '';
+            renderResellerPlaybooks();
+          });
+        }
+        return;
+      }
+
+      container.innerHTML = filtered.map(pb => {
+        const isOpen = pb.id === resellerKbState.openPlaybookId;
+        return `
+          <div class="faq-item ${isOpen ? 'is-open' : ''}" data-pb-id="${pb.id}">
+            <div class="faq-header" data-toggle-pb-id="${pb.id}">
+              <div class="faq-header-left">
+                <span class="faq-category-badge ${pb.badgeClass}">${pb.catLabel}</span>
+                <h3 class="faq-title">${pb.title}</h3>
+              </div>
+              <div class="faq-header-right">
+                <span class="faq-video-badge" style="background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe;">
+                  ⚡ Playbook
+                </span>
+                <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="faq-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
+              <p style="font-size:13px; color:#475569; margin: 0 0 12px 0; line-height: 1.5;">${pb.summary}</p>
+              
+              <div class="faq-steps-card">
+                <div class="faq-steps-card-title" style="color:#4338ca;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                  Execution Steps & Protocol
+                </div>
+                ${pb.steps.map((st, i) => `
+                  <div class="faq-step-item">
+                    <div class="faq-step-num" style="background:#4338ca; color:#fff;">${i + 1}</div>
+                    <div style="font-size:12.5px; line-height:1.5;">${st}</div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div style="margin-top:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; font-size:12.5px; color:#166534;">
+                💡 <strong>${pb.tip}</strong>
+              </div>
+
+              <div class="faq-footer-bar" style="margin-top:14px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:12px; color:#64748b;">Useful for your agency?</span>
+                  <button type="button" class="faq-feedback-btn" onclick="showToast('Thank you for partner feedback!')">👍 Helpful</button>
+                </div>
+                <button type="button" class="btn-primary" onclick="window.downloadPartnerAsset && window.downloadPartnerAsset('playbook')" style="font-size:12px; padding:6px 14px;">
+                  Download Checklist PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('[data-toggle-pb-id]').forEach(h => {
+        h.addEventListener('click', () => {
+          const id = h.getAttribute('data-toggle-pb-id');
+          resellerKbState.openPlaybookId = resellerKbState.openPlaybookId === id ? null : id;
+          renderResellerPlaybooks();
+        });
+      });
+    }
+
+    function initResellerKnowledgeBase() {
+      renderResellerPlaybooks();
+
+      // Category Tabs Filter
+      const rpbTabs = document.querySelectorAll('#reseller-cat-tabs .helpdesk-tab-btn');
+      rpbTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          rpbTabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          resellerKbState.cat = btn.getAttribute('data-reseller-cat') || 'all';
+          renderResellerPlaybooks();
+        });
+      });
+
+      // Search Input
+      const rpbSearch = document.getElementById('reseller-search-input');
+      const rpbClear = document.getElementById('reseller-search-clear');
+      if (rpbSearch) {
+        rpbSearch.addEventListener('input', () => {
+          resellerKbState.search = rpbSearch.value.trim();
+          if (rpbClear) rpbClear.style.display = resellerKbState.search ? 'block' : 'none';
+          renderResellerPlaybooks();
+        });
+      }
+      if (rpbClear && rpbSearch) {
+        rpbClear.addEventListener('click', () => {
+          rpbSearch.value = '';
+          resellerKbState.search = '';
+          rpbClear.style.display = 'none';
+          renderResellerPlaybooks();
+        });
+      }
+
+      // Fast track queries
+      document.querySelectorAll('[data-reseller-query]').forEach(pill => {
+        pill.addEventListener('click', () => {
+          const q = pill.getAttribute('data-reseller-query');
+          if (rpbSearch && q) {
+            rpbSearch.value = q;
+            resellerKbState.search = q;
+            if (rpbClear) rpbClear.style.display = 'block';
+            renderResellerPlaybooks();
+          }
+        });
+      });
+    }
+
+    initResellerKnowledgeBase();
+
+    // Portal Switcher for Knowledge Base
+    window.switchKbPortal = function(portal) {
+      const btnKbClient = document.getElementById('btn-kb-client');
+      const btnKbReseller = document.getElementById('btn-kb-reseller');
+      const kbClientView = document.getElementById('kb-client-view');
+      const kbResellerView = document.getElementById('kb-reseller-view');
+      const kbBadgeEl = document.getElementById('kb-portal-status-pill');
+
+      if (portal === 'reseller') {
+        if (btnKbReseller) btnKbReseller.classList.add('active');
+        if (btnKbClient) btnKbClient.classList.remove('active');
+        if (kbResellerView) kbResellerView.style.display = 'block';
+        if (kbClientView) kbClientView.style.display = 'none';
+        if (kbBadgeEl) {
+          kbBadgeEl.textContent = '💼 Reseller & Partner Playbooks Active';
+          kbBadgeEl.style.color = '#7c3aed';
+          kbBadgeEl.style.background = '#f5f3ff';
+          kbBadgeEl.style.borderColor = '#ddd6fe';
+        }
+        renderResellerPlaybooks();
+      } else {
+        if (btnKbClient) btnKbClient.classList.add('active');
+        if (btnKbReseller) btnKbReseller.classList.remove('active');
+        if (kbClientView) kbClientView.style.display = 'block';
+        if (kbResellerView) kbResellerView.style.display = 'none';
+        if (kbBadgeEl) {
+          kbBadgeEl.textContent = '👤 Client Self-Service Guides';
+          kbBadgeEl.style.color = '#2563eb';
+          kbBadgeEl.style.background = '#eff6ff';
+          kbBadgeEl.style.borderColor = '#bfdbfe';
+        }
+        renderHelpDeskFaqs();
+      }
+    };
+
+    window.downloadPartnerAsset = function(assetType) {
+      if (assetType === 'deck') {
+        showToast('📥 Downloading SimpleFloww SME Pitch Deck (Pitch_Deck_v4.pptx)...');
+      } else if (assetType === 'agreement') {
+        showToast('📥 Downloading Reseller Master Service Agreement (MSA_Draft.docx)...');
+      } else if (assetType === 'calculator') {
+        showToast('📥 Downloading Partner ROI & Client Margin Calculator (.xlsx)...');
+      } else if (assetType === 'templates') {
+        showToast('📥 Downloading 50 Meta Pre-Approved WhatsApp Templates (PDF)...');
+      } else {
+        showToast('📥 Downloading Partner Playbook Checklist (.pdf)...');
+      }
+    };
+
+    window.renderKnowledgeBaseAll = function() {
+      renderHelpDeskFaqs();
+      renderResellerPlaybooks();
+    };
+
+    // =========================================================================
     // DUAL-PORTAL HELP DESK TICKETING SYSTEM ENGINE
     // =========================================================================
     const helpdeskTicketsData = [
@@ -4301,12 +4611,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function setRole(role) {
         hdState.role = role;
-        if (role === 'team') {
+        const roleBadge = document.getElementById('hd-portal-status-pill');
+        if (role === 'team' || role === 'reseller') {
           if (btnSwitchTeam) btnSwitchTeam.classList.add('active');
           if (btnSwitchClient) btnSwitchClient.classList.remove('active');
           if (teamViewContainer) teamViewContainer.style.display = 'block';
           if (clientViewContainer) clientViewContainer.style.display = 'none';
           if (roleNameEl) roleNameEl.textContent = 'Support Team Desk (Internal Queue)';
+          if (roleBadge) {
+            roleBadge.textContent = '🏢 Reseller Desk Active';
+            roleBadge.style.color = '#7c3aed';
+            roleBadge.style.background = '#f5f3ff';
+            roleBadge.style.borderColor = '#ddd6fe';
+          }
           renderTeamTickets();
         } else {
           if (btnSwitchTeam) btnSwitchTeam.classList.remove('active');
@@ -4314,6 +4631,12 @@ document.addEventListener('DOMContentLoaded', () => {
           if (teamViewContainer) teamViewContainer.style.display = 'none';
           if (clientViewContainer) clientViewContainer.style.display = 'block';
           if (roleNameEl) roleNameEl.textContent = 'Client Portal (TechNova Solutions)';
+          if (roleBadge) {
+            roleBadge.textContent = '👤 Client Portal Active';
+            roleBadge.style.color = '#2563eb';
+            roleBadge.style.background = '#eff6ff';
+            roleBadge.style.borderColor = '#bfdbfe';
+          }
           renderClientTickets();
         }
       }
@@ -5755,6 +6078,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Initial Render
       renderTeamTickets();
       renderClientTickets();
+      setRole('client');
 
       // Export methods to window for 100% click reliability
       window.openRaiseTicketModal = openRaiseTicketModal;
