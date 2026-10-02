@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.2" />
+  <link rel="stylesheet" href="dashboard.css?v=3.3" />
 </head>
 <body>
 
@@ -2255,7 +2255,7 @@
                     <span class="hd-tab-count-badge subtle" id="badge-ref-payouts-cnt">3</span>
                   </button>
                   <button type="button" class="hd-main-tab-btn" id="tab-ref-tiers" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('tiers')">
-                    <span>Tier Rules</span>
+                    <span>Partnership Tracks</span>
                   </button>
                 </div>
 
@@ -2307,29 +2307,75 @@
                 </table>
               </div>
 
-              <!-- Table Tab 3: Tier Breakdown Table -->
+              <!-- Table Tab 3: Partnership Models (1. Refer & Earn, 2. Become Advisor, 3. Whitelabel Partner) -->
               <div id="panel-ref-tiers" class="ref-tab-panel" style="display: none; padding: 20px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
-                  <div style="background: #f8fafc; border: 1px solid #eaecf0; border-radius: 10px; padding: 16px;">
-                    <div style="font-size: 13px; font-weight: 600; color: #475569;">Bronze Partner</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #0f172a; margin: 4px 0;">10% Recurring</div>
-                    <p style="font-size: 12px; color: #64748b; margin: 0 0 10px 0;">1 to 3 active clients</p>
-                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Instant Wallet Credits</div>
+                <div style="margin-bottom: 16px;">
+                  <h4 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700; color: #0f172a;">Partner Growth Programs</h4>
+                  <p style="margin: 0; font-size: 12.5px; color: #64748b;">Choose how you want to partner with Simple Floww CRM — from instant referrals to custom whitelabel software.</p>
+                </div>
+
+                <div class="ref-partnership-models-grid">
+                  <!-- Model 1: Affiliate / Refer & Earn -->
+                  <div class="ref-partnership-card active">
+                    <span class="ref-partnership-badge free">Instant & Active ✓</span>
+                    <div>
+                      <div style="font-size: 24px; margin-bottom: 6px;">🚀</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 1: Refer & Earn (Affiliate)</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #2563eb; margin: 4px 0 10px 0;">Pure 20% Recurring OR Flat ₹500</div>
+                      <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
+                        Zero barrier to entry. Copy your referral link, share with clients or community, and track live payouts with automatic 7-day refund clearance.
+                      </p>
+                      <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
+                        <li><strong>Instant Setup:</strong> No approval required</li>
+                        <li><strong>Live Funnel Tracker:</strong> Account ➔ Paid ➔ Escrow ➔ Wallet</li>
+                        <li><strong>UPI / IMPS:</strong> Direct weekly wallet withdrawals</li>
+                      </ul>
+                    </div>
+                    <button type="button" class="btn-primary" style="width: 100%; justify-content: center;" onclick="window.switchPartnerTableTab('clients')">
+                      <span>View Active Referral Link ➔</span>
+                    </button>
                   </div>
 
-                  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px;">
-                    <div style="font-size: 13px; font-weight: 600; color: #1d4ed8;">Silver Partner</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #1e3a8a; margin: 4px 0;">15% Recurring</div>
-                    <p style="font-size: 12px; color: #3b82f6; margin: 0 0 10px 0;">4 to 10 active clients</p>
-                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Priority 24h Payouts</div>
+                  <!-- Model 2: Become Advisor (Paid & Application Based) -->
+                  <div class="ref-partnership-card advisor-card">
+                    <span class="ref-partnership-badge paid">Paid Track • Application</span>
+                    <div>
+                      <div style="font-size: 24px; margin-bottom: 6px;">💼</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 2: Certified CRM Advisor</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #7e22ce; margin: 4px 0 10px 0;">30% Commission + Co-Selling Leads</div>
+                      <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
+                        For business consultants, marketing agencies, and automation experts who implement and advise clients on WhatsApp CRM workflows.
+                      </p>
+                      <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
+                        <li><strong>Higher Royalty:</strong> 30% recurring monthly payout</li>
+                        <li><strong>Dedicated Tech Lead:</strong> Meta API onboarding support</li>
+                        <li><strong>Co-Branded Collateral:</strong> Official partner badge & lead intros</li>
+                      </ul>
+                    </div>
+                    <button type="button" class="btn-primary" style="width: 100%; justify-content: center; background: #7e22ce; border-color: #6b21a8;" onclick="window.openAdvisorApplicationModal && window.openAdvisorApplicationModal()">
+                      <span>Apply as Advisor (Paid) ➔</span>
+                    </button>
                   </div>
 
-                  <div style="background: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 16px; position: relative;">
-                    <span style="position: absolute; top: 12px; right: 12px; font-size: 10px; background: #eab308; color: #ffffff; padding: 2px 7px; border-radius: 999px; font-weight: 700;">CURRENT</span>
-                    <div style="font-size: 13px; font-weight: 600; color: #854d0e;">Gold VIP Partner</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #713f12; margin: 4px 0;">20% Recurring</div>
-                    <p style="font-size: 12px; color: #a16207; margin: 0 0 10px 0;">11+ active clients</p>
-                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Dedicated Account Manager</div>
+                  <!-- Model 3: Whitelabel Partner -->
+                  <div class="ref-partnership-card whitelabel-card">
+                    <span class="ref-partnership-badge enterprise">Enterprise • Custom Domain</span>
+                    <div>
+                      <div style="font-size: 24px; margin-bottom: 6px;">🏢</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 3: White-Label Partner</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #15803d; margin: 4px 0 10px 0;">Your Brand, Your Pricing, 100% Margin</div>
+                      <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
+                        Launch your own branded WhatsApp CRM SaaS under your custom domain, logo, and payment gateway with full reseller control.
+                      </p>
+                      <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
+                        <li><strong>Custom Domain & Branding:</strong> app.yourbrand.com</li>
+                        <li><strong>Your Own Razorpay / Stripe:</strong> Keep 100% payments</li>
+                        <li><strong>Master Reseller Dashboard:</strong> Control all client quotas</li>
+                      </ul>
+                    </div>
+                    <button type="button" class="btn-primary" style="width: 100%; justify-content: center; background: #16a34a; border-color: #15803d;" onclick="window.openWhitelabelApplicationModal && window.openWhitelabelApplicationModal()">
+                      <span>Apply for White-Label ➔</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -2342,6 +2388,63 @@
                ================================================================ -->
           <div id="ref-reseller-view" style="display: none;">
             
+            <!-- Reseller Master Live Analytics & KPI Strip -->
+            <div class="reseller-kpi-grid">
+              <div class="reseller-kpi-card">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Total Referral Invites</span>
+                  <span class="hd-kpi-dot info"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-invites">574</div>
+                <div class="reseller-kpi-sub">Total clicks / link visits</div>
+              </div>
+
+              <div class="reseller-kpi-card highlight">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Referred Signups</span>
+                  <span class="hd-kpi-dot success"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-signups" style="color: #2563eb;">22</div>
+                <div class="reseller-kpi-sub"><strong>38.3%</strong> conversion rate</div>
+              </div>
+
+              <div class="reseller-kpi-card">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Referral Revenue</span>
+                  <span class="hd-kpi-dot success"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-revenue" style="color: #16a34a;">₹1,08,498</div>
+                <div class="reseller-kpi-sub">Gross sales from affiliates</div>
+              </div>
+
+              <div class="reseller-kpi-card">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Total Paid Out</span>
+                  <span class="hd-kpi-dot success"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-paid" style="color: #0f172a;">₹11,200</div>
+                <div class="reseller-kpi-sub">Settled via IMPS / UPI</div>
+              </div>
+
+              <div class="reseller-kpi-card">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Pending Escrow</span>
+                  <span class="hd-kpi-dot warning"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-pending" style="color: #d97706;">₹5,450</div>
+                <div class="reseller-kpi-sub">In 7d refund window</div>
+              </div>
+
+              <div class="reseller-kpi-card">
+                <div class="reseller-kpi-head">
+                  <span class="reseller-kpi-title">Active Affiliates</span>
+                  <span class="hd-kpi-dot purple"></span>
+                </div>
+                <div class="reseller-kpi-val" id="reseller-kpi-partners">4</div>
+                <div class="reseller-kpi-sub">Registered promoters</div>
+              </div>
+            </div>
+
             <!-- Reseller Master Configuration Card -->
             <div class="module-card" style="margin-bottom: 20px; border: 1px solid #eaecf0; border-radius: 12px; background: #ffffff;">
               <div class="module-card-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
@@ -2477,12 +2580,13 @@
                 <table class="hd-table" id="reseller-partners-table">
                   <thead>
                     <tr>
-                      <th>Partner Name & Email</th>
-                      <th>Tier Level</th>
-                      <th>Clicks</th>
-                      <th>Paid Referrals</th>
+                      <th>Partner Name & Contact</th>
+                      <th>Program Track</th>
+                      <th>Commission Model</th>
+                      <th>Invites / Clicks</th>
+                      <th>Paid Signups</th>
                       <th>Conversion Rate</th>
-                      <th>Lifetime Earned</th>
+                      <th>Total Earned</th>
                       <th>Unpaid Balance</th>
                       <th>Status</th>
                     </tr>
@@ -3562,6 +3666,140 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </div>
   </div>
 
+  <!-- ====================================================================
+       MODAL 5: BECOME CERTIFIED CRM ADVISOR (Paid Program Application)
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-ref-advisor-app" style="display: none; z-index: 999999;">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #faf5ff; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid #e9d5ff;">
+            💼
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Apply as Certified CRM Advisor</h3>
+            <span style="font-size: 12px; color: #7e22ce; font-weight: 600;">Paid Program • 30% Lifetime Recurring + Direct Client Intros</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeAdvisorApplicationModal && window.closeAdvisorApplicationModal()">&times;</button>
+      </div>
+
+      <form id="form-advisor-application" onsubmit="window.handleAdvisorAppSubmit && window.handleAdvisorAppSubmit(event)" style="padding-top: 10px;">
+        <div style="background: #faf5ff; border: 1px solid #f3e8ff; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 12px; color: #6b21a8;">
+          ⚡ <strong>Advisor Perks:</strong> Direct WhatsApp co-selling support, 30% monthly royalties, certification badge, and pre-qualified leads from our marketing pool.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label class="form-label">Full Name <span style="color: #ef4444;">*</span></label>
+            <input type="text" class="form-input" id="adv-name" value="Abhinandan Kumar" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp Contact <span style="color: #ef4444;">*</span></label>
+            <input type="text" class="form-input" id="adv-phone" placeholder="+91 98765 43210" required />
+          </div>
+        </div>
+
+        <!-- Detail Question 1: What do you currently do? -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Current Role / Business Type <span style="color: #ef4444;">*</span></label>
+          <select class="form-input" id="adv-role" required>
+            <option value="agency">Digital Marketing & Growth Agency Owner</option>
+            <option value="consultant">Independent Business / CRM Consultant</option>
+            <option value="freelancer">Automation & WhatsApp API Specialist</option>
+            <option value="it-services">Software & IT Solutions Provider</option>
+          </select>
+        </div>
+
+        <!-- Detail Question 2: What products/services do you sell? -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">What products or services do you currently sell to your clients? <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="adv-services" placeholder="e.g. Lead Gen Ads, WhatsApp Automation, HubSpot Setup, Shopify CRM" required />
+        </div>
+
+        <!-- Detail Question 3: How many active clients? -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">How many active business clients do you currently manage? <span style="color: #ef4444;">*</span></label>
+          <select class="form-input" id="adv-client-count" required>
+            <option value="5-15">5 – 15 active business clients</option>
+            <option value="15-50">15 – 50 active business clients</option>
+            <option value="50+">50+ enterprise / mid-market clients</option>
+          </select>
+        </div>
+
+        <!-- Detail Question 4: Skills & Tech stack -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">What tools & workflows are you proficient with? (Skills) <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="adv-skills" placeholder="e.g. Meta Cloud API, Webhooks, Zapier/Make, CRM Pipelines, AI Prompts" required />
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eaecf0; padding-top: 12px;">
+          <span style="font-size: 11px; color: #64748b;">Annual Advisor Accreditation: ₹4,999/yr</span>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-secondary" onclick="window.closeAdvisorApplicationModal && window.closeAdvisorApplicationModal()">Cancel</button>
+            <button type="submit" class="btn-primary" style="background: #7e22ce; border-color: #6b21a8;">Submit Advisor Application & Pay ➔</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 6: WHITE-LABEL PARTNER APPLICATION
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-ref-whitelabel-app" style="display: none; z-index: 999999;">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid #bbf7d0;">
+            🏢
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Apply for White-Label Partner Portal</h3>
+            <span style="font-size: 12px; color: #16a34a; font-weight: 600;">Full Custom Branding • Your Domain • 100% Retained Revenue</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeWhitelabelApplicationModal && window.closeWhitelabelApplicationModal()">&times;</button>
+      </div>
+
+      <form id="form-whitelabel-application" onsubmit="window.handleWhitelabelAppSubmit && window.handleWhitelabelAppSubmit(event)" style="padding-top: 10px;">
+        <div style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 12px; color: #166534;">
+          🏢 <strong>White-Label Solution:</strong> Launch Simple Floww under your brand name, domain, SSL & Razorpay credentials. Complete master admin control.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label class="form-label">Brand / Agency Name <span style="color: #ef4444;">*</span></label>
+            <input type="text" class="form-input" id="wl-brand-name" placeholder="e.g. NextGen Floww Software" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Desired Custom Domain <span style="color: #ef4444;">*</span></label>
+            <input type="text" class="form-input" id="wl-domain" placeholder="e.g. crm.yourbrand.com" required />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Current Client Base & Projected Onboarding Volume <span style="color: #ef4444;">*</span></label>
+          <select class="form-input" id="wl-volume" required>
+            <option value="10-25">10 – 25 client businesses in first 60 days</option>
+            <option value="25-100">25 – 100 client businesses</option>
+            <option value="100+">100+ high-volume enterprise accounts</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Existing Experience & Primary Business Activity <span style="color: #ef4444;">*</span></label>
+          <textarea class="form-input" id="wl-experience" rows="3" placeholder="Tell us what services you currently provide, your team size, and what value whitelabel WhatsApp CRM adds to your existing customers." required></textarea>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #eaecf0; padding-top: 12px;">
+          <button type="button" class="btn-secondary" onclick="window.closeWhitelabelApplicationModal && window.closeWhitelabelApplicationModal()">Cancel</button>
+          <button type="submit" class="btn-primary" style="background: #16a34a; border-color: #15803d;">Submit White-Label Request ➔</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Floating Live Notification Toast Container -->
   <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
@@ -3590,6 +3828,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.2"></script>
+  <script src="dashboard.js?v=3.3"></script>
 </body>
 </html>

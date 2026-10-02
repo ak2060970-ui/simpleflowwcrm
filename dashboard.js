@@ -5937,12 +5937,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       ],
 
-      // All Registered Affiliates in Reseller Roster
+      // All Registered Affiliates in Reseller Roster across the 3 Partnership Tracks
       partnersRoster: [
         {
           name: 'Abhinandan Kumar',
           email: 'abhinandan@simplefloww.com',
-          tier: 'Gold VIP (20%)',
+          phone: '+91 98201 44550',
+          programTrack: 'Affiliate', // 'Affiliate' | 'Advisor' | 'Whitelabel'
+          chosenModel: '20% Recurring',
           clicks: 142,
           referrals: 5,
           rate: '38.4%',
@@ -5953,33 +5955,39 @@ document.addEventListener('DOMContentLoaded', () => {
         {
           name: 'Rahul Verma',
           email: 'rahul.verma@growthpartners.in',
-          tier: 'Gold VIP (20%)',
+          phone: '+91 98112 88410',
+          programTrack: 'Certified Advisor',
+          chosenModel: '30% Royalty (Advisor)',
           clicks: 310,
           referrals: 12,
           rate: '41.2%',
           lifetime: 42000,
           balance: 1200,
-          status: 'Active'
+          status: 'Certified'
         },
         {
-          name: 'Priya Sharma (Agency)',
+          name: 'Priya Sharma (SocialScale Agency)',
           email: 'priya@socialscale.in',
-          tier: 'Silver (15%)',
+          phone: '+91 97654 11200',
+          programTrack: 'Whitelabel Partner',
+          chosenModel: '100% Brand Margin',
           clicks: 88,
           referrals: 4,
           rate: '32.1%',
-          lifetime: 9600,
+          lifetime: 36000,
           balance: 850,
-          status: 'Active'
+          status: 'Live WL'
         },
         {
           name: 'Devansh Oberoi',
           email: 'dev@saasrocket.io',
-          tier: 'Bronze (10%)',
+          phone: '+91 98450 33910',
+          programTrack: 'Affiliate',
+          chosenModel: 'Flat ₹500 Bounty',
           clicks: 34,
           referrals: 1,
           rate: '18.5%',
-          lifetime: 1500,
+          lifetime: 500,
           balance: 0,
           status: 'Active'
         }
@@ -6335,25 +6343,48 @@ document.addEventListener('DOMContentLoaded', () => {
       const tbody = document.getElementById('reseller-partners-tbody');
       if (!tbody) return;
 
-      tbody.innerHTML = refState.partnersRoster.map(prt => `
-        <tr>
-          <td>
-            <div style="font-weight: 700; color: #0f172a;">${prt.name}</div>
-            <div style="font-size: 11px; color: #64748b;">${prt.email}</div>
-          </td>
-          <td>
-            <span class="status-chip resolved" style="font-size: 11px;">${prt.tier}</span>
-          </td>
-          <td style="font-weight: 600; color: #334155;">${prt.clicks}</td>
-          <td style="font-weight: 700; color: #1e3a8a;">${prt.referrals}</td>
-          <td style="font-weight: 600; color: #16a34a;">${prt.rate}</td>
-          <td style="font-weight: 700; color: #0f172a;">₹${prt.lifetime.toLocaleString('en-IN')}</td>
-          <td style="font-weight: 700; color: #2563eb;">₹${prt.balance.toLocaleString('en-IN')}</td>
-          <td>
-            <span class="status-chip resolved">${prt.status}</span>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = refState.partnersRoster.map(prt => {
+        let trackBadgeBg = '#eff6ff';
+        let trackBadgeColor = '#1d4ed8';
+        let trackBorder = '#bfdbfe';
+
+        if (prt.programTrack === 'Certified Advisor') {
+          trackBadgeBg = '#faf5ff';
+          trackBadgeColor = '#7e22ce';
+          trackBorder = '#e9d5ff';
+        } else if (prt.programTrack === 'Whitelabel Partner') {
+          trackBadgeBg = '#f0fdf4';
+          trackBadgeColor = '#16a34a';
+          trackBorder = '#bbf7d0';
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #0f172a; font-size: 13px;">${prt.name}</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                <span>${prt.email}</span> • <span style="font-family: monospace;">${prt.phone || ''}</span>
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: ${trackBadgeBg}; color: ${trackBadgeColor}; border: 1px solid ${trackBorder};">
+                ${prt.programTrack || 'Affiliate'}
+              </span>
+            </td>
+            <td style="font-size: 12px; font-weight: 600; color: #334155;">
+              ${prt.chosenModel || '20% Recurring'}
+            </td>
+            <td style="font-weight: 600; color: #475569; font-size: 12.5px;">${prt.clicks}</td>
+            <td style="font-weight: 700; color: #1e3a8a; font-size: 12.5px;">${prt.referrals}</td>
+            <td style="font-weight: 600; color: #16a34a; font-size: 12px;">${prt.rate}</td>
+            <td style="font-weight: 700; color: #0f172a; font-size: 12.5px;">₹${prt.lifetime.toLocaleString('en-IN')}</td>
+            <td style="font-weight: 700; color: #2563eb; font-size: 12.5px;">₹${prt.balance.toLocaleString('en-IN')}</td>
+            <td>
+              <span class="status-chip resolved" style="font-size: 10.5px; padding: 2px 7px;">${prt.status}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // 8. Copy Partner Link with Visual Feedback
@@ -6749,6 +6780,99 @@ document.addEventListener('DOMContentLoaded', () => {
       showRefToast(`🎉 New referral lead "${pick.name}" simulated! Plan paid: ₹${pick.val.toLocaleString('en-IN')}. 7-day refund countdown started.`);
     }
 
+    // 17. Advisor Application Modal Handlers
+    function openAdvisorApplicationModal() {
+      const modal = document.getElementById('modal-ref-advisor-app');
+      if (modal) {
+        modal.style.display = 'flex';
+        const nameInput = document.getElementById('adv-name');
+        if (nameInput && !nameInput.value) nameInput.value = 'Abhinandan Kumar';
+      }
+    }
+
+    function closeAdvisorApplicationModal() {
+      const modal = document.getElementById('modal-ref-advisor-app');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleAdvisorAppSubmit(e) {
+      if (e) e.preventDefault();
+      const name = document.getElementById('adv-name')?.value || 'New Advisor';
+      const phone = document.getElementById('adv-phone')?.value || '+91 98765 43210';
+      const role = document.getElementById('adv-role')?.value || 'Agency';
+      const services = document.getElementById('adv-services')?.value || '';
+      const clientCount = document.getElementById('adv-client-count')?.value || '5-15';
+      const skills = document.getElementById('adv-skills')?.value || '';
+
+      // Add to reseller partners roster as Certified Advisor
+      const newAdvisor = {
+        name: `${name} (Certified Advisor)`,
+        email: `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@partner.in`,
+        phone: phone,
+        programTrack: 'Certified Advisor',
+        chosenModel: '30% Royalty (Advisor)',
+        clicks: 0,
+        referrals: 0,
+        rate: '0.0%',
+        lifetime: 0,
+        balance: 0,
+        status: 'Accredited'
+      };
+
+      refState.partnersRoster.unshift(newAdvisor);
+      renderResellerPartners();
+
+      // Update Reseller KPI active affiliates count
+      const partKpi = document.getElementById('reseller-kpi-partners');
+      if (partKpi) partKpi.textContent = refState.partnersRoster.length;
+
+      closeAdvisorApplicationModal();
+      showRefToast(`🎉 Advisor application submitted! Welcome ${name} to the Certified Partner Network.`);
+    }
+
+    // 18. White-Label Application Modal Handlers
+    function openWhitelabelApplicationModal() {
+      const modal = document.getElementById('modal-ref-whitelabel-app');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeWhitelabelApplicationModal() {
+      const modal = document.getElementById('modal-ref-whitelabel-app');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleWhitelabelAppSubmit(e) {
+      if (e) e.preventDefault();
+      const brand = document.getElementById('wl-brand-name')?.value || 'Enterprise Partner';
+      const domain = document.getElementById('wl-domain')?.value || 'crm.partnerdomain.com';
+      const volume = document.getElementById('wl-volume')?.value || '10-25';
+      const experience = document.getElementById('wl-experience')?.value || '';
+
+      // Add to reseller partners roster as Whitelabel Partner
+      const newWL = {
+        name: brand,
+        email: `ops@${domain.replace('crm.', '')}`,
+        phone: '+91 99887 76655',
+        programTrack: 'Whitelabel Partner',
+        chosenModel: '100% Brand Margin',
+        clicks: 0,
+        referrals: 0,
+        rate: '0.0%',
+        lifetime: 0,
+        balance: 0,
+        status: 'Provisioning'
+      };
+
+      refState.partnersRoster.unshift(newWL);
+      renderResellerPartners();
+
+      const partKpi = document.getElementById('reseller-kpi-partners');
+      if (partKpi) partKpi.textContent = refState.partnersRoster.length;
+
+      closeWhitelabelApplicationModal();
+      showRefToast(`🚀 White-Label instance request received for ${brand} (${domain})! Provisioning portal.`);
+    }
+
     // Initial render
     updatePartnerHeroAndStats();
     renderPartnerClients();
@@ -6780,6 +6904,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openClientFunnelModal = openClientFunnelModal;
     window.closeClientFunnelModal = closeClientFunnelModal;
     window.simulateNewReferralLead = simulateNewReferralLead;
+    window.openAdvisorApplicationModal = openAdvisorApplicationModal;
+    window.closeAdvisorApplicationModal = closeAdvisorApplicationModal;
+    window.handleAdvisorAppSubmit = handleAdvisorAppSubmit;
+    window.openWhitelabelApplicationModal = openWhitelabelApplicationModal;
+    window.closeWhitelabelApplicationModal = closeWhitelabelApplicationModal;
+    window.handleWhitelabelAppSubmit = handleWhitelabelAppSubmit;
   }
 
   initHelpDesk();
