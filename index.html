@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.3" />
+  <link rel="stylesheet" href="dashboard.css?v=3.4" />
 </head>
 <body>
 
@@ -2237,8 +2237,66 @@
                   <span class="hd-kpi-title">Partner Tier</span>
                   <span class="hd-kpi-dot success"></span>
                 </div>
-                <div class="hd-kpi-val" id="ref-stat-tier" style="font-size: 18px; color: #0f172a;">Gold VIP (20%)</div>
-                <div class="hd-kpi-sub">Max rate unlocked</div>
+                <div class="hd-kpi-val" id="ref-stat-tier" style="font-size: 18px; color: #0f172a;">Silver Tier (15%)</div>
+                <div class="hd-kpi-sub" id="ref-stat-tier-sub">1 client away from 20% Gold VIP</div>
+              </div>
+            </div>
+
+            <!-- Affiliate Progression Milestone Card (10% -> 15% -> 20%) -->
+            <div class="ref-tier-progress-card" id="ref-affiliate-tier-card">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                    <span>🏆</span>
+                    <span>Affiliate Commission Milestone & Tier Tracker</span>
+                  </div>
+                  <div style="font-size: 12px; color: #64748b; margin-top: 2px;" id="ref-tier-summary-text">
+                    You currently have <strong>5 referred clients</strong>. Your active commission rate is <strong>15% Recurring</strong>!
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 11.5px; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 4px 10px; border-radius: 999px; border: 1px solid #bfdbfe;" id="ref-tier-next-target">
+                    Next: Refer 1 more client for 20% Gold VIP ➔
+                  </span>
+                </div>
+              </div>
+
+              <!-- 3 Interactive Tier Steps -->
+              <div class="ref-tier-stepper">
+                <!-- Tier 1: Bronze (10%) -->
+                <div class="ref-tier-step-box unlocked" id="tier-box-bronze">
+                  <div class="ref-tier-step-header">
+                    <span class="ref-tier-step-title">🥉 Bronze Tier</span>
+                    <span class="ref-tier-step-badge unlocked">Completed ✓</span>
+                  </div>
+                  <div class="ref-tier-rate">10% Recurring</div>
+                  <div class="ref-tier-req">1 – 2 paid client signups</div>
+                </div>
+
+                <!-- Tier 2: Silver (15%) -->
+                <div class="ref-tier-step-box current" id="tier-box-silver">
+                  <div class="ref-tier-step-header">
+                    <span class="ref-tier-step-title">🥈 Silver Tier</span>
+                    <span class="ref-tier-step-badge current">Current Stage</span>
+                  </div>
+                  <div class="ref-tier-rate">15% Recurring</div>
+                  <div class="ref-tier-req">3 – 5 paid client signups (You are here)</div>
+                </div>
+
+                <!-- Tier 3: Gold VIP (20%) -->
+                <div class="ref-tier-step-box" id="tier-box-gold">
+                  <div class="ref-tier-step-header">
+                    <span class="ref-tier-step-title">🥇 Gold VIP</span>
+                    <span class="ref-tier-step-badge locked">Target: 6+</span>
+                  </div>
+                  <div class="ref-tier-rate">20% Recurring</div>
+                  <div class="ref-tier-req">6+ paid clients (Max royalty rate)</div>
+                </div>
+              </div>
+
+              <!-- Progress Fill Bar -->
+              <div class="ref-tier-progress-track">
+                <div class="ref-tier-progress-fill" id="ref-tier-fill" style="width: 83%;"></div>
               </div>
             </div>
 
@@ -2321,39 +2379,41 @@
                     <div>
                       <div style="font-size: 24px; margin-bottom: 6px;">🚀</div>
                       <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 1: Refer & Earn (Affiliate)</div>
-                      <div style="font-size: 13px; font-weight: 600; color: #2563eb; margin: 4px 0 10px 0;">Pure 20% Recurring OR Flat ₹500</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #2563eb; margin: 4px 0 10px 0;">Tiered 10% ➔ 15% ➔ 20% Recurring (or Flat ₹500)</div>
                       <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
-                        Zero barrier to entry. Copy your referral link, share with clients or community, and track live payouts with automatic 7-day refund clearance.
+                        Zero entry barrier. Start at 10%, unlock 15% after 3 clients, and reach 20% Gold VIP after 6 clients. Live dashboard milestone tracking.
                       </p>
                       <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
-                        <li><strong>Instant Setup:</strong> No approval required</li>
-                        <li><strong>Live Funnel Tracker:</strong> Account ➔ Paid ➔ Escrow ➔ Wallet</li>
-                        <li><strong>UPI / IMPS:</strong> Direct weekly wallet withdrawals</li>
+                        <li><strong>Bronze (1-2 Clients):</strong> 10% Recurring</li>
+                        <li><strong>Silver (3-5 Clients):</strong> 15% Recurring</li>
+                        <li><strong>Gold VIP (6+ Clients):</strong> 20% Recurring</li>
+                        <li><strong>Bounty Alternative:</strong> Flat ₹500 one-time if preferred</li>
                       </ul>
                     </div>
                     <button type="button" class="btn-primary" style="width: 100%; justify-content: center;" onclick="window.switchPartnerTableTab('clients')">
-                      <span>View Active Referral Link ➔</span>
+                      <span>View My Referral Link ➔</span>
                     </button>
                   </div>
 
                   <!-- Model 2: Become Advisor (Paid & Application Based) -->
                   <div class="ref-partnership-card advisor-card">
-                    <span class="ref-partnership-badge paid">Paid Track • Application</span>
+                    <span class="ref-partnership-badge paid">Paid Track • ₹5,000/Year</span>
                     <div>
                       <div style="font-size: 24px; margin-bottom: 6px;">💼</div>
                       <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 2: Certified CRM Advisor</div>
-                      <div style="font-size: 13px; font-weight: 600; color: #7e22ce; margin: 4px 0 10px 0;">30% Commission + Co-Selling Leads</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #7e22ce; margin: 4px 0 10px 0;">50% Commission • CRM Leads • Full Back-office Handled</div>
                       <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
-                        For business consultants, marketing agencies, and automation experts who implement and advise clients on WhatsApp CRM workflows.
+                        Join as an official Sales & Solutions Advisor (₹5,000/year). You get direct buyer leads & hands-on sales training, and keep huge 50% revenue share while we handle all technical support.
                       </p>
                       <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
-                        <li><strong>Higher Royalty:</strong> 30% recurring monthly payout</li>
-                        <li><strong>Dedicated Tech Lead:</strong> Meta API onboarding support</li>
-                        <li><strong>Co-Branded Collateral:</strong> Official partner badge & lead intros</li>
+                        <li><strong>50% Revenue Share:</strong> Flat 50% commission on every closed deal</li>
+                        <li><strong>Qualified Inbound Leads:</strong> Access our paid verified lead desk</li>
+                        <li><strong>Product & Sales Training:</strong> Master demos & closing scripts</li>
+                        <li><strong>100% Managed By Us:</strong> Support, onboarding & tech maintenance</li>
                       </ul>
                     </div>
                     <button type="button" class="btn-primary" style="width: 100%; justify-content: center; background: #7e22ce; border-color: #6b21a8;" onclick="window.openAdvisorApplicationModal && window.openAdvisorApplicationModal()">
-                      <span>Apply as Advisor (Paid) ➔</span>
+                      <span>Apply as Advisor (₹5,000/yr) ➔</span>
                     </button>
                   </div>
 
@@ -2363,18 +2423,19 @@
                     <div>
                       <div style="font-size: 24px; margin-bottom: 6px;">🏢</div>
                       <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Track 3: White-Label Partner</div>
-                      <div style="font-size: 13px; font-weight: 600; color: #15803d; margin: 4px 0 10px 0;">Your Brand, Your Pricing, 100% Margin</div>
+                      <div style="font-size: 13px; font-weight: 600; color: #15803d; margin: 4px 0 10px 0;">100% Profit Margin • Your Brand & Custom Domain</div>
                       <p style="font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 14px;">
-                        Launch your own branded WhatsApp CRM SaaS under your custom domain, logo, and payment gateway with full reseller control.
+                        Run your own branded WhatsApp CRM SaaS platform. Charge clients whatever you want and retain 100% end-customer profit.
                       </p>
                       <ul style="margin: 0 0 16px 0; padding-left: 18px; font-size: 11.5px; color: #475569; line-height: 1.6;">
-                        <li><strong>Custom Domain & Branding:</strong> app.yourbrand.com</li>
-                        <li><strong>Your Own Razorpay / Stripe:</strong> Keep 100% payments</li>
-                        <li><strong>Master Reseller Dashboard:</strong> Control all client quotas</li>
+                        <li><strong>Custom Domain & Branding:</strong> crm.youragency.com</li>
+                        <li><strong>100% Retained Revenue:</strong> You collect end payments directly</li>
+                        <li><strong>Fixed Per-Client Model:</strong> Pay us only nominal platform fee</li>
+                        <li><strong>Dedicated Support:</strong> Private onboarding & partner assistance</li>
                       </ul>
                     </div>
                     <button type="button" class="btn-primary" style="width: 100%; justify-content: center; background: #16a34a; border-color: #15803d;" onclick="window.openWhitelabelApplicationModal && window.openWhitelabelApplicationModal()">
-                      <span>Apply for White-Label ➔</span>
+                      <span>Inquire for White-Label ➔</span>
                     </button>
                   </div>
                 </div>
@@ -3678,15 +3739,15 @@ Use my partner link to get an exclusive 10% Discount on signup:
           </div>
           <div>
             <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Apply as Certified CRM Advisor</h3>
-            <span style="font-size: 12px; color: #7e22ce; font-weight: 600;">Paid Program • 30% Lifetime Recurring + Direct Client Intros</span>
+            <span style="font-size: 12px; color: #7e22ce; font-weight: 600;">₹5,000/Year • 50% Revenue Share + Dedicated Leads & Sales Training</span>
           </div>
         </div>
         <button type="button" class="modal-close-btn" onclick="window.closeAdvisorApplicationModal && window.closeAdvisorApplicationModal()">&times;</button>
       </div>
 
       <form id="form-advisor-application" onsubmit="window.handleAdvisorAppSubmit && window.handleAdvisorAppSubmit(event)" style="padding-top: 10px;">
-        <div style="background: #faf5ff; border: 1px solid #f3e8ff; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 12px; color: #6b21a8;">
-          ⚡ <strong>Advisor Perks:</strong> Direct WhatsApp co-selling support, 30% monthly royalties, certification badge, and pre-qualified leads from our marketing pool.
+        <div style="background: #faf5ff; border: 1px solid #f3e8ff; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 12px; color: #6b21a8; line-height: 1.45;">
+          ⚡ <strong>Advisor Program (₹5,000/yr):</strong> You get direct inbound buyer leads (pay-per-lead), full product & sales closing training, and earn <strong>50% revenue share</strong>! Customer onboarding, technical setup, and 24/7 support are 100% managed by Simple Floww.
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
@@ -3734,10 +3795,10 @@ Use my partner link to get an exclusive 10% Discount on signup:
         </div>
 
         <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eaecf0; padding-top: 12px;">
-          <span style="font-size: 11px; color: #64748b;">Annual Advisor Accreditation: ₹4,999/yr</span>
+          <span style="font-size: 11px; color: #64748b;">Annual Advisor Accreditation: ₹5,000/yr</span>
           <div style="display: flex; gap: 8px;">
             <button type="button" class="btn-secondary" onclick="window.closeAdvisorApplicationModal && window.closeAdvisorApplicationModal()">Cancel</button>
-            <button type="submit" class="btn-primary" style="background: #7e22ce; border-color: #6b21a8;">Submit Advisor Application & Pay ➔</button>
+            <button type="submit" class="btn-primary" style="background: #7e22ce; border-color: #6b21a8;">Submit Application & Pay ₹5,000 ➔</button>
           </div>
         </div>
       </form>
@@ -3828,6 +3889,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.3"></script>
+  <script src="dashboard.js?v=3.4"></script>
 </body>
 </html>

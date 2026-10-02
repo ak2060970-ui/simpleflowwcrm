@@ -2882,6 +2882,118 @@ body {
   background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
 }
 
+/* Affiliate Dynamic Progression Bar */
+.ref-tier-progress-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.ref-tier-stepper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  position: relative;
+}
+
+.ref-tier-step-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.ref-tier-step-box.current {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.ref-tier-step-box.unlocked {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.ref-tier-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ref-tier-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ref-tier-step-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ref-tier-step-badge.current {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.ref-tier-step-badge.unlocked {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.ref-tier-step-badge.locked {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.ref-tier-rate {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.ref-tier-step-box.current .ref-tier-rate {
+  color: #2563eb;
+}
+
+.ref-tier-step-box.unlocked .ref-tier-rate {
+  color: #16a34a;
+}
+
+.ref-tier-req {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.ref-tier-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.ref-tier-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
 .ref-partnership-badge {
   position: absolute;
   top: 14px;

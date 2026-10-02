@@ -5957,7 +5957,7 @@ document.addEventListener('DOMContentLoaded', () => {
           email: 'rahul.verma@growthpartners.in',
           phone: '+91 98112 88410',
           programTrack: 'Certified Advisor',
-          chosenModel: '30% Royalty (Advisor)',
+          chosenModel: '50% Commission (Advisor)',
           clicks: 310,
           referrals: 12,
           rate: '41.2%',
@@ -6018,28 +6018,106 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 3500);
     }
 
-    // 1. Update Partner Dynamic Hero Banner and Math based on Reseller Active Model
+    // Helper: Calculate Tier based on paid clients count
+    function calculateAffiliateTier(paidCount) {
+      if (paidCount >= 6) {
+        return {
+          tierName: 'Gold VIP (20%)',
+          tierRate: 20,
+          currentStep: 'gold',
+          summaryText: `You have <strong>${paidCount} paid clients</strong>. You have unlocked the highest <strong>20% Recurring Gold VIP</strong> rate!`,
+          nextTarget: 'Max Tier Unlocked: 20% Recurring Royalty 🏆',
+          progressPercent: 100
+        };
+      } else if (paidCount >= 3) {
+        const remaining = 6 - paidCount;
+        return {
+          tierName: 'Silver Tier (15%)',
+          tierRate: 15,
+          currentStep: 'silver',
+          summaryText: `You have <strong>${paidCount} paid clients</strong>. Your active commission rate is <strong>15% Recurring</strong>!`,
+          nextTarget: `Next: Refer ${remaining} more client${remaining > 1 ? 's' : ''} for 20% Gold VIP ➔`,
+          progressPercent: Math.round((paidCount / 6) * 100)
+        };
+      } else {
+        const remaining = 3 - paidCount;
+        return {
+          tierName: 'Bronze Tier (10%)',
+          tierRate: 10,
+          currentStep: 'bronze',
+          summaryText: `You have <strong>${paidCount} paid client${paidCount === 1 ? '' : 's'}</strong>. Active commission rate is <strong>10% Recurring</strong>.`,
+          nextTarget: `Next: Refer ${remaining} more client${remaining > 1 ? 's' : ''} to unlock 15% Silver ➔`,
+          progressPercent: Math.round((paidCount / 6) * 100)
+        };
+      }
+    }
+
+    // 1. Update Partner Dynamic Hero Banner and Math based on Reseller Active Model & Tiers
     function updatePartnerHeroAndStats() {
       const m = refState.config.activeModel;
       const chip = document.getElementById('ref-active-model-chip');
       const title = document.getElementById('ref-hero-title');
       const sub = document.getElementById('ref-hero-sub');
       const tierVal = document.getElementById('ref-stat-tier');
+      const tierSub = document.getElementById('ref-stat-tier-sub');
       const headerTag = document.getElementById('ref-header-active-model-tag');
 
-      if (m === 'recurring') {
-        const pct = refState.config.recurringPercent;
-        if (chip) chip.textContent = `${pct}% Recurring`;
+      // Count paid referral clients
+      const paidClients = refState.referredClients.filter(c => c.stage === 'paid' || c.stage === 'credited');
+      const paidCount = paidClients.length;
+      const tierInfo = calculateAffiliateTier(paidCount);
+
+      // Synchronize partner state tier
+      refState.partner.activeTierRate = tierInfo.tierRate;
+      refState.partner.tier = tierInfo.tierName;
+
+      // Update Affiliate Milestone Card UI
+      const summaryTextEl = document.getElementById('ref-tier-summary-text');
+      if (summaryTextEl) summaryTextEl.innerHTML = tierInfo.summaryText;
+
+      const nextTargetEl = document.getElementById('ref-tier-next-target');
+      if (nextTargetEl) nextTargetEl.textContent = tierInfo.nextTarget;
+
+      const fillEl = document.getElementById('ref-tier-fill');
+      if (fillEl) fillEl.style.width = `${tierInfo.progressPercent}%`;
+
+      const boxBronze = document.getElementById('tier-box-bronze');
+      const boxSilver = document.getElementById('tier-box-silver');
+      const boxGold = document.getElementById('tier-box-gold');
+
+      if (boxBronze && boxSilver && boxGold) {
+        // Reset classes
+        boxBronze.className = 'ref-tier-step-box';
+        boxSilver.className = 'ref-tier-step-box';
+        boxGold.className = 'ref-tier-step-box';
+
+        if (tierInfo.currentStep === 'gold') {
+          boxBronze.className = 'ref-tier-step-box unlocked';
+          boxSilver.className = 'ref-tier-step-box unlocked';
+          boxGold.className = 'ref-tier-step-box current';
+        } else if (tierInfo.currentStep === 'silver') {
+          boxBronze.className = 'ref-tier-step-box unlocked';
+          boxSilver.className = 'ref-tier-step-box current';
+        } else {
+          boxBronze.className = 'ref-tier-step-box current';
+        }
+      }
+
+      if (refState.partner.chosenReward === 'recurring') {
+        const rate = tierInfo.tierRate;
+        if (chip) chip.textContent = `${rate}% Recurring (${tierInfo.currentStep.toUpperCase()})`;
         if (title) title.textContent = `Your Referral Link`;
-        if (sub) sub.textContent = `Clients receive a 10% welcome discount. 20% recurring royalty credits after 7-day refund clearance.`;
-        if (tierVal) tierVal.textContent = `Gold VIP (${pct}%)`;
-        if (headerTag) headerTag.textContent = `${pct}% Recurring`;
+        if (sub) sub.textContent = `Clients receive a 10% welcome discount. ${rate}% recurring royalty credits after 7-day refund clearance.`;
+        if (tierVal) tierVal.textContent = tierInfo.tierName;
+        if (tierSub) tierSub.textContent = tierInfo.nextTarget.replace('Next: ', '');
+        if (headerTag) headerTag.textContent = `${rate}% Recurring`;
       } else {
         const flat = refState.config.flatBountyAmount;
         if (chip) chip.textContent = `Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
         if (title) title.textContent = `Your Referral Link`;
         if (sub) sub.textContent = `Earn pure ₹${flat.toLocaleString('en-IN')} cash bounty once per paid signup (no recurring). Credits after 7-day refund clearance.`;
         if (tierVal) tierVal.textContent = `Flat Bounty (₹${flat.toLocaleString('en-IN')})`;
+        if (tierSub) tierSub.textContent = `One-time cash bounty active`;
         if (headerTag) headerTag.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
       }
 
@@ -6166,14 +6244,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       tbody.innerHTML = filtered.map(c => {
-        // Calculate commission
+        // Calculate commission using tiered progression rate
         let earnVal = 0;
         let commLabel = '';
         const mode = c.commissionMode || refState.partner.chosenReward || 'recurring';
+        const tierRate = refState.partner.activeTierRate || 15;
 
         if (mode === 'recurring') {
-          earnVal = c.planValue > 0 ? Math.round((c.planValue * refState.config.recurringPercent) / 100) : 0;
-          commLabel = `${refState.config.recurringPercent}% Recurring`;
+          earnVal = c.planValue > 0 ? Math.round((c.planValue * tierRate) / 100) : 0;
+          commLabel = `${tierRate}% Recurring (${refState.partner.tier ? refState.partner.tier.split(' ')[0] : 'Tier'})`;
         } else {
           earnVal = c.planValue > 0 ? refState.config.flatBountyAmount : 0;
           commLabel = `Flat ₹${refState.config.flatBountyAmount.toLocaleString('en-IN')}`;
@@ -6810,7 +6889,7 @@ document.addEventListener('DOMContentLoaded', () => {
         email: `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@partner.in`,
         phone: phone,
         programTrack: 'Certified Advisor',
-        chosenModel: '30% Royalty (Advisor)',
+        chosenModel: '50% Commission (Advisor)',
         clicks: 0,
         referrals: 0,
         rate: '0.0%',
@@ -6827,7 +6906,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (partKpi) partKpi.textContent = refState.partnersRoster.length;
 
       closeAdvisorApplicationModal();
-      showRefToast(`🎉 Advisor application submitted! Welcome ${name} to the Certified Partner Network.`);
+      showRefToast(`🎉 Certified Advisor registered! Welcome ${name}. Leads access & 50% commission active.`);
     }
 
     // 18. White-Label Application Modal Handlers
