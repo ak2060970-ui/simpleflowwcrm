@@ -5791,13 +5791,11 @@ document.addEventListener('DOMContentLoaded', () => {
       activeView: 'partner', // 'partner' or 'reseller'
       activeTableTab: 'clients', // 'clients', 'payouts', 'tiers'
 
-      // Master Reseller Configuration
+      // Master Reseller Configuration (Mutually Exclusive: Pure 20% Recurring OR Pure Flat ₹500 Bounty)
       config: {
-        activeModel: 'recurring', // 'recurring' | 'flat' | 'hybrid'
+        activeModel: 'recurring', // 'recurring' | 'flat' (Mutually exclusive: only one applies!)
         recurringPercent: 20,
-        flatBountyAmount: 1500,
-        hybridBounty: 500,
-        hybridPercent: 15,
+        flatBountyAmount: 500,
         minPayoutThreshold: 1000,
         welcomeBonus: 'discount' // 'discount' | 'credits' | 'extended-trial'
       },
@@ -5825,9 +5823,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name: 'Zenith Tech Solutions',
           contact: 'Karan Mehra',
           signupDate: '20 Sep 2026, 10:15 AM',
-          stage: 'credited', // 'signup' | 'waba' | 'paid' | 'credited'
-          wabaDate: '20 Sep 2026, 11:30 AM',
-          wabaNumber: '+91 98201 44550 (Meta Approved)',
+          stage: 'credited', // 'signup' | 'paid' | 'credited'
           plan: 'Enterprise CRM Annual',
           planValue: 24000,
           planDate: '21 Sep 2026, 03:00 PM',
@@ -5835,7 +5831,7 @@ document.addEventListener('DOMContentLoaded', () => {
           clearanceDate: '28 Sep 2026',
           commissionMode: 'recurring',
           recurringEarning: 4800,
-          flatEarning: 1500,
+          flatEarning: 500,
           status: 'Wallet Credited'
         },
         {
@@ -5844,8 +5840,6 @@ document.addEventListener('DOMContentLoaded', () => {
           contact: 'Sneha Rao',
           signupDate: '28 Sep 2026, 09:20 AM',
           stage: 'paid', // in 7-day refund window
-          wabaDate: '28 Sep 2026, 01:15 PM',
-          wabaNumber: '+91 98112 33445 (Meta Approved)',
           plan: 'Growth Pro Monthly',
           planValue: 4999,
           planDate: '29 Sep 2026, 05:40 PM',
@@ -5853,7 +5847,7 @@ document.addEventListener('DOMContentLoaded', () => {
           clearanceDate: '06 Oct 2026',
           commissionMode: 'recurring',
           recurringEarning: 1000,
-          flatEarning: 1500,
+          flatEarning: 500,
           status: 'In 7d Refund Window'
         },
         {
@@ -5861,9 +5855,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name: 'Apex Logistics Pvt Ltd',
           contact: 'Vikram Joshi',
           signupDate: '30 Sep 2026, 11:00 AM',
-          stage: 'waba', // WABA connected, plan purchase pending
-          wabaDate: '01 Oct 2026, 02:45 PM',
-          wabaNumber: '+91 97654 32109 (Meta Approved)',
+          stage: 'signup', // account created, plan purchase pending
           plan: 'Pending Purchase',
           planValue: 0,
           planDate: null,
@@ -5872,7 +5864,7 @@ document.addEventListener('DOMContentLoaded', () => {
           commissionMode: 'recurring',
           recurringEarning: 0,
           flatEarning: 0,
-          status: 'WABA Connected'
+          status: 'Account Created'
         },
         {
           id: 'REF-104',
@@ -5880,8 +5872,6 @@ document.addEventListener('DOMContentLoaded', () => {
           contact: 'Ananya Deshmukh',
           signupDate: '01 Oct 2026, 04:30 PM',
           stage: 'signup', // only account created
-          wabaDate: null,
-          wabaNumber: null,
           plan: 'None',
           planValue: 0,
           planDate: null,
@@ -5898,8 +5888,6 @@ document.addEventListener('DOMContentLoaded', () => {
           contact: 'Manish Chawla',
           signupDate: '12 Aug 2026, 10:00 AM',
           stage: 'credited',
-          wabaDate: '12 Aug 2026, 11:45 AM',
-          wabaNumber: '+91 98450 12345 (Meta Approved)',
           plan: 'Growth Pro Annual',
           planValue: 25000,
           planDate: '13 Aug 2026, 04:15 PM',
@@ -5907,7 +5895,7 @@ document.addEventListener('DOMContentLoaded', () => {
           clearanceDate: '20 Aug 2026',
           commissionMode: 'recurring',
           recurringEarning: 5000,
-          flatEarning: 1500,
+          flatEarning: 500,
           status: 'Wallet Credited'
         }
       ],
@@ -6035,24 +6023,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const pct = refState.config.recurringPercent;
         if (chip) chip.textContent = `${pct}% Recurring`;
         if (title) title.textContent = `Refer Clients & Earn ${pct}% Recurring`;
-        if (sub) sub.textContent = `Clients receive a 10% welcome discount. Commissions credit automatically on renewal.`;
+        if (sub) sub.textContent = `Clients receive a 10% welcome discount. 20% recurring royalty credits after 7-day refund clearance.`;
         if (tierVal) tierVal.textContent = `Gold VIP (${pct}%)`;
         if (headerTag) headerTag.textContent = `${pct}% Recurring`;
-      } else if (m === 'flat') {
+      } else {
         const flat = refState.config.flatBountyAmount;
-        if (chip) chip.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (chip) chip.textContent = `₹${flat.toLocaleString('en-IN')} Flat Bounty`;
         if (title) title.textContent = `Refer Clients & Earn ₹${flat.toLocaleString('en-IN')} Bounty`;
-        if (sub) sub.textContent = `Earn flat ₹${flat.toLocaleString('en-IN')} cash per paid signup. Clients receive a 10% discount.`;
+        if (sub) sub.textContent = `Earn pure ₹${flat.toLocaleString('en-IN')} cash bounty once per paid signup (no recurring). Credits after 7-day refund clearance.`;
         if (tierVal) tierVal.textContent = `Flat Bounty (₹${flat.toLocaleString('en-IN')})`;
         if (headerTag) headerTag.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
-      } else {
-        const hb = refState.config.hybridBounty;
-        const hp = refState.config.hybridPercent;
-        if (chip) chip.textContent = `₹${hb} + ${hp}% Hybrid`;
-        if (title) title.textContent = `Earn ₹${hb} + ${hp}% Recurring`;
-        if (sub) sub.textContent = `₹${hb} signup bonus plus ${hp}% recurring lifetime commission.`;
-        if (tierVal) tierVal.textContent = `Hybrid (${hp}% + Bonus)`;
-        if (headerTag) headerTag.textContent = `Hybrid (₹${hb} + ${hp}%)`;
       }
 
       // Update wallet balance values in DOM
@@ -6197,8 +6177,6 @@ document.addEventListener('DOMContentLoaded', () => {
           stageBadge = `<span class="status-chip resolved" style="font-size: 11px; padding: 3px 8px;">✓ Wallet Credited</span>`;
         } else if (c.stage === 'paid') {
           stageBadge = `<span class="status-chip waiting" style="font-size: 11px; padding: 3px 8px; background: #fef3c7; color: #92400e;">⚡ Plan Activated</span>`;
-        } else if (c.stage === 'waba') {
-          stageBadge = `<span class="status-chip in-progress" style="font-size: 11px; padding: 3px 8px; background: #e0f2fe; color: #0369a1;">📱 WABA Connected</span>`;
         } else {
           stageBadge = `<span class="status-chip" style="font-size: 11px; padding: 3px 8px; background: #f1f5f9; color: #475569;">👤 Account Created</span>`;
         }
@@ -6222,14 +6200,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="font-size: 11px; color: #64748b;">Auto-credits on ${c.clearanceDate || 'in a few days'}</div>
           `;
-        } else if (c.stage === 'waba') {
-          clearanceHtml = `
-            <div style="font-size: 11.5px; color: #64748b; font-weight: 500;">Awaiting Plan Purchase</div>
-            <div style="font-size: 11px; color: #94a3b8;">WABA active</div>
-          `;
         } else {
           clearanceHtml = `
-            <div style="font-size: 11.5px; color: #94a3b8; font-weight: 500;">Awaiting WABA Connect</div>
+            <div style="font-size: 11.5px; color: #94a3b8; font-weight: 500;">Awaiting Plan Purchase</div>
             <div style="font-size: 11px; color: #cbd5e1;">Signup completed</div>
           `;
         }
@@ -6240,11 +6213,6 @@ document.addEventListener('DOMContentLoaded', () => {
           planHtml = `
             <div style="font-weight: 700; color: #0f172a; font-size: 13px;">${c.plan}</div>
             <div style="font-size: 11.5px; color: #16a34a; font-weight: 600;">Paid: ₹${c.planValue.toLocaleString('en-IN')}</div>
-          `;
-        } else if (c.stage === 'waba') {
-          planHtml = `
-            <div style="font-weight: 600; color: #475569; font-size: 12.5px;">Browsing Plans</div>
-            <div style="font-size: 11px; color: #94a3b8;">₹0 paid yet</div>
           `;
         } else {
           planHtml = `
@@ -6526,16 +6494,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 12. Reseller Config Settings Handlers
+    // 12. Reseller Config Settings Handlers (Mutually Exclusive: pure recurring vs pure flat)
     function selectResellerModel(model) {
       refState.config.activeModel = model;
       const cRec = document.getElementById('card-model-recurring');
       const cFlat = document.getElementById('card-model-flat');
-      const cHyb = document.getElementById('card-model-hybrid');
 
       if (cRec) cRec.classList.toggle('active', model === 'recurring');
       if (cFlat) cFlat.classList.toggle('active', model === 'flat');
-      if (cHyb) cHyb.classList.toggle('active', model === 'hybrid');
     }
 
     function saveResellerConfig() {
@@ -6545,9 +6511,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const inWelcome = document.getElementById('reseller-cfg-welcome');
 
       if (inRec) refState.config.recurringPercent = parseInt(inRec.value, 10) || 20;
-      if (inFlat) refState.config.flatBountyAmount = parseInt(inFlat.value, 10) || 1500;
+      if (inFlat) refState.config.flatBountyAmount = parseInt(inFlat.value, 10) || 500;
       if (inMin) refState.config.minPayoutThreshold = parseInt(inMin.value, 10) || 1000;
       if (inWelcome) refState.config.welcomeBonus = inWelcome.value;
+
+      // Update partner choice labels as well
+      const lblFlat = document.getElementById('choice-lbl-flat');
+      if (lblFlat) lblFlat.textContent = `Flat ₹${refState.config.flatBountyAmount.toLocaleString('en-IN')} Bounty`;
 
       updatePartnerHeroAndStats();
       renderPartnerClients();
@@ -6659,7 +6629,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Build 5-step Lifecycle Stepper
+      // Build 4-step Lifecycle Stepper (WABA step removed as requested)
       const steps = [
         {
           key: 'signup',
@@ -6674,20 +6644,8 @@ document.addEventListener('DOMContentLoaded', () => {
           isActive: client.stage === 'signup'
         },
         {
-          key: 'waba',
-          num: '2',
-          title: 'WhatsApp Business API (WABA) Connected',
-          desc: client.wabaNumber ? `Phone number ${client.wabaNumber} verified with Meta Cloud API.` : 'Client is connecting their WhatsApp Business Account with Meta.',
-          time: client.wabaDate || (client.stage === 'signup' ? 'In Progress' : 'Pending'),
-          badge: client.wabaDate ? 'Meta Cloud API Verified ✓' : 'Setup In Progress',
-          badgeBg: client.wabaDate ? '#ecfdf5' : '#f8fafc',
-          badgeColor: client.wabaDate ? '#059669' : '#64748b',
-          isDone: client.stage === 'waba' || client.stage === 'paid' || client.stage === 'credited',
-          isActive: client.stage === 'waba'
-        },
-        {
           key: 'paid',
-          num: '3',
+          num: '2',
           title: 'Plan Activated & Payment Confirmed',
           desc: client.planValue > 0 ? `Subscribed to ${client.plan} for ₹${client.planValue.toLocaleString('en-IN')}.` : 'Client is evaluating trial and selecting plan.',
           time: client.planDate || (client.stage === 'paid' || client.stage === 'credited' ? 'Completed' : 'Pending'),
@@ -6699,7 +6657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
           key: 'refund',
-          num: '4',
+          num: '3',
           title: '7-Day Refund Policy Window',
           desc: client.planValue > 0 
             ? (client.daysSincePlan >= 7 ? `7-day window completed on ${client.clearanceDate} without refund.` : `Currently day ${client.daysSincePlan} of 7. Commission held in safety escrow.`)
@@ -6713,7 +6671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
           key: 'credited',
-          num: '5',
+          num: '4',
           title: 'Commission Credited to Partner Wallet',
           desc: client.stage === 'credited' 
             ? `+₹${earnVal.toLocaleString('en-IN')} added directly to your CRM wallet balance. Available for instant UPI/Bank payout withdrawal.`
@@ -6768,8 +6726,6 @@ document.addEventListener('DOMContentLoaded', () => {
         contact: pick.contact,
         signupDate: 'Just now',
         stage: 'paid', // newly paid in 7-day refund window
-        wabaDate: 'Just now',
-        wabaNumber: `+91 98${Math.floor(10000000 + Math.random() * 90000000)} (Meta Approved)`,
         plan: pick.plan,
         planValue: pick.val,
         planDate: 'Just now',
