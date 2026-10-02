@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=2.8" />
+  <link rel="stylesheet" href="dashboard.css?v=2.9" />
 </head>
 <body>
 
@@ -2102,61 +2102,38 @@
         <div class="module-page">
 
           <!-- 1. Module Header with Clean Actions & Segmented Role Switcher -->
-          <div class="module-header-row hd-clean-header" style="margin-bottom: 16px;">
+          <!-- 1. Module Header with Clean Role Segmented Switcher & Primary Action -->
+          <div class="module-header-row hd-clean-header" style="margin-bottom: 18px;">
             <div class="module-title-box">
-              <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
                 <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;">Refer & Earn</h2>
-                <span class="hd-status-pill" style="background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8;">
-                  <span class="pulse-dot" style="background: #2563eb;"></span> Partner Hub
-                </span>
                 <span class="status-chip in-progress" id="ref-header-active-model-tag" style="font-size: 11px; padding: 2px 8px;">
-                  Model: 20% Recurring
+                  20% Recurring
                 </span>
               </div>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Earn recurring lifetime commissions or instant bounties by referring businesses to Simple Floww.</p>
+              <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">Invite businesses to Simple Floww and earn lifetime recurring commissions.</p>
             </div>
+            
             <div class="module-actions-row">
+              <!-- Segmented View Switcher -->
+              <div class="hd-role-segmented">
+                <button type="button" class="hd-segmented-btn active" id="btn-ref-switch-partner" onclick="window.switchReferralView && window.switchReferralView('partner')">
+                  Partner Dashboard
+                </button>
+                <button type="button" class="hd-segmented-btn" id="btn-ref-switch-reseller" onclick="window.switchReferralView && window.switchReferralView('reseller')">
+                  Reseller Settings <span class="hd-tab-count-badge subtle" id="reseller-pending-badge" style="margin-left: 4px;">1</span>
+                </button>
+              </div>
+
+              <!-- Primary Withdrawal Action -->
               <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-open-payout-modal" onclick="window.openPayoutModal && window.openPayoutModal()" title="Request Payout Withdrawal">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
                 <span>Request Payout</span>
               </button>
-              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-ref-top-copy" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()" title="Copy your referral link">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Copy Link</span>
-              </button>
-              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-ref-top-wa" onclick="window.shareReferralOnWhatsApp && window.shareReferralOnWhatsApp()" title="Share on WhatsApp">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366" style="vertical-align: -2px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                <span>WhatsApp</span>
-              </button>
-              <button type="button" class="btn-secondary hd-clean-btn-secondary" id="btn-ref-top-promo" onclick="window.openPromoKitModal && window.openPromoKitModal()" title="View Marketing Assets & QR">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                <span>Promo Kit & QR</span>
-              </button>
-            </div>
-          </div>
 
-          <!-- 2. Dual-Interface Segmented Switcher (Partner View vs Reseller Admin Controls) -->
-          <div class="hd-nav-row" style="margin-bottom: 18px;">
-            <div class="helpdesk-main-tabs">
-              <button type="button" class="hd-main-tab-btn active" id="tab-ref-sub-partner" onclick="window.switchReferralView && window.switchReferralView('partner')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Partner / Client Dashboard</span>
-              </button>
-              <button type="button" class="hd-main-tab-btn" id="tab-ref-sub-reseller" onclick="window.switchReferralView && window.switchReferralView('reseller')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                <span>Reseller Admin Controls</span>
-                <span class="hd-tab-count-badge subtle" id="reseller-pending-badge">1</span>
-              </button>
-            </div>
-
-            <!-- Role Segmented Toggle -->
-            <div class="hd-role-segmented">
-              <button type="button" class="hd-segmented-btn active" id="btn-ref-switch-partner" onclick="window.switchReferralView && window.switchReferralView('partner')">
-                <span>👤 Partner View</span>
-              </button>
-              <button type="button" class="hd-segmented-btn" id="btn-ref-switch-reseller" onclick="window.switchReferralView && window.switchReferralView('reseller')">
-                <span>⚙️ Reseller Panel</span>
-              </button>
+              <!-- Hidden tabs for script compatibility -->
+              <span id="tab-ref-sub-partner" style="display: none;"></span>
+              <span id="tab-ref-sub-reseller" style="display: none;"></span>
             </div>
           </div>
 
@@ -2164,42 +2141,36 @@
                CONTAINER A: PARTNER / CLIENT VIEW
                ================================================================ -->
           <div id="ref-partner-view">
-            <!-- Sleek Modern Partner Hero Box -->
-            <div class="ref-clean-hero" id="ref-hero-banner">
-              <div class="ref-clean-hero-info">
-                <div class="ref-hero-badges-row">
-                  <span class="ref-clean-badge subtle">Simple Floww Partner Program</span>
-                  <span class="ref-clean-badge active" id="ref-active-model-chip">🟢 Mode A: 20% Recurring Lifetime</span>
+            <!-- Sleek High-End Referral Link Strip -->
+            <div class="ref-link-strip" id="ref-hero-banner">
+              <div class="ref-link-strip-info">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="ref-label-tag" id="ref-hero-title">Your Referral Link</span>
+                  <span class="ref-clean-badge active" id="ref-active-model-chip">20% Recurring</span>
                 </div>
-                <h3 class="ref-clean-hero-title" id="ref-hero-title">
-                  Refer Clients & Earn 20% Recurring Lifetime
-                </h3>
-                <p class="ref-clean-hero-sub" id="ref-hero-sub">
-                  Share your personal partner link. Whenever an agency or business purchases any subscription, your CRM wallet is credited immediately. Referred clients get an instant 10% Welcome Discount!
+                <p class="ref-strip-sub" id="ref-hero-sub">
+                  Clients receive a 10% welcome discount. Commissions credit automatically on renewal.
                 </p>
               </div>
 
-              <!-- Compact Referral Link & Quick Sharing -->
-              <div class="ref-clean-link-container">
-                <div class="ref-link-meta-label">Your Personal Referral Link</div>
+              <!-- Compact Referral Link & Actions -->
+              <div class="ref-link-strip-actions">
                 <div class="ref-clean-link-bar">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                   <span class="ref-clean-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082</span>
-                  <button type="button" class="ref-clean-copy-btn" id="ref-copy-btn" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()">
+                  <button type="button" class="ref-clean-copy-btn" id="ref-copy-btn" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()" title="Copy link">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span>Copy</span>
                   </button>
                 </div>
-                <div class="ref-quick-share-row">
-                  <button type="button" class="ref-share-action-btn wa" onclick="window.shareReferralOnWhatsApp && window.shareReferralOnWhatsApp()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span>WhatsApp</span>
-                  </button>
-                  <button type="button" class="ref-share-action-btn qr" onclick="window.openPromoKitModal && window.openPromoKitModal()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span>Promo QR</span>
-                  </button>
-                </div>
+                <button type="button" class="ref-share-action-btn wa" onclick="window.shareReferralOnWhatsApp && window.shareReferralOnWhatsApp()" title="Share on WhatsApp">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                  <span>WhatsApp</span>
+                </button>
+                <button type="button" class="ref-share-action-btn qr" onclick="window.openPromoKitModal && window.openPromoKitModal()" title="View Marketing Assets & QR">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  <span>QR Code</span>
+                </button>
               </div>
             </div>
 
@@ -2258,20 +2229,20 @@
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #eaecf0; background: #ffffff; flex-wrap: wrap; gap: 10px;">
                 <div class="helpdesk-main-tabs" style="margin: 0; border: none; padding: 0;">
                   <button type="button" class="hd-main-tab-btn active" id="tab-ref-clients" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('clients')">
-                    <span>👥 Referred Clients</span>
+                    <span>Referred Clients</span>
                     <span class="hd-tab-count-badge" id="badge-ref-clients-cnt">5</span>
                   </button>
                   <button type="button" class="hd-main-tab-btn" id="tab-ref-payouts" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('payouts')">
-                    <span>📜 Payout History</span>
+                    <span>Payout History</span>
                     <span class="hd-tab-count-badge subtle" id="badge-ref-payouts-cnt">3</span>
                   </button>
                   <button type="button" class="hd-main-tab-btn" id="tab-ref-tiers" onclick="window.switchPartnerTableTab && window.switchPartnerTableTab('tiers')">
-                    <span>🏆 Tier Benefits & Rules</span>
+                    <span>Tier Rules</span>
                   </button>
                 </div>
 
                 <div id="ref-client-search-wrapper" style="display: flex; align-items: center; gap: 8px;">
-                  <input type="text" id="ref-client-search" placeholder="Search client name or plan..." class="inbox-search-input" style="font-size: 12px; padding: 5px 10px; width: 220px;" oninput="window.filterReferredClients && window.filterReferredClients()" />
+                  <input type="text" id="ref-client-search" placeholder="Search clients..." class="inbox-search-input" style="font-size: 12px; padding: 5px 10px; width: 200px;" oninput="window.filterReferredClients && window.filterReferredClients()" />
                 </div>
               </div>
 
@@ -2320,25 +2291,25 @@
               <div id="panel-ref-tiers" class="ref-tab-panel" style="display: none; padding: 20px;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
                   <div style="background: #f8fafc; border: 1px solid #eaecf0; border-radius: 10px; padding: 16px;">
-                    <div style="font-size: 13px; font-weight: 700; color: #475569;">🥉 Bronze Partner</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 4px 0;">10% Recurring</div>
-                    <p style="font-size: 12px; color: #64748b; margin: 0 0 10px 0;">For 1 to 3 active clients referred</p>
+                    <div style="font-size: 13px; font-weight: 600; color: #475569;">Bronze Partner</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #0f172a; margin: 4px 0;">10% Recurring</div>
+                    <p style="font-size: 12px; color: #64748b; margin: 0 0 10px 0;">1 to 3 active clients</p>
                     <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Instant Wallet Credits</div>
                   </div>
 
                   <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px;">
-                    <div style="font-size: 13px; font-weight: 700; color: #1d4ed8;">🥈 Silver Partner</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #1e3a8a; margin: 4px 0;">15% Recurring</div>
-                    <p style="font-size: 12px; color: #3b82f6; margin: 0 0 10px 0;">For 4 to 10 active clients referred</p>
-                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Priority Payouts within 24h</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1d4ed8;">Silver Partner</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #1e3a8a; margin: 4px 0;">15% Recurring</div>
+                    <p style="font-size: 12px; color: #3b82f6; margin: 0 0 10px 0;">4 to 10 active clients</p>
+                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Priority 24h Payouts</div>
                   </div>
 
                   <div style="background: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 16px; position: relative;">
-                    <span style="position: absolute; top: 10px; right: 10px; font-size: 10px; background: #eab308; color: #ffffff; padding: 2px 6px; border-radius: 999px; font-weight: 700;">CURRENT TIER</span>
-                    <div style="font-size: 13px; font-weight: 700; color: #854d0e;">🥇 Gold VIP Partner</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #713f12; margin: 4px 0;">20% Recurring</div>
-                    <p style="font-size: 12px; color: #a16207; margin: 0 0 10px 0;">For 11+ active clients or VIP creators</p>
-                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Dedicated Partner Success Manager</div>
+                    <span style="position: absolute; top: 12px; right: 12px; font-size: 10px; background: #eab308; color: #ffffff; padding: 2px 7px; border-radius: 999px; font-weight: 700;">CURRENT</span>
+                    <div style="font-size: 13px; font-weight: 600; color: #854d0e;">Gold VIP Partner</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #713f12; margin: 4px 0;">20% Recurring</div>
+                    <p style="font-size: 12px; color: #a16207; margin: 0 0 10px 0;">11+ active clients</p>
+                    <div style="font-size: 11.5px; color: #15803d; font-weight: 600;">✓ Dedicated Account Manager</div>
                   </div>
                 </div>
               </div>
@@ -2355,23 +2326,22 @@
             <div class="module-card" style="margin-bottom: 20px; border: 1px solid #eaecf0; border-radius: 12px; background: #ffffff;">
               <div class="module-card-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
                 <div>
-                  <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                    <span>⚙️ Reseller Commission Engine Settings</span>
-                    <span class="status-chip resolved" style="font-size: 11px;">Master Control</span>
+                  <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">
+                    Commission Settings
                   </h3>
-                  <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748b;">
-                    Choose the active reward model. When changed, all partner dashboards, copy, and payout math will instantly update.
+                  <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                    Configure active referral model and commission rates for affiliates.
                   </p>
                 </div>
                 <button type="button" class="btn-primary hd-clean-btn-primary" id="btn-save-reseller-cfg" onclick="window.saveResellerConfig && window.saveResellerConfig()">
-                  💾 Save & Deploy Changes
+                  Save Settings
                 </button>
               </div>
 
               <!-- Interactive Model Selectors (3 Mode Cards) -->
               <div style="margin-bottom: 16px;">
-                <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">
-                  Select Active Commission Model:
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">
+                  Active Model
                 </label>
                 <div class="ref-model-selector-grid">
                   <!-- Mode A Card -->
@@ -2379,8 +2349,8 @@
                     <div class="ref-model-radio"><span class="dot"></span></div>
                     <div class="ref-model-body">
                       <div class="ref-model-title">Mode A: Recurring Lifetime (%)</div>
-                      <div class="ref-model-desc">Partner earns a percentage (e.g. 20%) every month/year as long as their referred client stays subscribed.</div>
-                      <div class="ref-model-tag">Recommended for SaaS</div>
+                      <div class="ref-model-desc">Earn a % on every renewal for the lifetime of the subscription.</div>
+                      <div class="ref-model-tag">Recurring SaaS</div>
                     </div>
                   </div>
 
@@ -2388,9 +2358,9 @@
                   <div class="ref-model-card" id="card-model-flat" onclick="window.selectResellerModel && window.selectResellerModel('flat')">
                     <div class="ref-model-radio"><span class="dot"></span></div>
                     <div class="ref-model-body">
-                      <div class="ref-model-title">Mode B: One-Time Flat Bounty (₹)</div>
-                      <div class="ref-model-desc">Partner earns a fixed cash bounty (e.g. ₹1,500) once per converted paying customer. Simple & predictable.</div>
-                      <div class="ref-model-tag flat">Instant Cash Incentive</div>
+                      <div class="ref-model-title">Mode B: One-Time Bounty (₹)</div>
+                      <div class="ref-model-desc">Fixed cash bounty once per converted paying subscriber.</div>
+                      <div class="ref-model-tag flat">One-Time Cash</div>
                     </div>
                   </div>
 
@@ -2398,54 +2368,54 @@
                   <div class="ref-model-card" id="card-model-hybrid" onclick="window.selectResellerModel && window.selectResellerModel('hybrid')">
                     <div class="ref-model-radio"><span class="dot"></span></div>
                     <div class="ref-model-body">
-                      <div class="ref-model-title">Mode C: Hybrid (Bonus + Recurring)</div>
-                      <div class="ref-model-desc">Partner gets an instant ₹500 activation bonus PLUS 15% recurring lifetime share on renewals.</div>
-                      <div class="ref-model-tag hybrid">Highest Growth Velocity</div>
+                      <div class="ref-model-title">Mode C: Hybrid Model</div>
+                      <div class="ref-model-desc">Upfront activation bonus plus recurring renewal royalties.</div>
+                      <div class="ref-model-tag hybrid">Hybrid</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- Commission Rate Sliders & Limits -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; background: #f8fafc; border: 1px solid #eaecf0; border-radius: 10px; padding: 16px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; background: #f8fafc; border: 1px solid #eaecf0; border-radius: 10px; padding: 14px;">
                 <div>
-                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">
-                    Mode A: Recurring Percentage (%)
+                  <label style="display: block; font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 4px;">
+                    Recurring Rate (%)
                   </label>
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="number" id="reseller-cfg-recurring" value="20" min="5" max="50" class="form-input" style="font-size: 13px; font-weight: 700; width: 90px;" />
-                    <span style="font-size: 12px; color: #64748b;">% on each renewal</span>
+                    <input type="number" id="reseller-cfg-recurring" value="20" min="5" max="50" class="form-input" style="font-size: 13px; font-weight: 700; width: 80px;" />
+                    <span style="font-size: 12px; color: #64748b;">% per renewal</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">
-                    Mode B: Flat Bounty Amount (₹)
+                  <label style="display: block; font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 4px;">
+                    Flat Bounty (₹)
                   </label>
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="number" id="reseller-cfg-flat" value="1500" min="200" max="10000" step="100" class="form-input" style="font-size: 13px; font-weight: 700; width: 110px;" />
+                    <input type="number" id="reseller-cfg-flat" value="1500" min="200" max="10000" step="100" class="form-input" style="font-size: 13px; font-weight: 700; width: 100px;" />
                     <span style="font-size: 12px; color: #64748b;">₹ per client</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">
-                    Min. Payout Threshold (₹)
+                  <label style="display: block; font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 4px;">
+                    Min. Withdrawal (₹)
                   </label>
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="number" id="reseller-cfg-minpayout" value="1000" min="100" max="5000" step="100" class="form-input" style="font-size: 13px; font-weight: 700; width: 100px;" />
-                    <span style="font-size: 12px; color: #64748b;">Min withdrawal</span>
+                    <input type="number" id="reseller-cfg-minpayout" value="1000" min="100" max="5000" step="100" class="form-input" style="font-size: 13px; font-weight: 700; width: 90px;" />
+                    <span style="font-size: 12px; color: #64748b;">Threshold</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">
-                    Referred Client Welcome Offer
+                  <label style="display: block; font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 4px;">
+                    Client Welcome Perk
                   </label>
                   <select id="reseller-cfg-welcome" class="form-input" style="font-size: 12.5px; padding: 6px 10px;">
-                    <option value="discount">10% Welcome Discount (First Billing)</option>
-                    <option value="credits">₹500 Free WhatsApp API Credits</option>
-                    <option value="extended-trial">14-Day Full Access Trial</option>
+                    <option value="discount">10% Welcome Discount</option>
+                    <option value="credits">₹500 WhatsApp Credits</option>
+                    <option value="extended-trial">14-Day Free Trial</option>
                   </select>
                 </div>
               </div>
@@ -2456,12 +2426,9 @@
               <div class="module-card-header" style="padding-bottom: 10px;">
                 <div>
                   <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                    <span>💸 Partner Withdrawal Requests (Approval Desk)</span>
+                    <span>Withdrawal Requests</span>
                     <span class="hd-pill-count danger" id="reseller-payout-pending-count">1 Pending</span>
                   </h3>
-                  <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">
-                    Review partner payout requests, verify UPI/Bank details, and mark paid with bank UTR number.
-                  </p>
                 </div>
               </div>
 
@@ -2491,11 +2458,8 @@
               <div class="module-card-header" style="padding-bottom: 10px;">
                 <div>
                   <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">
-                    👥 All Registered Affiliates & Partners
+                    Partner Directory
                   </h3>
-                  <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">
-                    Monitor performance, total clicks, conversions, and lifetime commissions per partner.
-                  </p>
                 </div>
               </div>
 
@@ -3568,7 +3532,7 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </button>
   </nav>
 
-  <script src="data-service.js?v=2.8"></script>
-  <script src="dashboard.js?v=2.8"></script>
+  <script src="data-service.js?v=2.9"></script>
+  <script src="dashboard.js?v=2.9"></script>
 </body>
 </html>

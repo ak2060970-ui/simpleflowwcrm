@@ -2785,47 +2785,41 @@ body {
 .status-chip.resolved { background: #dcfce7; color: #166534; }
 .status-chip.urgent { background: #fee2e2; color: #991b1b; }
 
-/* Referral Clean Modern Hero & Hub Styling */
-.ref-clean-hero {
+/* Sleek High-End Referral Link Strip */
+.ref-link-strip {
   background: #ffffff;
   border: 1px solid #eaecf0;
-  border-radius: 12px;
-  padding: 18px 22px;
+  border-radius: 10px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 18px;
   flex-wrap: wrap;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
-.ref-clean-hero-info {
-  flex: 1 1 380px;
-}
-
-.ref-hero-badges-row {
+.ref-link-strip-info {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 240px;
+}
+
+.ref-label-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .ref-clean-badge {
   font-size: 11px;
   font-weight: 600;
-  padding: 2.5px 9px;
+  padding: 2px 8px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-}
-
-.ref-clean-badge.subtle {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
 }
 
 .ref-clean-badge.active {
@@ -2834,38 +2828,18 @@ body {
   border: 1px solid #a7f3d0;
 }
 
-.ref-clean-hero-title {
-  font-size: 19px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 5px 0;
-  letter-spacing: -0.01em;
-}
-
-.ref-clean-hero-sub {
-  font-size: 13px;
+.ref-strip-sub {
+  font-size: 12px;
   color: #64748b;
   margin: 0;
-  line-height: 1.45;
-  max-width: 600px;
+  line-height: 1.35;
 }
 
-/* Compact Referral Link & Actions */
-.ref-clean-link-container {
+.ref-link-strip-actions {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
-  min-width: 320px;
-  max-width: 440px;
-  flex: 1 1 320px;
-}
-
-.ref-link-meta-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #64748b;
+  flex-wrap: wrap;
 }
 
 .ref-clean-link-bar {
@@ -2875,7 +2849,8 @@ body {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 6px 6px 6px 12px;
+  padding: 5px 6px 5px 12px;
+  min-width: 290px;
   transition: border-color 0.15s ease;
 }
 
@@ -2888,7 +2863,7 @@ body {
   font-size: 12px;
   color: #334155;
   font-weight: 500;
-  flex: 1;
+  max-width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2897,35 +2872,29 @@ body {
 .ref-clean-copy-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: #2563eb;
+  gap: 4px;
+  background: #0f172a;
   color: #ffffff;
   font-size: 11.5px;
   font-weight: 600;
   border: none;
   border-radius: 6px;
-  padding: 5px 12px;
+  padding: 4px 10px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .ref-clean-copy-btn:hover {
-  background: #1d4ed8;
+  background: #1e293b;
   transform: translateY(-1px);
-}
-
-.ref-quick-share-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .ref-share-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
+  gap: 5px;
+  padding: 5px 10px;
   border-radius: 6px;
   font-size: 11.5px;
   font-weight: 600;
@@ -2953,94 +2922,27 @@ body {
   color: #1d4ed8;
 }
 
-/* Backward-compatible fallback for ref-hero-banner class */
-.ref-hero-banner {
+/* Fallback aliases for backward compatibility */
+.ref-hero-banner, .ref-clean-hero {
   background: #ffffff;
   border: 1px solid #eaecf0;
-  border-radius: 12px;
-  padding: 18px 22px;
-  color: #0f172a;
+  border-radius: 10px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 18px;
   flex-wrap: wrap;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
-.ref-hero-info { flex: 1 1 380px; }
-.ref-prog-badge {
-  font-size: 11px;
-  font-weight: 600;
-  background: #f1f5f9;
-  padding: 2.5px 9px;
-  border-radius: 999px;
-  color: #475569;
-  border: 1px solid #e2e8f0;
-  display: inline-block;
-}
-.ref-prog-badge.active-model {
-  background: #ecfdf5;
-  border-color: #a7f3d0;
-  color: #047857;
-}
-.ref-link-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 320px;
-  max-width: 440px;
-  flex: 1 1 320px;
-}
-.ref-link-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 6px 8px 6px 12px;
-}
-.ref-link-text {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 12px;
-  color: #334155;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ref-copy-btn {
-  background: #2563eb;
-  color: #ffffff;
-  font-size: 11.5px;
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-.ref-copy-btn:hover { background: #1d4ed8; }
-.ref-link-actions { display: flex; align-items: center; gap: 8px; }
-.ref-mini-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #eaecf0;
-  background: #ffffff;
-  color: #334155;
-  transition: all 0.15s ease;
-}
-.ref-mini-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-.ref-mini-btn.wa { background: #ffffff; border-color: #eaecf0; color: #15803d; }
-.ref-mini-btn.wa:hover { background: #f0fdf4; border-color: #bbf7d0; }
+.ref-hero-info, .ref-clean-hero-info { display: flex; flex-direction: column; gap: 3px; min-width: 240px; }
+.ref-link-card, .ref-clean-link-container { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ref-link-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 6px 5px 12px; }
+.ref-link-text { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; color: #334155; }
+.ref-copy-btn { background: #0f172a; color: #fff; font-size: 11.5px; font-weight: 600; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.ref-mini-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer; border: 1px solid #eaecf0; background: #fff; color: #334155; }
+.ref-prog-badge { font-size: 11px; font-weight: 600; background: #f1f5f9; padding: 2px 8px; border-radius: 999px; color: #475569; }
+.ref-prog-badge.active-model { background: #ecfdf5; border-color: #a7f3d0; color: #047857; }
 
 /* Reseller Model Selector Grid */
 .ref-model-selector-grid {

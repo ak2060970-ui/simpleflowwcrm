@@ -6001,26 +6001,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (m === 'recurring') {
         const pct = refState.config.recurringPercent;
-        if (chip) chip.textContent = `🟢 Mode A: ${pct}% Recurring Lifetime`;
-        if (title) title.textContent = `Refer Clients & Earn ${pct}% Recurring Lifetime`;
-        if (sub) sub.textContent = `Share your personal partner link. Whenever an agency or business purchases any subscription, your CRM wallet is credited ${pct}% on every renewal. Referred businesses get an instant 10% Welcome Discount!`;
+        if (chip) chip.textContent = `${pct}% Recurring`;
+        if (title) title.textContent = `Refer Clients & Earn ${pct}% Recurring`;
+        if (sub) sub.textContent = `Clients receive a 10% welcome discount. Commissions credit automatically on renewal.`;
         if (tierVal) tierVal.textContent = `Gold VIP (${pct}%)`;
-        if (headerTag) headerTag.textContent = `Model: ${pct}% Recurring`;
+        if (headerTag) headerTag.textContent = `${pct}% Recurring`;
       } else if (m === 'flat') {
         const flat = refState.config.flatBountyAmount;
-        if (chip) chip.textContent = `🔵 Mode B: Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
-        if (title) title.textContent = `Refer & Earn Flat ₹${flat.toLocaleString('en-IN')} Cash on Every Business!`;
-        if (sub) sub.textContent = `Share your partner link. Get an instant ₹${flat.toLocaleString('en-IN')} cash bounty deposited straight into your wallet on every successful paid signup!`;
-        if (tierVal) tierVal.textContent = `Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
-        if (headerTag) headerTag.textContent = `Model: Flat ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (chip) chip.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (title) title.textContent = `Refer Clients & Earn ₹${flat.toLocaleString('en-IN')} Bounty`;
+        if (sub) sub.textContent = `Earn flat ₹${flat.toLocaleString('en-IN')} cash per paid signup. Clients receive a 10% discount.`;
+        if (tierVal) tierVal.textContent = `Flat Bounty (₹${flat.toLocaleString('en-IN')})`;
+        if (headerTag) headerTag.textContent = `₹${flat.toLocaleString('en-IN')} Bounty`;
       } else {
         const hb = refState.config.hybridBounty;
         const hp = refState.config.hybridPercent;
-        if (chip) chip.textContent = `🟣 Mode C: Hybrid (₹${hb} + ${hp}%)`;
-        if (title) title.textContent = `Earn ₹${hb} Joining Bonus + ${hp}% Lifetime Recurring!`;
-        if (sub) sub.textContent = `Get the best of both worlds! Earn instant ₹${hb} cash upon client activation PLUS ${hp}% recurring lifetime royalties on every monthly renewal.`;
-        if (tierVal) tierVal.textContent = `Hybrid VIP (${hp}% + Bonus)`;
-        if (headerTag) headerTag.textContent = `Model: Hybrid (₹${hb} + ${hp}%)`;
+        if (chip) chip.textContent = `₹${hb} + ${hp}% Hybrid`;
+        if (title) title.textContent = `Earn ₹${hb} + ${hp}% Recurring`;
+        if (sub) sub.textContent = `₹${hb} signup bonus plus ${hp}% recurring lifetime commission.`;
+        if (tierVal) tierVal.textContent = `Hybrid (${hp}% + Bonus)`;
+        if (headerTag) headerTag.textContent = `Hybrid (₹${hb} + ${hp}%)`;
       }
 
       // Update wallet balance values in DOM
