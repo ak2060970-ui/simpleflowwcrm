@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.7" />
+  <link rel="stylesheet" href="dashboard.css?v=3.8" />
 </head>
 <body>
 
@@ -1772,72 +1772,73 @@
 
           <!-- SUB-VIEW 1: CLIENT SELF-SERVICE GUIDES & VIDEO TUTORIALS -->
           <div id="kb-client-view">
-            <!-- Hero Search & Quick Action Section -->
-            <div class="helpdesk-hero">
-              <div class="helpdesk-hero-title">
-                <span>🔍 How can we help you today?</span>
-              </div>
-              <div class="helpdesk-hero-sub">
-                Search 26+ step-by-step guides with 45-second inline video walkthroughs, or pick a trending query below.
-              </div>
-              
-              <div class="helpdesk-search-wrapper">
-                <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" class="helpdesk-search-input" id="helpdesk-search-input" placeholder="Type your question or error (e.g. QR disconnect, Meta template, 10k broadcast, auto assign, GST invoice)..." autocomplete="off" />
-                <button type="button" class="helpdesk-search-clear" id="helpdesk-search-clear">&times;</button>
+            <!-- Sleek Minimalist Search & Filter Card -->
+            <div class="kb-clean-hero">
+              <div class="kb-clean-hero-head">
+                <div>
+                  <h3 class="kb-clean-hero-title">How can we help you today?</h3>
+                  <p class="kb-clean-hero-desc">Search 26+ step-by-step guides, troubleshooting fixes, and screen walkthroughs.</p>
+                </div>
+                <!-- Sleek Segmented Type Switcher -->
+                <div class="kb-type-segmented" id="helpdesk-type-filters">
+                  <button type="button" class="kb-type-btn active" data-type="all">All Content (<span id="hd-type-all">26</span>)</button>
+                  <button type="button" class="kb-type-btn" data-type="troubleshoot">⚡ Quick Fixes (<span id="hd-type-troubleshoot">14</span>)</button>
+                  <button type="button" class="kb-type-btn" data-type="guide">📖 Guides (<span id="hd-type-guide">12</span>)</button>
+                </div>
               </div>
 
-              <div class="helpdesk-trending-row">
-                <span class="helpdesk-trending-label">Popular:</span>
-                <span class="helpdesk-trend-pill" data-query="QR">⚡ Connect WhatsApp QR</span>
-                <span class="helpdesk-trend-pill" data-query="Template">🚫 Meta Template Rejection</span>
-                <span class="helpdesk-trend-pill" data-query="Broadcast">📢 10,000 Safe Broadcast</span>
-                <span class="helpdesk-trend-pill" data-query="Auto Assign">👥 Auto-Assign Telecallers</span>
-                <span class="helpdesk-trend-pill" data-query="Invoice">💳 Download GST Invoice</span>
-                <span class="helpdesk-trend-pill" data-query="Green Tick">✅ Meta Green Tick</span>
+              <!-- Refined Search Bar -->
+              <div class="kb-search-container">
+                <svg class="kb-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="kb-search-input" id="helpdesk-search-input" placeholder="Type error or question (e.g. QR disconnect, Meta template, 10k broadcast, GST invoice)..." autocomplete="off" />
+                <button type="button" class="kb-search-clear" id="helpdesk-search-clear" aria-label="Clear Search">&times;</button>
+              </div>
+
+              <!-- Refined Trending Queries Row -->
+              <div class="kb-trending-bar">
+                <span class="kb-trending-label">Trending:</span>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="QR">⚡ Connect WhatsApp QR</button>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="Template">🚫 Meta Template Rejection</button>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="Broadcast">📢 10,000 Safe Broadcast</button>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="Auto Assign">👥 Auto-Assign Telecallers</button>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="Invoice">💳 Download GST Invoice</button>
+                <button type="button" class="kb-trend-chip helpdesk-trend-pill" data-query="Green Tick">✅ Meta Green Tick</button>
               </div>
             </div>
 
-            <!-- Sub-filter Type Switcher (Troubleshooting vs How-To Guides) -->
-            <div class="helpdesk-subfilter-bar" id="helpdesk-type-filters">
-              <button class="helpdesk-subfilter-btn active" data-type="all">All Content (<span id="hd-type-all">26</span>)</button>
-              <button class="helpdesk-subfilter-btn" data-type="troubleshoot">⚡ Troubleshooting & Fixes (<span id="hd-type-troubleshoot">14</span>)</button>
-              <button class="helpdesk-subfilter-btn" data-type="guide">📖 Feature How-To Guides (<span id="hd-type-guide">12</span>)</button>
-            </div>
-
-            <!-- Category Filter Tabs -->
-            <div class="helpdesk-tabs-bar" id="helpdesk-cat-tabs">
-              <button class="helpdesk-tab-btn active" data-cat="all">
-                <span>All Guides</span>
-                <span class="helpdesk-tab-count" id="hd-count-all">26</span>
+            <!-- Single Clean Category Pill Bar -->
+            <div class="kb-categories-nav" id="helpdesk-cat-tabs">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn active" data-cat="all">
+                <span>✨ All Guides</span>
+                <span class="kb-cat-badge" id="hd-count-all">26</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="whatsapp">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="whatsapp">
                 <span>📱 WhatsApp & API</span>
-                <span class="helpdesk-tab-count" id="hd-count-whatsapp">4</span>
+                <span class="kb-cat-badge" id="hd-count-whatsapp">4</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="broadcast">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="broadcast">
                 <span>📢 Broadcast & Campaigns</span>
-                <span class="helpdesk-tab-count" id="hd-count-broadcast">4</span>
+                <span class="kb-cat-badge" id="hd-count-broadcast">4</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="chatbot">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="chatbot">
                 <span>🤖 AI & Chatbot</span>
-                <span class="helpdesk-tab-count" id="hd-count-chatbot">4</span>
+                <span class="kb-cat-badge" id="hd-count-chatbot">4</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="crm">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="crm">
                 <span>👥 CRM & Leads</span>
-                <span class="helpdesk-tab-count" id="hd-count-crm">4</span>
+                <span class="kb-cat-badge" id="hd-count-crm">4</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="team">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="team">
                 <span>📋 Tasks & Operations</span>
-                <span class="helpdesk-tab-count" id="hd-count-team">3</span>
+                <span class="kb-cat-badge" id="hd-count-team">3</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="developer">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="developer">
                 <span>⚙️ Integrations & APIs</span>
-                <span class="helpdesk-tab-count" id="hd-count-developer">3</span>
+                <span class="kb-cat-badge" id="hd-count-developer">3</span>
               </button>
-              <button class="helpdesk-tab-btn" data-cat="billing">
+              <button type="button" class="kb-cat-pill helpdesk-tab-btn" data-cat="billing">
                 <span>💳 Billing & GST</span>
-                <span class="helpdesk-tab-count" id="hd-count-billing">4</span>
+                <span class="kb-cat-badge" id="hd-count-billing">4</span>
               </button>
             </div>
 
@@ -1903,33 +1904,36 @@
                   </button>
                 </div>
 
-                <!-- 3. My Active Support Tickets -->
+                <!-- 3. Top 3 Quick Diagnostic Fixes -->
                 <div class="helpdesk-side-card">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <div class="helpdesk-side-title" style="margin-bottom: 0;">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                      My Support Tickets
-                    </div>
-                    <span style="font-size: 11px; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 700;">2 Active</span>
+                  <div class="helpdesk-side-title" style="margin-bottom: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    Instant Quick Fixes
                   </div>
                   
                   <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
-                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <strong style="color: var(--sf-text-main);">#TK-1082</strong>
-                        <span class="status-chip in-progress" style="font-size: 10px; padding: 1px 6px;">In Investigation</span>
+                    <div style="padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.15s ease;" onclick="window.openFaqGuide && window.openFaqGuide('faq-wa-2')" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e2e8f0'">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                        <strong style="color: var(--sf-text-main);">QR Disconnect / Sleep Fix</strong>
+                        <span class="status-chip in-progress" style="font-size: 10px; padding: 1px 6px;">⚡ 35s Fix</span>
                       </div>
-                      <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Webhook HMAC Signature Mismatch</div>
-                      <span style="font-size: 11px; color: #dc2626; font-weight: 600;">⏰ SLA: 18 mins remaining</span>
+                      <div style="color: #64748b; font-size: 11px;">Keep background phone session active</div>
                     </div>
 
-                    <div style="padding: 8px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
-                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <strong style="color: var(--sf-text-main);">#TK-1081</strong>
-                        <span class="status-chip open" style="font-size: 10px; padding: 1px 6px;">Meta Reviewing</span>
+                    <div style="padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.15s ease;" onclick="window.openFaqGuide && window.openFaqGuide('faq-bc-2')" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e2e8f0'">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                        <strong style="color: var(--sf-text-main);">Template Rejected by Meta</strong>
+                        <span class="status-chip open" style="font-size: 10px; padding: 1px 6px;">⚡ Fix Syntax</span>
                       </div>
-                      <div style="color: #475569; margin-bottom: 3px; font-weight: 500;">Diwali Marketing Template Expedite</div>
-                      <span style="font-size: 11px; color: var(--sf-text-muted);">Logged 1h ago</span>
+                      <div style="color: #64748b; font-size: 11px;">Correct variable parameters {{1}} {{2}}</div>
+                    </div>
+
+                    <div style="padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.15s ease;" onclick="window.openFaqGuide && window.openFaqGuide('faq-bc-1')" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e2e8f0'">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                        <strong style="color: var(--sf-text-main);">10k Broadcast Without Ban</strong>
+                        <span class="status-chip resolved" style="font-size: 10px; padding: 1px 6px;">🛡️ Safe Warmup</span>
+                      </div>
+                      <div style="color: #64748b; font-size: 11px;">Safe warmup volume & throttling queue</div>
                     </div>
                   </div>
                 </div>
@@ -4200,6 +4204,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.7"></script>
+  <script src="dashboard.js?v=3.8"></script>
 </body>
 </html>

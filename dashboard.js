@@ -3565,15 +3565,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="faq-item ${isOpen ? 'is-open' : ''}" data-faq-id="${faq.id}">
           <div class="faq-header" data-toggle-id="${faq.id}">
             <div class="faq-header-left">
-              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
               <span class="faq-category-badge ${faq.badgeClass}">${faq.catLabel}</span>
+              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
               <h3 class="faq-title">${faq.title}</h3>
             </div>
             <div class="faq-header-right">
-              <span class="faq-video-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                ${faq.duration} Video
-              </span>
+              <span class="faq-read-time">⏱️ 2 min read</span>
               <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
@@ -3589,13 +3586,22 @@ document.addEventListener('DOMContentLoaded', () => {
               ${faq.steps.map((st, i) => `
                 <div class="faq-step-item">
                   <div class="faq-step-num">${i + 1}</div>
-                  <div>${st}</div>
+                  <div style="font-size:12.5px; line-height:1.5;">${st}</div>
                 </div>
               `).join('')}
             </div>
 
-            <!-- Inline Video Walkthrough Player -->
-            <div class="faq-video-card">
+            <!-- Optional Screen Walkthrough Trigger -->
+            <div class="faq-video-trigger-wrap">
+              <button type="button" class="faq-video-trigger-btn" data-toggle-video="${faq.id}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Watch 45-sec Screen Walkthrough</span>
+                <span class="faq-video-badge-pill">${faq.duration}</span>
+              </button>
+            </div>
+
+            <!-- Inline Video Walkthrough Player (Reveals only when user clicks watch) -->
+            <div class="faq-video-card" id="video-card-${faq.id}" style="display: none;">
               <div class="faq-video-screen">
                 <canvas class="faq-video-canvas" id="canvas-${faq.id}" width="640" height="360"></canvas>
                 <div class="faq-video-overlay-poster" id="poster-${faq.id}" data-play-id="${faq.id}">
@@ -3603,7 +3609,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
                   </div>
                   <div style="font-size: 13.5px; font-weight: 700;">${faq.videoTitle}</div>
-                  <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">Click to play 45-sec inline screen walkthrough (No redirects)</div>
+                  <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">Click to play inline screen walkthrough</div>
                 </div>
               </div>
 
@@ -3626,12 +3632,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="faq-footer-bar">
               <div class="faq-feedback-group">
                 <span>Was this guide helpful?</span>
-                <button type="button" class="faq-feedback-btn" data-rating="yes" title="Mark helpful">👍 Yes</button>
-                <button type="button" class="faq-feedback-btn" data-rating="no" title="Mark not helpful">👎 No</button>
+                <button type="button" class="faq-feedback-btn" data-rating="yes" onclick="showToast('Thank you for your feedback!')" title="Mark helpful">👍 Yes</button>
+                <button type="button" class="faq-feedback-btn" data-rating="no" onclick="showToast('Feedback noted. We will improve this guide!')" title="Mark not helpful">👎 No</button>
               </div>
 
               <div style="display: flex; gap: 8px;">
-                <button type="button" class="btn-primary" data-action-target="${faq.actionTarget}" style="font-size: 12.5px; padding: 6px 14px;">
+                <button type="button" class="btn-primary" data-action-target="${faq.actionTarget}" style="font-size: 12px; padding: 6px 14px;">
                   ${faq.actionLabel}
                 </button>
               </div>
@@ -3651,7 +3657,35 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Attach Video Play triggers
+    // Attach Video Expand / Collapse toggles
+    container.querySelectorAll('[data-toggle-video]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-toggle-video');
+        const videoCard = document.getElementById(`video-card-${id}`);
+        if (videoCard) {
+          const isHidden = videoCard.style.display === 'none';
+          videoCard.style.display = isHidden ? 'block' : 'none';
+          if (isHidden) {
+            btn.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              <span>Hide Screen Walkthrough</span>
+            `;
+            startFaqVideo(id);
+          } else {
+            const faqObj = helpdeskFaqsData.find(f => f.id === id);
+            btn.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Watch 45-sec Screen Walkthrough</span>
+              <span class="faq-video-badge-pill">${faqObj ? faqObj.duration : '0:45'}</span>
+            `;
+            stopFaqVideo(id);
+          }
+        }
+      });
+    });
+
+    // Attach Video Play triggers inside player
     container.querySelectorAll('[data-play-id]').forEach(poster => {
       poster.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3832,6 +3866,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const troubleshoots = helpdeskFaqsData.filter(f => f.type === 'troubleshoot').length;
     const guides = helpdeskFaqsData.filter(f => f.type === 'guide').length;
 
+    const elTotal = document.getElementById('hd-type-all');
+    const elTr = document.getElementById('hd-type-troubleshoot');
+    const elGd = document.getElementById('hd-type-guide');
+    if (elTotal) elTotal.textContent = total;
+    if (elTr) elTr.textContent = troubleshoots;
+    if (elGd) elGd.textContent = guides;
+
     const btnAll = document.querySelector('.helpdesk-subfilter-btn[data-type="all"]');
     const btnTr = document.querySelector('.helpdesk-subfilter-btn[data-type="troubleshoot"]');
     const btnGd = document.querySelector('.helpdesk-subfilter-btn[data-type="guide"]');
@@ -3840,65 +3881,95 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnGd) btnGd.textContent = `📖 Feature How-To Guides (${guides})`;
   }
 
-  function initHelpDesk() {
-    updateHelpDeskCounts();
-    renderHelpDeskFaqs();
+    function initHelpDesk() {
+      updateHelpDeskCounts();
+      renderHelpDeskFaqs();
 
-    // Category Tabs Filter
-    const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .helpdesk-tab-btn');
-    catTabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        catTabs.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        helpdeskState.cat = btn.getAttribute('data-cat') || 'all';
-        renderHelpDeskFaqs();
-      });
-    });
-
-    // Sub-filters (All / Troubleshooting / Guides)
-    const subfilterBtns = document.querySelectorAll('.helpdesk-subfilter-btn');
-    subfilterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        subfilterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        helpdeskState.type = btn.getAttribute('data-type') || 'all';
-        renderHelpDeskFaqs();
-      });
-    });
-
-    // Search Input
-    const searchInput = document.getElementById('helpdesk-search-input');
-    const searchClear = document.getElementById('helpdesk-search-clear');
-
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        helpdeskState.search = searchInput.value.trim();
-        if (searchClear) searchClear.style.display = helpdeskState.search ? 'block' : 'none';
-        renderHelpDeskFaqs();
-      });
-    }
-
-    if (searchClear && searchInput) {
-      searchClear.addEventListener('click', () => {
-        searchInput.value = '';
-        helpdeskState.search = '';
-        searchClear.style.display = 'none';
-        renderHelpDeskFaqs();
-      });
-    }
-
-    // Trending Pills Click
-    document.querySelectorAll('.helpdesk-trend-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        const query = pill.getAttribute('data-query');
-        if (searchInput && query) {
-          searchInput.value = query;
-          helpdeskState.search = query;
-          if (searchClear) searchClear.style.display = 'block';
+      // Category Tabs Filter (Supports .kb-cat-pill & .helpdesk-tab-btn)
+      const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn');
+      catTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catTabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          helpdeskState.cat = btn.getAttribute('data-cat') || 'all';
           renderHelpDeskFaqs();
-        }
+        });
       });
-    });
+
+      // Sub-filters (All / Troubleshooting / Guides)
+      const subfilterBtns = document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn');
+      subfilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          subfilterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          helpdeskState.type = btn.getAttribute('data-type') || 'all';
+          renderHelpDeskFaqs();
+        });
+      });
+
+      // Search Input
+      const searchInput = document.getElementById('helpdesk-search-input');
+      const searchClear = document.getElementById('helpdesk-search-clear');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          helpdeskState.search = searchInput.value.trim();
+          if (searchClear) searchClear.style.display = helpdeskState.search ? 'block' : 'none';
+          renderHelpDeskFaqs();
+        });
+      }
+
+      if (searchClear && searchInput) {
+        searchClear.addEventListener('click', () => {
+          searchInput.value = '';
+          helpdeskState.search = '';
+          searchClear.style.display = 'none';
+          renderHelpDeskFaqs();
+        });
+      }
+
+      // Trending Pills Click
+      document.querySelectorAll('.kb-trend-chip, .helpdesk-trend-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          const query = pill.getAttribute('data-query');
+          if (searchInput && query) {
+            searchInput.value = query;
+            helpdeskState.search = query;
+            if (searchClear) searchClear.style.display = 'block';
+            renderHelpDeskFaqs();
+          }
+        });
+      });
+
+      // 1-Click Fast FAQ Opener
+      window.openFaqGuide = function(faqId) {
+        const faq = helpdeskFaqsData.find(f => f.id === faqId);
+        if (!faq) return;
+        helpdeskState.cat = 'all';
+        helpdeskState.type = 'all';
+        helpdeskState.search = '';
+        helpdeskState.openFaqId = faqId;
+
+        document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-cat') === 'all');
+        });
+        document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-type') === 'all');
+        });
+        if (searchInput) {
+          searchInput.value = '';
+          if (searchClear) searchClear.style.display = 'none';
+        }
+
+        renderHelpDeskFaqs();
+
+        setTimeout(() => {
+          const el = document.querySelector(`[data-faq-id="${faqId}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 80);
+      };
 
     // Modal: Feature Request
     const btnOpenFeatureReq = document.getElementById('btn-open-feature-request');
