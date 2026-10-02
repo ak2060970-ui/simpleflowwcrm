@@ -5808,75 +5808,107 @@ document.addEventListener('DOMContentLoaded', () => {
         name: 'Abhinandan Kumar',
         email: 'abhinandan@simplefloww.com',
         code: 'ak9082',
-        link: 'https://connect.simplefloww.com/ref/ak9082',
+        chosenReward: 'recurring', // 'recurring' | 'flat'
+        baseLink: 'https://connect.simplefloww.com/ref/ak9082',
+        link: 'https://connect.simplefloww.com/ref/ak9082?reward=recurring',
         tier: 'Gold VIP (20%)',
         walletBalance: 3250.00,
         totalEarned: 18500.00,
-        pendingClearance: 1200.00,
+        pendingClearance: 1000.00,
         totalClicks: 142
       },
 
-      // Referred Clients
+      // Referred Clients with Full Funnel Tracking & 7-Day Refund Clearance Life-cycle
       referredClients: [
         {
           id: 'REF-101',
           name: 'Zenith Tech Solutions',
           contact: 'Karan Mehra',
-          signupDate: '28 Sep 2026',
+          signupDate: '20 Sep 2026, 10:15 AM',
+          stage: 'credited', // 'signup' | 'waba' | 'paid' | 'credited'
+          wabaDate: '20 Sep 2026, 11:30 AM',
+          wabaNumber: '+91 98201 44550 (Meta Approved)',
           plan: 'Enterprise CRM Annual',
           planValue: 24000,
+          planDate: '21 Sep 2026, 03:00 PM',
+          daysSincePlan: 11, // > 7 days => fully cleared!
+          clearanceDate: '28 Sep 2026',
+          commissionMode: 'recurring',
           recurringEarning: 4800,
           flatEarning: 1500,
-          status: 'Active',
-          nextPayout: '15 Oct 2026'
+          status: 'Wallet Credited'
         },
         {
           id: 'REF-102',
           name: 'NextGen Marketing Agency',
           contact: 'Sneha Rao',
-          signupDate: '24 Sep 2026',
+          signupDate: '28 Sep 2026, 09:20 AM',
+          stage: 'paid', // in 7-day refund window
+          wabaDate: '28 Sep 2026, 01:15 PM',
+          wabaNumber: '+91 98112 33445 (Meta Approved)',
           plan: 'Growth Pro Monthly',
           planValue: 4999,
+          planDate: '29 Sep 2026, 05:40 PM',
+          daysSincePlan: 3, // 3 days since purchase, 4 days remaining in 7-day refund window!
+          clearanceDate: '06 Oct 2026',
+          commissionMode: 'recurring',
           recurringEarning: 1000,
           flatEarning: 1500,
-          status: 'Active',
-          nextPayout: '15 Oct 2026'
+          status: 'In 7d Refund Window'
         },
         {
           id: 'REF-103',
           name: 'Apex Logistics Pvt Ltd',
           contact: 'Vikram Joshi',
-          signupDate: '19 Sep 2026',
-          plan: 'Enterprise WABA Suite',
-          planValue: 36000,
-          recurringEarning: 7200,
-          flatEarning: 1500,
-          status: 'Active',
-          nextPayout: '15 Oct 2026'
+          signupDate: '30 Sep 2026, 11:00 AM',
+          stage: 'waba', // WABA connected, plan purchase pending
+          wabaDate: '01 Oct 2026, 02:45 PM',
+          wabaNumber: '+91 97654 32109 (Meta Approved)',
+          plan: 'Pending Purchase',
+          planValue: 0,
+          planDate: null,
+          daysSincePlan: 0,
+          clearanceDate: null,
+          commissionMode: 'recurring',
+          recurringEarning: 0,
+          flatEarning: 0,
+          status: 'WABA Connected'
         },
         {
           id: 'REF-104',
           name: 'FitPulse Wellness Club',
           contact: 'Ananya Deshmukh',
-          signupDate: '30 Sep 2026',
-          plan: 'Starter Monthly',
-          planValue: 2499,
-          recurringEarning: 500,
-          flatEarning: 1500,
-          status: 'In Review (14d)',
-          nextPayout: 'Pending Clearance'
+          signupDate: '01 Oct 2026, 04:30 PM',
+          stage: 'signup', // only account created
+          wabaDate: null,
+          wabaNumber: null,
+          plan: 'None',
+          planValue: 0,
+          planDate: null,
+          daysSincePlan: 0,
+          clearanceDate: null,
+          commissionMode: 'recurring',
+          recurringEarning: 0,
+          flatEarning: 0,
+          status: 'Account Created'
         },
         {
           id: 'REF-105',
           name: 'Global Exim Corp',
           contact: 'Manish Chawla',
-          signupDate: '12 Aug 2026',
+          signupDate: '12 Aug 2026, 10:00 AM',
+          stage: 'credited',
+          wabaDate: '12 Aug 2026, 11:45 AM',
+          wabaNumber: '+91 98450 12345 (Meta Approved)',
           plan: 'Growth Pro Annual',
           planValue: 25000,
+          planDate: '13 Aug 2026, 04:15 PM',
+          daysSincePlan: 50,
+          clearanceDate: '20 Aug 2026',
+          commissionMode: 'recurring',
           recurringEarning: 5000,
           flatEarning: 1500,
-          status: 'Active',
-          nextPayout: '15 Oct 2026'
+          status: 'Wallet Credited'
         }
       ],
 
@@ -6093,7 +6125,34 @@ document.addEventListener('DOMContentLoaded', () => {
       if (searchWrap) searchWrap.style.display = tab === 'clients' ? 'flex' : 'none';
     }
 
-    // 4. Render Partner Referred Clients Table
+    // Partner Reward Choice (20% Recurring vs Flat Bounty)
+    function setPartnerRewardChoice(choice) {
+      refState.partner.chosenReward = choice;
+      const btnRec = document.getElementById('btn-choice-recurring');
+      const btnFlat = document.getElementById('btn-choice-flat');
+      const chip = document.getElementById('ref-active-model-chip');
+      const explain = document.getElementById('ref-choice-explain');
+      const linkText = document.getElementById('ref-link-text');
+
+      if (btnRec) btnRec.classList.toggle('active', choice === 'recurring');
+      if (btnFlat) btnFlat.classList.toggle('active', choice === 'flat');
+
+      if (choice === 'recurring') {
+        refState.partner.link = `${refState.partner.baseLink}?reward=recurring`;
+        if (chip) chip.textContent = `${refState.config.recurringPercent}% Recurring`;
+        if (explain) explain.textContent = `Earn ${refState.config.recurringPercent}% recurring monthly royalty on renewals, auto-credited after 7-day refund clearance.`;
+      } else {
+        refState.partner.link = `${refState.partner.baseLink}?reward=flat`;
+        if (chip) chip.textContent = `Flat ₹${refState.config.flatBountyAmount.toLocaleString('en-IN')} Bounty`;
+        if (explain) explain.textContent = `Earn flat ₹${refState.config.flatBountyAmount.toLocaleString('en-IN')} one-time bounty per plan, auto-credited after 7-day refund clearance.`;
+      }
+
+      if (linkText) linkText.textContent = refState.partner.link;
+      renderPartnerClients();
+      showRefToast(`Commission model updated to ${choice === 'recurring' ? '20% Recurring' : 'Flat Bounty'}!`);
+    }
+
+    // 4. Render Partner Referred Clients Table with Full Funnel & 7-Day Refund Clearance
     function renderPartnerClients(searchQuery = '') {
       const tbody = document.getElementById('ref-clients-tbody');
       if (!tbody) return;
@@ -6101,13 +6160,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const q = searchQuery.toLowerCase().trim();
       const filtered = refState.referredClients.filter(c => {
         if (!q) return true;
-        return c.name.toLowerCase().includes(q) || c.plan.toLowerCase().includes(q) || c.contact.toLowerCase().includes(q);
+        return c.name.toLowerCase().includes(q) || c.plan.toLowerCase().includes(q) || c.contact.toLowerCase().includes(q) || (c.status && c.status.toLowerCase().includes(q));
       });
+
+      const badgeCnt = document.getElementById('badge-ref-clients-cnt');
+      if (badgeCnt) badgeCnt.textContent = refState.referredClients.length;
 
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" style="text-align: center; padding: 32px 14px; color: #64748b;">
+            <td colspan="6" style="text-align: center; padding: 32px 14px; color: #64748b;">
               <div style="font-size: 24px; margin-bottom: 6px;">🔍</div>
               <div style="font-weight: 600; color: #0f172a;">No referred clients match your search</div>
             </td>
@@ -6115,45 +6177,110 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const m = refState.config.activeModel;
-
       tbody.innerHTML = filtered.map(c => {
+        // Calculate commission
         let earnVal = 0;
-        let typeBadge = '';
+        let commLabel = '';
+        const mode = c.commissionMode || refState.partner.chosenReward || 'recurring';
 
-        if (m === 'recurring') {
-          earnVal = Math.round((c.planValue * refState.config.recurringPercent) / 100);
-          typeBadge = `<span class="hd-prio-chip normal" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;">${refState.config.recurringPercent}% Recurring</span>`;
-        } else if (m === 'flat') {
-          earnVal = refState.config.flatBountyAmount;
-          typeBadge = `<span class="hd-prio-chip normal" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">Flat Bounty</span>`;
+        if (mode === 'recurring') {
+          earnVal = c.planValue > 0 ? Math.round((c.planValue * refState.config.recurringPercent) / 100) : 0;
+          commLabel = `${refState.config.recurringPercent}% Recurring`;
         } else {
-          earnVal = refState.config.hybridBounty + Math.round((c.planValue * refState.config.hybridPercent) / 100);
-          typeBadge = `<span class="hd-prio-chip normal" style="background: #fdf4ff; color: #86198f; border: 1px solid #f5d0fe;">Hybrid (${refState.config.hybridPercent}% + ₹${refState.config.hybridBounty})</span>`;
+          earnVal = c.planValue > 0 ? refState.config.flatBountyAmount : 0;
+          commLabel = `Flat ₹${refState.config.flatBountyAmount.toLocaleString('en-IN')}`;
         }
 
-        const isPending = c.status.includes('Review');
+        // Funnel Stage Pill
+        let stageBadge = '';
+        if (c.stage === 'credited') {
+          stageBadge = `<span class="status-chip resolved" style="font-size: 11px; padding: 3px 8px;">✓ Wallet Credited</span>`;
+        } else if (c.stage === 'paid') {
+          stageBadge = `<span class="status-chip waiting" style="font-size: 11px; padding: 3px 8px; background: #fef3c7; color: #92400e;">⚡ Plan Activated</span>`;
+        } else if (c.stage === 'waba') {
+          stageBadge = `<span class="status-chip in-progress" style="font-size: 11px; padding: 3px 8px; background: #e0f2fe; color: #0369a1;">📱 WABA Connected</span>`;
+        } else {
+          stageBadge = `<span class="status-chip" style="font-size: 11px; padding: 3px 8px; background: #f1f5f9; color: #475569;">👤 Account Created</span>`;
+        }
+
+        // 7-Day Refund Policy Clearance Status
+        let clearanceHtml = '';
+        if (c.stage === 'credited') {
+          clearanceHtml = `
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #16a34a;"></span>
+              <span style="font-weight: 700; color: #15803d; font-size: 12px;">Cleared & In Wallet</span>
+            </div>
+            <div style="font-size: 11px; color: #64748b;">Refund window ended (${c.clearanceDate || 'Cleared'})</div>
+          `;
+        } else if (c.stage === 'paid') {
+          const daysLeft = Math.max(1, 7 - (c.daysSincePlan || 0));
+          clearanceHtml = `
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f59e0b;"></span>
+              <span style="font-weight: 700; color: #b45309; font-size: 12px;">⏳ ${daysLeft}d Refund Window</span>
+            </div>
+            <div style="font-size: 11px; color: #64748b;">Auto-credits on ${c.clearanceDate || 'in a few days'}</div>
+          `;
+        } else if (c.stage === 'waba') {
+          clearanceHtml = `
+            <div style="font-size: 11.5px; color: #64748b; font-weight: 500;">Awaiting Plan Purchase</div>
+            <div style="font-size: 11px; color: #94a3b8;">WABA active</div>
+          `;
+        } else {
+          clearanceHtml = `
+            <div style="font-size: 11.5px; color: #94a3b8; font-weight: 500;">Awaiting WABA Connect</div>
+            <div style="font-size: 11px; color: #cbd5e1;">Signup completed</div>
+          `;
+        }
+
+        // Plan & Paid Display
+        let planHtml = '';
+        if (c.planValue > 0) {
+          planHtml = `
+            <div style="font-weight: 700; color: #0f172a; font-size: 13px;">${c.plan}</div>
+            <div style="font-size: 11.5px; color: #16a34a; font-weight: 600;">Paid: ₹${c.planValue.toLocaleString('en-IN')}</div>
+          `;
+        } else if (c.stage === 'waba') {
+          planHtml = `
+            <div style="font-weight: 600; color: #475569; font-size: 12.5px;">Browsing Plans</div>
+            <div style="font-size: 11px; color: #94a3b8;">₹0 paid yet</div>
+          `;
+        } else {
+          planHtml = `
+            <div style="font-weight: 500; color: #94a3b8; font-size: 12.5px;">No Plan Selected</div>
+            <div style="font-size: 11px; color: #cbd5e1;">₹0</div>
+          `;
+        }
 
         return `
           <tr>
             <td>
-              <div style="font-weight: 700; color: #0f172a;">${c.name}</div>
-              <div style="font-size: 11px; color: #64748b;">Contact: ${c.contact}</div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 13px;">${c.name}</div>
+              <div style="font-size: 11px; color: #64748b;">${c.contact} • <span style="font-family: monospace; color: #2563eb;">${c.id}</span></div>
             </td>
-            <td style="color: #475569;">${c.signupDate}</td>
             <td>
-              <span style="font-weight: 600; color: #1e3a8a;">${c.plan}</span>
+              ${stageBadge}
             </td>
-            <td style="font-weight: 600; color: #334155;">₹${c.planValue.toLocaleString('en-IN')}</td>
-            <td style="font-weight: 700; color: #16a34a; font-size: 13.5px;">+₹${earnVal.toLocaleString('en-IN')}</td>
-            <td>${typeBadge}</td>
             <td>
-              <span class="status-chip ${isPending ? 'waiting' : 'resolved'}">
-                ${c.status}
-              </span>
+              ${planHtml}
             </td>
-            <td style="font-size: 11.5px; color: ${isPending ? '#d97706' : '#16a34a'}; font-weight: 600;">
-              ${c.nextPayout}
+            <td>
+              ${earnVal > 0 ? `
+                <div style="font-weight: 700; color: #16a34a; font-size: 13.5px;">+₹${earnVal.toLocaleString('en-IN')}</div>
+                <div style="font-size: 10.5px; color: #64748b;">${commLabel}</div>
+              ` : `
+                <div style="font-size: 12px; color: #94a3b8;">₹0.00</div>
+                <div style="font-size: 10.5px; color: #cbd5e1;">Pending paid plan</div>
+              `}
+            </td>
+            <td>
+              ${clearanceHtml}
+            </td>
+            <td style="text-align: right;">
+              <button type="button" class="btn-secondary hd-clean-btn-secondary" onclick="window.openClientFunnelModal && window.openClientFunnelModal('${c.id}')" style="font-size: 11.5px; padding: 4px 10px;" title="View Complete Funnel Timeline">
+                <span>Track Timeline ➔</span>
+              </button>
             </td>
           </tr>
         `;
@@ -6489,6 +6616,183 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPartnerClients(search ? search.value : '');
     }
 
+    // 15. Referred Client Funnel Modal (Visual 5-Step Stepper)
+    function openClientFunnelModal(clientId) {
+      const client = refState.referredClients.find(c => c.id === clientId);
+      if (!client) return;
+
+      const modal = document.getElementById('modal-ref-client-funnel');
+      const nameEl = document.getElementById('funnel-modal-client-name');
+      const idEl = document.getElementById('funnel-modal-client-id');
+      const planAmtEl = document.getElementById('funnel-modal-plan-amt');
+      const commAmtEl = document.getElementById('funnel-modal-comm-amt');
+      const clearPillEl = document.getElementById('funnel-modal-clearance-pill');
+      const stepperEl = document.getElementById('funnel-modal-stepper');
+
+      if (!modal || !stepperEl) return;
+
+      if (nameEl) nameEl.textContent = client.name;
+      if (idEl) idEl.textContent = `${client.id} • ${client.contact}`;
+
+      const mode = client.commissionMode || refState.partner.chosenReward || 'recurring';
+      let earnVal = 0;
+      if (mode === 'recurring') {
+        earnVal = client.planValue > 0 ? Math.round((client.planValue * refState.config.recurringPercent) / 100) : 0;
+      } else {
+        earnVal = client.planValue > 0 ? refState.config.flatBountyAmount : 0;
+      }
+
+      if (planAmtEl) planAmtEl.textContent = client.planValue > 0 ? `₹${client.planValue.toLocaleString('en-IN')}` : '₹0 (Pending)';
+      if (commAmtEl) commAmtEl.textContent = earnVal > 0 ? `+₹${earnVal.toLocaleString('en-IN')}` : '₹0.00';
+
+      if (clearPillEl) {
+        if (client.stage === 'credited') {
+          clearPillEl.textContent = 'Cleared & In Wallet';
+          clearPillEl.style.color = '#16a34a';
+        } else if (client.stage === 'paid') {
+          const daysLeft = Math.max(1, 7 - (client.daysSincePlan || 0));
+          clearPillEl.textContent = `⏳ ${daysLeft}d Refund Window`;
+          clearPillEl.style.color = '#d97706';
+        } else {
+          clearPillEl.textContent = 'Awaiting Plan';
+          clearPillEl.style.color = '#64748b';
+        }
+      }
+
+      // Build 5-step Lifecycle Stepper
+      const steps = [
+        {
+          key: 'signup',
+          num: '1',
+          title: 'Account Created',
+          desc: `Signed up via your referral code (${refState.partner.code}).`,
+          time: client.signupDate || 'Completed',
+          badge: '10% Welcome Discount Activated',
+          badgeBg: '#f1f5f9',
+          badgeColor: '#475569',
+          isDone: true,
+          isActive: client.stage === 'signup'
+        },
+        {
+          key: 'waba',
+          num: '2',
+          title: 'WhatsApp Business API (WABA) Connected',
+          desc: client.wabaNumber ? `Phone number ${client.wabaNumber} verified with Meta Cloud API.` : 'Client is connecting their WhatsApp Business Account with Meta.',
+          time: client.wabaDate || (client.stage === 'signup' ? 'In Progress' : 'Pending'),
+          badge: client.wabaDate ? 'Meta Cloud API Verified ✓' : 'Setup In Progress',
+          badgeBg: client.wabaDate ? '#ecfdf5' : '#f8fafc',
+          badgeColor: client.wabaDate ? '#059669' : '#64748b',
+          isDone: client.stage === 'waba' || client.stage === 'paid' || client.stage === 'credited',
+          isActive: client.stage === 'waba'
+        },
+        {
+          key: 'paid',
+          num: '3',
+          title: 'Plan Activated & Payment Confirmed',
+          desc: client.planValue > 0 ? `Subscribed to ${client.plan} for ₹${client.planValue.toLocaleString('en-IN')}.` : 'Client is evaluating trial and selecting plan.',
+          time: client.planDate || (client.stage === 'paid' || client.stage === 'credited' ? 'Completed' : 'Pending'),
+          badge: client.planValue > 0 ? `Payment Received: ₹${client.planValue.toLocaleString('en-IN')}` : 'Awaiting Payment',
+          badgeBg: client.planValue > 0 ? '#eff6ff' : '#f8fafc',
+          badgeColor: client.planValue > 0 ? '#2563eb' : '#64748b',
+          isDone: client.stage === 'paid' || client.stage === 'credited',
+          isActive: client.stage === 'paid' && client.daysSincePlan < 7
+        },
+        {
+          key: 'refund',
+          num: '4',
+          title: '7-Day Refund Policy Window',
+          desc: client.planValue > 0 
+            ? (client.daysSincePlan >= 7 ? `7-day window completed on ${client.clearanceDate} without refund.` : `Currently day ${client.daysSincePlan} of 7. Commission held in safety escrow.`)
+            : 'Starts immediately after plan purchase.',
+          time: client.clearanceDate ? `Ends: ${client.clearanceDate}` : 'Pending Plan',
+          badge: client.daysSincePlan >= 7 ? '7-Day Clearance Complete ✓' : (client.stage === 'paid' ? `⏳ ${7 - (client.daysSincePlan || 0)} Days Remaining` : 'Escrow Protected'),
+          badgeBg: client.daysSincePlan >= 7 ? '#ecfdf5' : (client.stage === 'paid' ? '#fffbeb' : '#f8fafc'),
+          badgeColor: client.daysSincePlan >= 7 ? '#059669' : (client.stage === 'paid' ? '#b45309' : '#64748b'),
+          isDone: client.stage === 'credited',
+          isActive: client.stage === 'paid'
+        },
+        {
+          key: 'credited',
+          num: '5',
+          title: 'Commission Credited to Partner Wallet',
+          desc: client.stage === 'credited' 
+            ? `+₹${earnVal.toLocaleString('en-IN')} added directly to your CRM wallet balance. Available for instant UPI/Bank payout withdrawal.`
+            : `Will credit automatically upon day 8 of active subscription (+₹${earnVal.toLocaleString('en-IN')}).`,
+          time: client.stage === 'credited' ? 'Credited ✅' : 'Pending 7d Clearance',
+          badge: client.stage === 'credited' ? `Wallet Balance Updated (+₹${earnVal.toLocaleString('en-IN')})` : 'Auto-Credit Queued',
+          badgeBg: client.stage === 'credited' ? '#f0fdf4' : '#f8fafc',
+          badgeColor: client.stage === 'credited' ? '#15803d' : '#94a3b8',
+          isDone: client.stage === 'credited',
+          isActive: client.stage === 'credited'
+        }
+      ];
+
+      stepperEl.innerHTML = steps.map(s => `
+        <div class="ref-step-item ${s.isDone ? 'completed' : (s.isActive ? 'active' : '')}">
+          <div class="ref-step-line"></div>
+          <div class="ref-step-node">
+            ${s.isDone ? '✓' : s.num}
+          </div>
+          <div class="ref-step-content">
+            <div class="ref-step-title">
+              <span>${s.title}</span>
+              <span class="ref-step-time">${s.time}</span>
+            </div>
+            <div class="ref-step-desc">${s.desc}</div>
+            <span class="ref-step-meta-badge" style="background: ${s.badgeBg}; color: ${s.badgeColor};">${s.badge}</span>
+          </div>
+        </div>
+      `).join('');
+
+      modal.style.display = 'flex';
+    }
+
+    function closeClientFunnelModal() {
+      const modal = document.getElementById('modal-ref-client-funnel');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // 16. Simulate a New Referral Lead through the Funnel
+    function simulateNewReferralLead() {
+      const sampleCompanies = [
+        { name: 'BlueStar Logistics Hub', contact: 'Deepak Patel', plan: 'Growth Pro Monthly', val: 4999 },
+        { name: 'UrbanKart Retail Tech', contact: 'Kavita Sundaram', plan: 'Enterprise Annual Suite', val: 24000 },
+        { name: 'QuickServe Cloud Kitchen', contact: 'Aakash Singhania', plan: 'Starter Monthly', val: 2499 }
+      ];
+      const pick = sampleCompanies[Math.floor(Math.random() * sampleCompanies.length)];
+      const newId = `REF-${Math.floor(100 + Math.random() * 900)}`;
+
+      const newRef = {
+        id: newId,
+        name: pick.name,
+        contact: pick.contact,
+        signupDate: 'Just now',
+        stage: 'paid', // newly paid in 7-day refund window
+        wabaDate: 'Just now',
+        wabaNumber: `+91 98${Math.floor(10000000 + Math.random() * 90000000)} (Meta Approved)`,
+        plan: pick.plan,
+        planValue: pick.val,
+        planDate: 'Just now',
+        daysSincePlan: 1, // day 1 in 7-day refund window!
+        clearanceDate: 'In 6 days',
+        commissionMode: refState.partner.chosenReward,
+        recurringEarning: Math.round((pick.val * refState.config.recurringPercent) / 100),
+        flatEarning: refState.config.flatBountyAmount,
+        status: 'In 7d Refund Window'
+      };
+
+      refState.referredClients.unshift(newRef);
+      refState.partner.totalClicks += 4;
+      const expectedEarn = refState.partner.chosenReward === 'recurring' ? newRef.recurringEarning : newRef.flatEarning;
+      refState.partner.pendingClearance += expectedEarn;
+
+      const pendingStat = document.getElementById('ref-stat-pending');
+      if (pendingStat) pendingStat.textContent = `₹${refState.partner.pendingClearance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+      renderPartnerClients();
+      showRefToast(`🎉 New referral lead "${pick.name}" simulated! Plan paid: ₹${pick.val.toLocaleString('en-IN')}. 7-day refund countdown started.`);
+    }
+
     // Initial render
     updatePartnerHeroAndStats();
     renderPartnerClients();
@@ -6516,6 +6820,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.handleConfirmApprovePayout = handleConfirmApprovePayout;
     window.handleRejectPayout = handleRejectPayout;
     window.filterReferredClients = filterReferredClients;
+    window.setPartnerRewardChoice = setPartnerRewardChoice;
+    window.openClientFunnelModal = openClientFunnelModal;
+    window.closeClientFunnelModal = closeClientFunnelModal;
+    window.simulateNewReferralLead = simulateNewReferralLead;
   }
 
   initHelpDesk();

@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=2.9" />
+  <link rel="stylesheet" href="dashboard.css?v=3.0" />
 </head>
 <body>
 
@@ -2141,6 +2141,24 @@
                CONTAINER A: PARTNER / CLIENT VIEW
                ================================================================ -->
           <div id="ref-partner-view">
+            <!-- Partner Choice: Choose Commission Model Before Sharing -->
+            <div class="ref-partner-choice-box">
+              <div class="ref-choice-meta">
+                <span class="ref-choice-label">Choose your commission model before sharing:</span>
+                <span class="ref-choice-sub" id="ref-choice-explain">Earn 20% recurring monthly royalty on renewals, auto-credited after 7-day refund clearance.</span>
+              </div>
+              <div class="ref-choice-pills">
+                <button type="button" class="ref-choice-pill active" id="btn-choice-recurring" onclick="window.setPartnerRewardChoice && window.setPartnerRewardChoice('recurring')" title="Select 20% Recurring Lifetime">
+                  <span class="choice-dot"></span>
+                  <span id="choice-lbl-recurring">20% Recurring Lifetime</span>
+                </button>
+                <button type="button" class="ref-choice-pill" id="btn-choice-flat" onclick="window.setPartnerRewardChoice && window.setPartnerRewardChoice('flat')" title="Select Flat Bounty">
+                  <span class="choice-dot"></span>
+                  <span id="choice-lbl-flat">Flat ₹1,500 Bounty</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Sleek High-End Referral Link Strip -->
             <div class="ref-link-strip" id="ref-hero-banner">
               <div class="ref-link-strip-info">
@@ -2149,7 +2167,7 @@
                   <span class="ref-clean-badge active" id="ref-active-model-chip">20% Recurring</span>
                 </div>
                 <p class="ref-strip-sub" id="ref-hero-sub">
-                  Clients receive a 10% welcome discount. Commissions credit automatically on renewal.
+                  Clients receive a 10% welcome discount. Commissions credit automatically after 7-day refund clearance.
                 </p>
               </div>
 
@@ -2157,7 +2175,7 @@
               <div class="ref-link-strip-actions">
                 <div class="ref-clean-link-bar">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                  <span class="ref-clean-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082</span>
+                  <span class="ref-clean-link-text" id="ref-link-text">https://connect.simplefloww.com/ref/ak9082?reward=recurring</span>
                   <button type="button" class="ref-clean-copy-btn" id="ref-copy-btn" onclick="window.copyPartnerReferralLink && window.copyPartnerReferralLink()" title="Copy link">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span>Copy</span>
@@ -2198,11 +2216,11 @@
 
               <div class="hd-kpi-card">
                 <div class="hd-kpi-head">
-                  <span class="hd-kpi-title">In Review / Pending</span>
+                  <span class="hd-kpi-title">In Review (7d Refund)</span>
                   <span class="hd-kpi-dot warning"></span>
                 </div>
-                <div class="hd-kpi-val" id="ref-stat-pending" style="color: #d97706;">₹1,200.00</div>
-                <div class="hd-kpi-sub">14-day refund clearance</div>
+                <div class="hd-kpi-val" id="ref-stat-pending" style="color: #d97706;">₹1,000.00</div>
+                <div class="hd-kpi-sub">Cleared after 7-day period</div>
               </div>
 
               <div class="hd-kpi-card">
@@ -2210,8 +2228,8 @@
                   <span class="hd-kpi-title">Referrals & Clicks</span>
                   <span class="hd-kpi-dot purple"></span>
                 </div>
-                <div class="hd-kpi-val" id="ref-stat-referrals">5 Paid <span style="font-size: 13px; font-weight: 500; color: #64748b;">/ 142 Clicks</span></div>
-                <div class="hd-kpi-sub" style="color: #16a34a; font-weight: 600;">38.4% Conversion Rate</div>
+                <div class="hd-kpi-val" id="ref-stat-referrals">5 Total <span style="font-size: 13px; font-weight: 500; color: #64748b;">/ 142 Clicks</span></div>
+                <div class="hd-kpi-sub" style="color: #16a34a; font-weight: 600;">38.4% conversion</div>
               </div>
 
               <div class="hd-kpi-card">
@@ -2220,7 +2238,7 @@
                   <span class="hd-kpi-dot success"></span>
                 </div>
                 <div class="hd-kpi-val" id="ref-stat-tier" style="font-size: 18px; color: #0f172a;">Gold VIP (20%)</div>
-                <div class="hd-kpi-sub">Max recurring rate unlocked</div>
+                <div class="hd-kpi-sub">Max rate unlocked</div>
               </div>
             </div>
 
@@ -2242,23 +2260,25 @@
                 </div>
 
                 <div id="ref-client-search-wrapper" style="display: flex; align-items: center; gap: 8px;">
-                  <input type="text" id="ref-client-search" placeholder="Search clients..." class="inbox-search-input" style="font-size: 12px; padding: 5px 10px; width: 200px;" oninput="window.filterReferredClients && window.filterReferredClients()" />
+                  <input type="text" id="ref-client-search" placeholder="Search clients..." class="inbox-search-input" style="font-size: 12px; padding: 5px 10px; width: 180px;" oninput="window.filterReferredClients && window.filterReferredClients()" />
+                  <button type="button" class="btn-secondary hd-clean-btn-secondary" onclick="window.simulateNewReferralLead && window.simulateNewReferralLead()" style="font-size: 11.5px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;" title="Simulate a new referred signup">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Simulate Referral</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- Table Tab 1: Referred Clients Table -->
+              <!-- Table Tab 1: Referred Clients Table with Full Funnel Tracking -->
               <div id="panel-ref-clients" class="ref-tab-panel">
                 <table class="hd-table" id="ref-clients-table">
                   <thead>
                     <tr>
-                      <th>Referred Business</th>
-                      <th>Signup Date</th>
-                      <th>Plan Subscribed</th>
-                      <th>Plan Value</th>
+                      <th>Referred Client</th>
+                      <th>Funnel Stage</th>
+                      <th>Plan & Paid Amount</th>
                       <th>Your Commission</th>
-                      <th>Commission Type</th>
-                      <th>Status</th>
-                      <th>Next Payout</th>
+                      <th>Clearance Status (7d Policy)</th>
+                      <th style="text-align: right;">Funnel Timeline</th>
                     </tr>
                   </thead>
                   <tbody id="ref-clients-tbody">
@@ -3505,6 +3525,53 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </div>
   </div>
 
+  <!-- ====================================================================
+       MODAL 4: REFERRED CLIENT FUNNEL TIMELINE & 7-DAY CLEARANCE TRACKER
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-ref-client-funnel" style="display: none; z-index: 999999;">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1px solid #bfdbfe;">
+            📊
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;" id="funnel-modal-client-name">Client Funnel Timeline</h3>
+            <span style="font-size: 12px; color: #64748b;" id="funnel-modal-client-id">REF-101 • Complete Onboarding Journey</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeClientFunnelModal && window.closeClientFunnelModal()">&times;</button>
+      </div>
+
+      <div style="padding-top: 10px;">
+        <!-- Summary Box -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+          <div>
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Plan Paid</span>
+            <div style="font-size: 14px; font-weight: 700; color: #0f172a;" id="funnel-modal-plan-amt">₹4,999.00</div>
+          </div>
+          <div>
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Commission</span>
+            <div style="font-size: 14px; font-weight: 700; color: #16a34a;" id="funnel-modal-comm-amt">₹1,000.00</div>
+          </div>
+          <div>
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">7d Refund Policy</span>
+            <div style="font-size: 12.5px; font-weight: 700;" id="funnel-modal-clearance-pill">In Window</div>
+          </div>
+        </div>
+
+        <!-- Vertical Stepper List -->
+        <div class="ref-stepper-list" id="funnel-modal-stepper">
+          <!-- Dynamically populated by dashboard.js -->
+        </div>
+
+        <div class="modal-footer" style="margin-top: 18px; display: flex; justify-content: flex-end;">
+          <button type="button" class="btn-primary" onclick="window.closeClientFunnelModal && window.closeClientFunnelModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Live Notification Toast Container -->
   <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
@@ -3532,7 +3599,7 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </button>
   </nav>
 
-  <script src="data-service.js?v=2.9"></script>
-  <script src="dashboard.js?v=2.9"></script>
+  <script src="data-service.js?v=3.0"></script>
+  <script src="dashboard.js?v=3.0"></script>
 </body>
 </html>
