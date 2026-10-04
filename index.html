@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=3.8" />
+  <link rel="stylesheet" href="dashboard.css?v=3.9" />
 </head>
 <body>
 
@@ -1946,22 +1946,109 @@
 
           <!-- SUB-VIEW 2: RESELLER & PARTNER PLAYBOOKS -->
           <div id="kb-reseller-view" style="display: none;">
-            <!-- Partner Hero Banner -->
-            <div class="helpdesk-hero" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%); color: #ffffff;">
-              <div class="helpdesk-hero-title" style="color: #ffffff;">
-                <span>💼 Reseller & White-Label Partner Playbooks</span>
+            
+            <!-- Reseller Studio Command Center Card -->
+            <div class="rkb-studio-card">
+              <div class="rkb-studio-header">
+                <div class="rkb-studio-info">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">💼</span>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;">Reseller Knowledge Base Studio & Directory</h3>
+                    <span class="hd-status-pill" style="background: #faf5ff; color: #7c3aed; border: 1px solid #e9d5ff;">
+                      👑 Master Admin & Partner Panel
+                    </span>
+                  </div>
+                  <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748b;">
+                    Create, update, and publish WhatsApp CRM troubleshooting guides for clients, or internal playbooks for your white-label sub-accounts.
+                  </p>
+                </div>
+                <div class="rkb-studio-actions">
+                  <button type="button" class="btn-primary" onclick="window.openAddKbArticleModal && window.openAddKbArticleModal()" style="background: #7c3aed; border-color: #6d28d9; padding: 7px 16px; font-size: 12.5px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>+ Add New Article / Guide</span>
+                  </button>
+                  <button type="button" class="btn-secondary" onclick="window.exportKbArticlesJson && window.exportKbArticlesJson()" title="Download JSON Backup" style="font-size: 12.5px; padding: 7px 14px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Export KB</span>
+                  </button>
+                </div>
               </div>
-              <div class="helpdesk-hero-sub" style="color: #c7d2fe;">
-                Step-by-step master playbooks to launch your SaaS agency, onboard client Meta Cloud APIs, configure white-label custom domains, and scale recurring MRR.
+
+              <!-- 4-Stat Metric Row -->
+              <div class="rkb-stats-grid">
+                <div class="rkb-stat-box">
+                  <div class="rkb-stat-num" id="rkb-stat-total">32</div>
+                  <div class="rkb-stat-lbl">Total Articles</div>
+                </div>
+                <div class="rkb-stat-box">
+                  <div class="rkb-stat-num" id="rkb-stat-client" style="color: #2563eb;">26</div>
+                  <div class="rkb-stat-lbl">Client Portal Guides</div>
+                </div>
+                <div class="rkb-stat-box">
+                  <div class="rkb-stat-num" id="rkb-stat-reseller" style="color: #4f46e5;">6</div>
+                  <div class="rkb-stat-lbl">Partner Playbooks</div>
+                </div>
+                <div class="rkb-stat-box">
+                  <div class="rkb-stat-num" id="rkb-stat-custom" style="color: #7c3aed;">0</div>
+                  <div class="rkb-stat-lbl">Custom Authored</div>
+                </div>
               </div>
-              
-              <div class="helpdesk-search-wrapper" style="background: rgba(255, 255, 255, 0.95);">
+            </div>
+
+            <!-- Articles Management Directory (Interactive Table) -->
+            <div class="rkb-table-card">
+              <div class="rkb-table-toolbar">
+                <div class="rkb-search-box">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" id="rkb-manage-search" placeholder="Search by title, keyword, or category..." />
+                </div>
+                <div class="rkb-filter-pills" id="rkb-audience-filters">
+                  <button type="button" class="rkb-filter-pill active" data-aud="all">All (<span id="rkb-cnt-pill-all">32</span>)</button>
+                  <button type="button" class="rkb-filter-pill" data-aud="client">👤 Client Guides (<span id="rkb-cnt-pill-client">26</span>)</button>
+                  <button type="button" class="rkb-filter-pill" data-aud="reseller">💼 Partner SOPs (<span id="rkb-cnt-pill-reseller">6</span>)</button>
+                  <button type="button" class="rkb-filter-pill" data-aud="custom">✨ Custom (<span id="rkb-cnt-pill-custom">0</span>)</button>
+                </div>
+              </div>
+
+              <div class="rkb-table-wrap">
+                <table class="rkb-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 36%;">Article Title & Summary</th>
+                      <th style="width: 14%;">Audience</th>
+                      <th style="width: 15%;">Category</th>
+                      <th style="width: 13%;">Format</th>
+                      <th style="width: 10%;">Status</th>
+                      <th style="width: 12%; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rkb-manage-tbody">
+                    <!-- Populated dynamically by dashboard.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Section Divider & Title for Playbooks -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin: 24px 0 14px 0;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                  <span>📖 Master Partner Playbooks Reader</span>
+                  <span style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 999px; font-weight: 600;">SOPs & Guides</span>
+                </h3>
+                <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Read and download complete execution SOPs for custom domains, pricing, WABA onboarding, and sales scripts.</p>
+              </div>
+            </div>
+
+            <!-- Partner Hero Search & Filter -->
+            <div class="helpdesk-hero" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%); color: #ffffff; padding: 18px 22px; border-radius: 12px; margin-bottom: 14px;">
+              <div class="helpdesk-search-wrapper" style="background: rgba(255, 255, 255, 0.95); margin-top: 0;">
                 <svg class="helpdesk-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input type="text" class="helpdesk-search-input" id="reseller-search-input" placeholder="Search partner playbooks (e.g. CNAME domain, ₹2999 pricing, Meta WABA signup, objections, number warmup)..." autocomplete="off" />
                 <button type="button" class="helpdesk-search-clear" id="reseller-search-clear">&times;</button>
               </div>
 
-              <div class="helpdesk-trending-row" style="color: #e0e7ff;">
+              <div class="helpdesk-trending-row" style="color: #e0e7ff; margin-top: 10px;">
                 <span class="helpdesk-trending-label" style="color: #a5b4fc;">Fast Track:</span>
                 <span class="helpdesk-trend-pill" data-reseller-query="domain" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">🌐 White-Label CNAME</span>
                 <span class="helpdesk-trend-pill" data-reseller-query="pricing" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">💰 100% Margin Pricing</span>
@@ -4176,6 +4263,154 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </div>
   </div>
 
+  <!-- ====================================================================
+       MODAL: ADD / EDIT KNOWLEDGE BASE ARTICLE & PLAYBOOK (RESELLER PANEL)
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-add-kb-article" style="display: none; z-index: 999999;">
+    <div class="modal-card" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 8px; background: #faf5ff; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid #e9d5ff;">
+            📝
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;" id="modal-kb-title">Add New Knowledge Base Article</h3>
+            <span style="font-size: 12px; color: #7c3aed; font-weight: 600;">Publish Client Self-Service Guides or Reseller Partner SOPs</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeAddKbArticleModal && window.closeAddKbArticleModal()">&times;</button>
+      </div>
+
+      <form id="form-add-kb-article" onsubmit="window.handleKbArticleSubmit && window.handleKbArticleSubmit(event)" style="padding-top: 10px; overflow-y: auto; flex: 1; padding-right: 4px;">
+        <input type="hidden" id="kb-article-id" value="" />
+
+        <!-- 1. Target Audience Switcher -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-weight: 700;">Target Audience / Portal <span style="color: #ef4444;">*</span></label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; background: #f8fafc;" id="lbl-aud-client">
+              <input type="radio" name="kb-audience" value="client" checked onchange="window.onKbAudienceChange && window.onKbAudienceChange('client')" />
+              <div>
+                <strong style="display: block; font-size: 12.5px; color: #0f172a;">👤 Client Portal</strong>
+                <span style="font-size: 11px; color: #64748b;">End-User Helpdesk & FAQs</span>
+              </div>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; background: #f8fafc;" id="lbl-aud-reseller">
+              <input type="radio" name="kb-audience" value="reseller" onchange="window.onKbAudienceChange && window.onKbAudienceChange('reseller')" />
+              <div>
+                <strong style="display: block; font-size: 12.5px; color: #0f172a;">💼 Reseller Portal</strong>
+                <span style="font-size: 11px; color: #64748b;">Agency Playbooks & Master SOPs</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. Type & Category Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label class="form-label">Article Format / Type <span style="color: #ef4444;">*</span></label>
+            <select class="form-input" id="kb-type" required>
+              <option value="troubleshoot">⚡ Quick Fix / Troubleshooting</option>
+              <option value="guide">📖 Feature How-To Guide / SOP</option>
+              <option value="playbook">💼 Business Playbook & Strategy</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Category <span style="color: #ef4444;">*</span></label>
+            <select class="form-input" id="kb-category" required onchange="window.onKbCategoryChange && window.onKbCategoryChange(this.value)">
+              <option value="whatsapp">📱 WhatsApp & QR Setup</option>
+              <option value="broadcast">📢 Broadcast & Campaigns</option>
+              <option value="catalog">🛍️ Catalog & Commerce</option>
+              <option value="meta">🚫 Meta Templates & Approvals</option>
+              <option value="automation">⚡ Automation & Webhooks</option>
+              <option value="billing">💳 Billing & Tier Limits</option>
+              <option value="whitelabel">🏢 White-Label & Custom Domain</option>
+              <option value="pricing">💰 Pricing & Margins</option>
+              <option value="sales">🎯 Sales & Closing Scripts</option>
+              <option value="compliance">🛡️ Ban Prevention & Warmup</option>
+              <option value="custom">+ Add Custom Category</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Custom Category Name (Conditional) -->
+        <div class="form-group" id="kb-custom-category-wrap" style="display: none; margin-bottom: 12px;">
+          <label class="form-label">Custom Category Title <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="kb-custom-category-name" placeholder="e.g. AI Prompt Flows, Shopify Webhooks" />
+        </div>
+
+        <!-- 3. Article Title -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Article Title <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="kb-title" placeholder="e.g. How to connect WhatsApp Webhook with Google Sheets in 3 mins" required />
+        </div>
+
+        <!-- 4. Quick TL;DR / 1-Line Solution -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Quick Answer / TL;DR Summary <span style="color: #ef4444;">*</span></label>
+          <input type="text" class="form-input" id="kb-summary" placeholder="e.g. Go to Settings > Webhooks, copy URL, and paste into Google Apps Script webhook trigger." required />
+          <span style="font-size: 11px; color: #64748b; margin-top: 3px; display: block;">⚡ Shown in the quick 3-second highlight card so users get instant answers.</span>
+        </div>
+
+        <!-- 5. Step-by-Step Resolution Steps -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Step-by-Step Resolution Guide (1 step per line) <span style="color: #ef4444;">*</span></label>
+          <textarea class="form-input" id="kb-steps" rows="4" placeholder="Enter Step 1 details here&#10;Enter Step 2 details here&#10;Enter Step 3 details here" required></textarea>
+          <span style="font-size: 11px; color: #64748b; margin-top: 3px; display: block;">💡 Each line will automatically be formatted as a numbered step (1, 2, 3...).</span>
+        </div>
+
+        <!-- 6. Pro Tip / Best Practice Note -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label">Pro Tip / Recommendation (Optional)</label>
+          <input type="text" class="form-input" id="kb-tip" placeholder="e.g. Always keep primary business phone on WiFi and charger during initial sync." />
+        </div>
+
+        <!-- 7. Read Time & Module Action Link -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label class="form-label">Est. Read Time</label>
+            <input type="text" class="form-input" id="kb-duration" value="0:45" placeholder="e.g. 0:45 or 2 min" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Action Button Target (Optional)</label>
+            <select class="form-input" id="kb-action-target">
+              <option value="inbox">Direct to WhatsApp Inbox</option>
+              <option value="broadcast">Direct to Broadcast Campaigns</option>
+              <option value="templates">Direct to Message Templates</option>
+              <option value="contacts">Direct to Contacts & Leads</option>
+              <option value="settings">Direct to Account Settings</option>
+              <option value="none">None (Read Only)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 8. Status & Publish Options -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Publication Status <span style="color: #ef4444;">*</span></label>
+          <div style="display: flex; gap: 16px; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+              <input type="radio" name="kb-status" value="published" checked />
+              <span class="rkb-badge-live">🟢 Publish Live Immediately</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+              <input type="radio" name="kb-status" value="draft" />
+              <span class="rkb-badge-draft">🟡 Save as Draft</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #eaecf0; padding-top: 12px;">
+          <button type="button" class="btn-secondary" onclick="window.closeAddKbArticleModal && window.closeAddKbArticleModal()">Cancel</button>
+          <button type="submit" class="btn-primary" style="background: #7c3aed; border-color: #6d28d9;" id="kb-submit-btn">
+            💾 Save & Publish Article ➔
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Floating Live Notification Toast Container -->
   <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
@@ -4204,6 +4439,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=3.8"></script>
+  <script src="dashboard.js?v=3.9"></script>
 </body>
 </html>

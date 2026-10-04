@@ -3025,7 +3025,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
   // HELP DESK & VIDEO KNOWLEDGE BASE ENGINE (Self-Service Center)
   // =========================================================================
-  const helpdeskFaqsData = [
+  let helpdeskFaqsData = [
     // --- WhatsApp & API (4) ---
     {
       id: 'faq-wa-1',
@@ -3561,22 +3561,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const typeBadgeText = faq.type === 'troubleshoot' ? '⚡ Fix' : '📖 Guide';
       const typeBadgeClass = faq.type === 'troubleshoot' ? 'troubleshoot' : 'guide';
 
+      const customBadge = faq.isCustom ? `<span class="faq-custom-badge">✨ Partner Authored</span>` : '';
+      const quickSummary = faq.summary || (faq.steps && faq.steps[0] ? faq.steps[0].replace(/<[^>]*>?/gm, '') : 'Follow resolution steps below.');
+
       return `
         <div class="faq-item ${isOpen ? 'is-open' : ''}" data-faq-id="${faq.id}">
           <div class="faq-header" data-toggle-id="${faq.id}">
             <div class="faq-header-left">
               <span class="faq-category-badge ${faq.badgeClass}">${faq.catLabel}</span>
               <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
-              <h3 class="faq-title">${faq.title}</h3>
+              <h3 class="faq-title">${faq.title} ${customBadge}</h3>
             </div>
             <div class="faq-header-right">
-              <span class="faq-read-time">⏱️ 2 min read</span>
+              <span class="faq-read-time">⏱️ ${faq.duration || '0:45'}</span>
               <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
 
           <div class="faq-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
             
+            <!-- Quick Answer Highlight (Instant 3-sec Resolution) -->
+            <div class="faq-quick-answer-card">
+              <span class="faq-quick-answer-badge">⚡ Quick Fix</span>
+              <span class="faq-quick-answer-text">${quickSummary}</span>
+            </div>
+
             <!-- Step By Step List -->
             <div class="faq-steps-card">
               <div class="faq-steps-card-title">
@@ -3590,6 +3599,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               `).join('')}
             </div>
+
+            ${(faq.tip || faq.proTip) ? `
+              <div class="faq-pro-tip-box">
+                💡 <strong>Pro Tip:</strong> ${faq.tip || faq.proTip}
+              </div>
+            ` : ''}
 
             <!-- Optional Screen Walkthrough Trigger -->
             <div class="faq-video-trigger-wrap">
@@ -3882,8 +3897,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
     function initHelpDesk() {
+      mergeCustomArticles();
       updateHelpDeskCounts();
       renderHelpDeskFaqs();
+      renderResellerKbManageTable();
+
+      // Reseller KB Directory Search & Filter Listeners
+      const rkbSearchInp = document.getElementById('rkb-manage-search');
+      if (rkbSearchInp) {
+        rkbSearchInp.addEventListener('input', () => {
+          rkbManageState.search = rkbSearchInp.value.trim();
+          renderResellerKbManageTable();
+        });
+      }
+
+      const rkbAudPills = document.querySelectorAll('#rkb-audience-filters .rkb-filter-pill');
+      rkbAudPills.forEach(btn => {
+        btn.addEventListener('click', () => {
+          rkbAudPills.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          rkbManageState.audience = btn.getAttribute('data-aud') || 'all';
+          renderResellerKbManageTable();
+        });
+      });
 
       // Category Tabs Filter (Supports .kb-cat-pill & .helpdesk-tab-btn)
       const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn');
@@ -4080,7 +4116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // RESELLER & PARTNER KNOWLEDGE BASE / PLAYBOOKS ENGINE
     // =========================================================================
-    const resellerPlaybooksData = [
+    let resellerPlaybooksData = [
       {
         id: 'rpb-1',
         cat: 'whitelabel',
@@ -4334,6 +4370,455 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // =========================================================================
+    // RESELLER KNOWLEDGE BASE STUDIO: CUSTOM ARTICLES & CRUD ENGINE
+    // =========================================================================
+    function loadCustomKbArticles() {
+      try {
+        const raw = localStorage.getItem('sf_custom_kb_articles');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCustomKbArticles(articles) {
+      try {
+        localStorage.setItem('sf_custom_kb_articles', JSON.stringify(articles));
+      } catch (e) {
+        console.error('Failed to save custom articles to localStorage', e);
+      }
+    }
+
+    function mergeCustomArticles() {
+      const customArticles = loadCustomKbArticles();
+      helpdeskFaqsData = helpdeskFaqsData.filter(f => !f.isCustom);
+      resellerPlaybooksData = resellerPlaybooksData.filter(p => !p.isCustom);
+
+      customArticles.forEach(item => {
+        if (item.audience === 'reseller') {
+          resellerPlaybooksData.unshift(item);
+        } else {
+          helpdeskFaqsData.unshift(item);
+        }
+      });
+    }
+
+    const rkbManageState = {
+      search: '',
+      audience: 'all' // 'all' | 'client' | 'reseller' | 'custom'
+    };
+
+    function renderResellerKbManageTable() {
+      const tbody = document.getElementById('rkb-manage-tbody');
+      if (!tbody) return;
+
+      const customArticles = loadCustomKbArticles();
+      const allArticles = [
+        ...helpdeskFaqsData.map(f => ({ ...f, audience: f.audience || 'client' })),
+        ...resellerPlaybooksData.map(p => ({ ...p, audience: p.audience || 'reseller' }))
+      ];
+
+      // Update Metric Numbers & Pills
+      const totalCount = allArticles.length;
+      const clientCount = helpdeskFaqsData.length;
+      const resellerCount = resellerPlaybooksData.length;
+      const customCount = customArticles.length;
+
+      const elTot = document.getElementById('rkb-stat-total');
+      const elCli = document.getElementById('rkb-stat-client');
+      const elRes = document.getElementById('rkb-stat-reseller');
+      const elCus = document.getElementById('rkb-stat-custom');
+      if (elTot) elTot.textContent = totalCount;
+      if (elCli) elCli.textContent = clientCount;
+      if (elRes) elRes.textContent = resellerCount;
+      if (elCus) elCus.textContent = customCount;
+
+      const pAll = document.getElementById('rkb-cnt-pill-all');
+      const pCli = document.getElementById('rkb-cnt-pill-client');
+      const pRes = document.getElementById('rkb-cnt-pill-reseller');
+      const pCus = document.getElementById('rkb-cnt-pill-custom');
+      if (pAll) pAll.textContent = totalCount;
+      if (pCli) pCli.textContent = clientCount;
+      if (pRes) pRes.textContent = resellerCount;
+      if (pCus) pCus.textContent = customCount;
+
+      // Filter articles
+      const filtered = allArticles.filter(item => {
+        if (rkbManageState.audience === 'client' && item.audience !== 'client') return false;
+        if (rkbManageState.audience === 'reseller' && item.audience !== 'reseller') return false;
+        if (rkbManageState.audience === 'custom' && !item.isCustom) return false;
+
+        if (!rkbManageState.search) return true;
+        const q = rkbManageState.search.toLowerCase();
+        return (item.title && item.title.toLowerCase().includes(q)) ||
+               (item.catLabel && item.catLabel.toLowerCase().includes(q)) ||
+               (item.summary && item.summary.toLowerCase().includes(q));
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 36px 20px; color: #64748b;">
+              <div style="font-size: 26px; margin-bottom: 6px;">📄</div>
+              <strong>No matching articles found for "${rkbManageState.search}".</strong>
+              <div style="font-size: 12px; margin-top: 4px;">Click "+ Add New Article / Guide" to publish a new guide.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const isClient = item.audience === 'client';
+        const audBadge = isClient
+          ? `<span class="rkb-badge-aud-client">👤 Client Portal</span>`
+          : `<span class="rkb-badge-aud-reseller">💼 Reseller Portal</span>`;
+        
+        const typeBadge = item.type === 'troubleshoot'
+          ? `<span style="font-size:11px; font-weight:600; color:#ea580c; background:#fff7ed; padding:2px 7px; border-radius:4px; border:1px solid #ffedd5;">⚡ Quick Fix</span>`
+          : (item.type === 'playbook' 
+             ? `<span style="font-size:11px; font-weight:600; color:#4338ca; background:#e0e7ff; padding:2px 7px; border-radius:4px; border:1px solid #c7d2fe;">💼 Playbook</span>`
+             : `<span style="font-size:11px; font-weight:600; color:#0284c7; background:#f0f9ff; padding:2px 7px; border-radius:4px; border:1px solid #e0f2fe;">📖 Guide</span>`);
+
+        const statusBadge = item.status === 'draft'
+          ? `<span class="rkb-badge-draft">🟡 Draft</span>`
+          : `<span class="rkb-badge-live">🟢 Live</span>`;
+
+        const summaryText = item.summary || (item.steps && item.steps[0] ? item.steps[0].replace(/<[^>]*>?/gm, '') : 'Resolution guide and execution steps.');
+
+        return `
+          <tr>
+            <td>
+              <div class="rkb-article-cell">
+                <div class="rkb-article-title" onclick="window.previewKbArticle && window.previewKbArticle('${item.id}', '${item.audience}')">
+                  ${item.title}
+                  ${item.isCustom ? '<span class="faq-custom-badge">✨ Custom</span>' : ''}
+                </div>
+                <div class="rkb-article-snippet">${summaryText}</div>
+              </div>
+            </td>
+            <td>${audBadge}</td>
+            <td><span class="faq-category-badge ${item.badgeClass || 'whatsapp'}">${item.catLabel || 'General'}</span></td>
+            <td>${typeBadge}</td>
+            <td>${statusBadge}</td>
+            <td style="text-align: right;">
+              <div class="rkb-action-group">
+                <button type="button" class="rkb-action-btn" onclick="window.previewKbArticle && window.previewKbArticle('${item.id}', '${item.audience}')" title="Preview Article">
+                  👁️
+                </button>
+                <button type="button" class="rkb-action-btn" onclick="window.openEditKbArticleModal && window.openEditKbArticleModal('${item.id}', '${item.audience}')" title="Edit Article">
+                  ✏️
+                </button>
+                ${item.isCustom ? `
+                  <button type="button" class="rkb-action-btn btn-delete" onclick="window.deleteCustomKbArticle && window.deleteCustomKbArticle('${item.id}')" title="Delete Article">
+                    🗑️
+                  </button>
+                ` : `
+                  <button type="button" class="rkb-action-btn" style="opacity:0.4; cursor:not-allowed;" title="Core Guide (Read-Only)">
+                    🔒
+                  </button>
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Modal Operations
+    window.openAddKbArticleModal = function() {
+      const modal = document.getElementById('modal-add-kb-article');
+      const form = document.getElementById('form-add-kb-article');
+      if (!modal) return;
+      if (form) form.reset();
+
+      const elId = document.getElementById('kb-article-id');
+      const modalTitle = document.getElementById('modal-kb-title');
+      const submitBtn = document.getElementById('kb-submit-btn');
+      const customWrap = document.getElementById('kb-custom-category-wrap');
+
+      if (elId) elId.value = '';
+      if (modalTitle) modalTitle.textContent = 'Add New Knowledge Base Article';
+      if (submitBtn) submitBtn.innerHTML = '💾 Save & Publish Article ➔';
+      if (customWrap) customWrap.style.display = 'none';
+
+      const durInp = document.getElementById('kb-duration');
+      if (durInp) durInp.value = '0:45';
+
+      modal.style.display = 'flex';
+    };
+
+    window.closeAddKbArticleModal = function() {
+      const modal = document.getElementById('modal-add-kb-article');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.openEditKbArticleModal = function(id, audience) {
+      const customArticles = loadCustomKbArticles();
+      let item = customArticles.find(a => a.id === id);
+      if (!item) {
+        if (audience === 'reseller') {
+          item = resellerPlaybooksData.find(p => p.id === id);
+        } else {
+          item = helpdeskFaqsData.find(f => f.id === id);
+        }
+      }
+      if (!item) return;
+
+      const modal = document.getElementById('modal-add-kb-article');
+      if (!modal) return;
+
+      const elId = document.getElementById('kb-article-id');
+      const elTitle = document.getElementById('kb-title');
+      const elType = document.getElementById('kb-type');
+      const elCat = document.getElementById('kb-category');
+      const elCustomName = document.getElementById('kb-custom-category-name');
+      const elCustomWrap = document.getElementById('kb-custom-category-wrap');
+      const elSummary = document.getElementById('kb-summary');
+      const elSteps = document.getElementById('kb-steps');
+      const elTip = document.getElementById('kb-tip');
+      const elDur = document.getElementById('kb-duration');
+      const elAction = document.getElementById('kb-action-target');
+      const modalTitle = document.getElementById('modal-kb-title');
+      const submitBtn = document.getElementById('kb-submit-btn');
+
+      if (elId) elId.value = item.id;
+      if (elTitle) elTitle.value = item.title || '';
+      if (elType) elType.value = item.type || 'troubleshoot';
+      if (elSummary) elSummary.value = item.summary || (item.steps ? item.steps[0].replace(/<[^>]*>?/gm, '') : '');
+      if (elSteps) elSteps.value = item.steps ? item.steps.map(s => s.replace(/<[^>]*>?/gm, '')).join('\n') : '';
+      if (elTip) elTip.value = item.tip || item.proTip || '';
+      if (elDur) elDur.value = item.duration || '0:45';
+      if (elAction) elAction.value = item.actionTarget || 'none';
+
+      // Set Audience Radio
+      const aud = item.audience || audience || 'client';
+      const radAud = document.querySelector(`input[name="kb-audience"][value="${aud}"]`);
+      if (radAud) radAud.checked = true;
+
+      // Set Category
+      if (elCat) {
+        const hasOption = Array.from(elCat.options).some(o => o.value === item.cat);
+        if (hasOption) {
+          elCat.value = item.cat;
+          if (elCustomWrap) elCustomWrap.style.display = 'none';
+        } else {
+          elCat.value = 'custom';
+          if (elCustomWrap) {
+            elCustomWrap.style.display = 'block';
+            if (elCustomName) elCustomName.value = item.catLabel || item.cat;
+          }
+        }
+      }
+
+      if (modalTitle) modalTitle.textContent = `Edit Article: ${item.title.substring(0, 32)}...`;
+      if (submitBtn) submitBtn.innerHTML = '💾 Update & Save Changes ➔';
+
+      modal.style.display = 'flex';
+    };
+
+    window.onKbAudienceChange = function(aud) {
+      const lblClient = document.getElementById('lbl-aud-client');
+      const lblReseller = document.getElementById('lbl-aud-reseller');
+      if (lblClient && lblReseller) {
+        if (aud === 'client') {
+          lblClient.style.borderColor = '#2563eb';
+          lblClient.style.background = '#eff6ff';
+          lblReseller.style.borderColor = '#cbd5e1';
+          lblReseller.style.background = '#f8fafc';
+        } else {
+          lblReseller.style.borderColor = '#7c3aed';
+          lblReseller.style.background = '#faf5ff';
+          lblClient.style.borderColor = '#cbd5e1';
+          lblClient.style.background = '#f8fafc';
+        }
+      }
+    };
+
+    window.onKbCategoryChange = function(cat) {
+      const wrap = document.getElementById('kb-custom-category-wrap');
+      if (wrap) {
+        wrap.style.display = cat === 'custom' ? 'block' : 'none';
+      }
+    };
+
+    window.handleKbArticleSubmit = function(e) {
+      e.preventDefault();
+      const elId = document.getElementById('kb-article-id');
+      const id = elId ? elId.value.trim() : '';
+
+      const radAud = document.querySelector('input[name="kb-audience"]:checked');
+      const audience = radAud ? radAud.value : 'client';
+
+      const type = document.getElementById('kb-type') ? document.getElementById('kb-type').value : 'troubleshoot';
+      const catVal = document.getElementById('kb-category') ? document.getElementById('kb-category').value : 'whatsapp';
+      const customCatName = document.getElementById('kb-custom-category-name') ? document.getElementById('kb-custom-category-name').value.trim() : '';
+
+      const title = document.getElementById('kb-title') ? document.getElementById('kb-title').value.trim() : '';
+      const summary = document.getElementById('kb-summary') ? document.getElementById('kb-summary').value.trim() : '';
+      const stepsRaw = document.getElementById('kb-steps') ? document.getElementById('kb-steps').value : '';
+      const tip = document.getElementById('kb-tip') ? document.getElementById('kb-tip').value.trim() : '';
+      const duration = document.getElementById('kb-duration') ? document.getElementById('kb-duration').value.trim() : '0:45';
+      const actionTarget = document.getElementById('kb-action-target') ? document.getElementById('kb-action-target').value : 'none';
+
+      const radStatus = document.querySelector('input[name="kb-status"]:checked');
+      const status = radStatus ? radStatus.value : 'published';
+
+      if (!title || !summary || !stepsRaw.trim()) {
+        alert('Please fill out Title, Summary, and Step-by-Step Resolution steps.');
+        return;
+      }
+
+      const steps = stepsRaw
+        .split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      // Determine Category Label & Badge Class
+      let cat = catVal;
+      let catLabel = 'General';
+      let badgeClass = 'whatsapp';
+
+      if (catVal === 'custom') {
+        cat = 'custom-' + (customCatName ? customCatName.toLowerCase().replace(/\s+/g, '-') : 'cat');
+        catLabel = customCatName || 'Custom Guide';
+        badgeClass = 'badge-purple';
+      } else {
+        const catMap = {
+          'whatsapp': { label: 'WhatsApp & QR', badge: 'whatsapp' },
+          'broadcast': { label: 'Broadcast & Campaigns', badge: 'broadcast' },
+          'catalog': { label: 'Catalog & Commerce', badge: 'team' },
+          'meta': { label: 'Meta Templates', badge: 'broadcast' },
+          'automation': { label: 'Automation & Webhooks', badge: 'chatbot' },
+          'billing': { label: 'Billing & Limits', badge: 'billing' },
+          'whitelabel': { label: '🏢 White-Label & Domain', badge: 'badge-purple' },
+          'pricing': { label: '💰 Pricing & Margins', badge: 'badge-green' },
+          'sales': { label: '🎯 Sales & Closing', badge: 'badge-orange' },
+          'compliance': { label: '🛡️ Ban Prevention', badge: 'badge-red' },
+          'subaccounts': { label: '👥 Sub-Accounts', badge: 'badge-cyan' }
+        };
+        if (catMap[catVal]) {
+          catLabel = catMap[catVal].label;
+          badgeClass = catMap[catVal].badge;
+        }
+      }
+
+      let customArticles = loadCustomKbArticles();
+
+      if (id) {
+        // Editing existing
+        const idx = customArticles.findIndex(a => a.id === id);
+        const updatedArticle = {
+          id: id,
+          audience: audience,
+          cat: cat,
+          catLabel: catLabel,
+          type: type,
+          title: title,
+          summary: summary,
+          duration: duration || '0:45',
+          videoTitle: `Walkthrough: ${title}`,
+          badgeClass: badgeClass,
+          steps: steps,
+          tip: tip,
+          proTip: tip,
+          actionLabel: actionTarget !== 'none' ? 'Open Module ➔' : '',
+          actionTarget: actionTarget,
+          status: status,
+          isCustom: true,
+          updatedAt: new Date().toISOString()
+        };
+
+        if (idx !== -1) {
+          customArticles[idx] = updatedArticle;
+        } else {
+          customArticles.unshift(updatedArticle);
+        }
+        showToast(`✓ Article "${title}" updated successfully!`);
+      } else {
+        // Create new
+        const newId = (audience === 'reseller' ? 'rpb-cust-' : 'faq-cust-') + Date.now();
+        const newArticle = {
+          id: newId,
+          audience: audience,
+          cat: cat,
+          catLabel: catLabel,
+          type: type,
+          title: title,
+          summary: summary,
+          duration: duration || '0:45',
+          videoTitle: `Walkthrough: ${title}`,
+          badgeClass: badgeClass,
+          steps: steps,
+          tip: tip,
+          proTip: tip,
+          actionLabel: actionTarget !== 'none' ? 'Open Module ➔' : '',
+          actionTarget: actionTarget,
+          status: status,
+          isCustom: true,
+          createdAt: new Date().toISOString()
+        };
+        customArticles.unshift(newArticle);
+        showToast(`🎉 Article "${title}" published to Knowledge Base!`);
+      }
+
+      saveCustomKbArticles(customArticles);
+      mergeCustomArticles();
+      updateHelpDeskCounts();
+      renderHelpDeskFaqs();
+      renderResellerPlaybooks();
+      renderResellerKbManageTable();
+      window.closeAddKbArticleModal();
+    };
+
+    window.deleteCustomKbArticle = function(id) {
+      if (!confirm('Are you sure you want to delete this custom article? This action cannot be undone.')) return;
+      let customArticles = loadCustomKbArticles();
+      customArticles = customArticles.filter(a => a.id !== id);
+      saveCustomKbArticles(customArticles);
+      mergeCustomArticles();
+      updateHelpDeskCounts();
+      renderHelpDeskFaqs();
+      renderResellerPlaybooks();
+      renderResellerKbManageTable();
+      showToast('🗑️ Article deleted successfully from Knowledge Base.');
+    };
+
+    window.previewKbArticle = function(id, audience) {
+      if (audience === 'client') {
+        window.switchKbPortal('client');
+        setTimeout(() => {
+          window.openFaqGuide(id);
+        }, 100);
+      } else {
+        window.switchKbPortal('reseller');
+        resellerKbState.openPlaybookId = id;
+        renderResellerPlaybooks();
+        setTimeout(() => {
+          const el = document.querySelector(`[data-pb-id="${id}"]`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    };
+
+    window.exportKbArticlesJson = function() {
+      const allData = {
+        exportedAt: new Date().toISOString(),
+        clientFaqs: helpdeskFaqsData,
+        resellerPlaybooks: resellerPlaybooksData,
+        customArticles: loadCustomKbArticles()
+      };
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', 'simplefloww_knowledge_base_backup.json');
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('📥 Knowledge Base articles exported successfully as JSON!');
+    };
+
     initResellerKnowledgeBase();
 
     // Portal Switcher for Knowledge Base
@@ -4356,6 +4841,7 @@ document.addEventListener('DOMContentLoaded', () => {
           kbBadgeEl.style.borderColor = '#ddd6fe';
         }
         renderResellerPlaybooks();
+        renderResellerKbManageTable();
       } else {
         if (btnKbClient) btnKbClient.classList.add('active');
         if (btnKbReseller) btnKbReseller.classList.remove('active');
