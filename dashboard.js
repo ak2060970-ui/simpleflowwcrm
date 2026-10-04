@@ -3509,610 +3509,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  let helpdeskState = {
-    cat: 'all',
-    type: 'all',
-    search: '',
-    openFaqId: 'faq-wa-1'
-  };
-
-  const activeVideoTimers = {};
-
-  function renderHelpDeskFaqs() {
-    const container = document.getElementById('faq-accordion-list');
-    if (!container) return;
-
-    const filtered = helpdeskFaqsData.filter(faq => {
-      const matchCat = helpdeskState.cat === 'all' || faq.cat === helpdeskState.cat;
-      if (!matchCat) return false;
-      const matchType = helpdeskState.type === 'all' || faq.type === helpdeskState.type;
-      if (!matchType) return false;
-      if (!helpdeskState.search) return true;
-      const q = helpdeskState.search.toLowerCase();
-      return faq.title.toLowerCase().includes(q) ||
-             faq.keywords.toLowerCase().includes(q) ||
-             faq.catLabel.toLowerCase().includes(q) ||
-             faq.steps.some(s => s.toLowerCase().includes(q));
-    });
-
-    if (filtered.length === 0) {
-      container.innerHTML = `
-        <div style="background:#fff; border:1px solid var(--sf-border); border-radius:12px; padding:40px 20px; text-align:center;">
-          <div style="font-size:32px; margin-bottom:8px;">🔍</div>
-          <h4 style="font-size:15px; font-weight:700; color:var(--sf-text-main); margin-bottom:4px;">No matching guide found for "${helpdeskState.search}"</h4>
-          <p style="font-size:12.5px; color:var(--sf-text-muted); margin-bottom:14px;">Try searching broader keywords like "QR", "Broadcast", or "Template".</p>
-          <button type="button" class="btn-secondary" id="btn-reset-hd-search" style="font-size:12px;">Clear Search</button>
-        </div>
-      `;
-      const btnClear = document.getElementById('btn-reset-hd-search');
-      if (btnClear) {
-        btnClear.addEventListener('click', () => {
-          helpdeskState.search = '';
-          const inp = document.getElementById('helpdesk-search-input');
-          if (inp) inp.value = '';
-          renderHelpDeskFaqs();
-        });
-      }
-      return;
-    }
-
-    container.innerHTML = filtered.map(faq => {
-      const isOpen = faq.id === helpdeskState.openFaqId;
-      const typeBadgeText = faq.type === 'troubleshoot' ? '⚡ Fix' : '📖 Guide';
-      const typeBadgeClass = faq.type === 'troubleshoot' ? 'troubleshoot' : 'guide';
-
-      const customBadge = faq.isCustom ? `<span class="faq-custom-badge">✨ Partner Authored</span>` : '';
-      const quickSummary = faq.summary || (faq.steps && faq.steps[0] ? faq.steps[0].replace(/<[^>]*>?/gm, '') : 'Follow resolution steps below.');
-
-      return `
-        <div class="faq-item ${isOpen ? 'is-open' : ''}" data-faq-id="${faq.id}">
-          <div class="faq-header" data-toggle-id="${faq.id}">
-            <div class="faq-header-left">
-              <span class="faq-category-badge ${faq.badgeClass}">${faq.catLabel}</span>
-              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
-              <h3 class="faq-title">${faq.title} ${customBadge}</h3>
-            </div>
-            <div class="faq-header-right">
-              <span class="faq-read-time">⏱️ ${faq.duration || '0:45'}</span>
-              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-          </div>
-
-          <div class="faq-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
-            
-            <!-- Quick Answer Highlight (Instant 3-sec Resolution) -->
-            <div class="faq-quick-answer-card">
-              <span class="faq-quick-answer-badge">⚡ Quick Fix</span>
-              <span class="faq-quick-answer-text">${quickSummary}</span>
-            </div>
-
-            <!-- Step By Step List -->
-            <div class="faq-steps-card">
-              <div class="faq-steps-card-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                Step-by-Step Resolution Guide
-              </div>
-              ${faq.steps.map((st, i) => `
-                <div class="faq-step-item">
-                  <div class="faq-step-num">${i + 1}</div>
-                  <div style="font-size:12.5px; line-height:1.5;">${st}</div>
-                </div>
-              `).join('')}
-            </div>
-
-            ${(faq.tip || faq.proTip) ? `
-              <div class="faq-pro-tip-box">
-                💡 <strong>Pro Tip:</strong> ${faq.tip || faq.proTip}
-              </div>
-            ` : ''}
-
-            <!-- Optional Screen Walkthrough Trigger -->
-            <div class="faq-video-trigger-wrap">
-              <button type="button" class="faq-video-trigger-btn" data-toggle-video="${faq.id}">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                <span>Watch 45-sec Screen Walkthrough</span>
-                <span class="faq-video-badge-pill">${faq.duration}</span>
-              </button>
-            </div>
-
-            <!-- Inline Video Walkthrough Player (Reveals only when user clicks watch) -->
-            <div class="faq-video-card" id="video-card-${faq.id}" style="display: none;">
-              <div class="faq-video-screen">
-                <canvas class="faq-video-canvas" id="canvas-${faq.id}" width="640" height="360"></canvas>
-                <div class="faq-video-overlay-poster" id="poster-${faq.id}" data-play-id="${faq.id}">
-                  <div class="faq-video-play-btn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-                  </div>
-                  <div style="font-size: 13.5px; font-weight: 700;">${faq.videoTitle}</div>
-                  <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">Click to play inline screen walkthrough</div>
-                </div>
-              </div>
-
-              <!-- Controls Bar -->
-              <div class="faq-video-controls-bar">
-                <button type="button" class="faq-video-ctrl-btn" data-btn-play="${faq.id}" title="Play / Pause">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="playicon-${faq.id}"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                </button>
-                <div class="faq-video-timeline-wrap" data-seek-id="${faq.id}">
-                  <div class="faq-video-timeline-progress" id="progress-${faq.id}"></div>
-                </div>
-                <span id="timer-${faq.id}">0:00 / ${faq.duration}</span>
-                <button type="button" class="faq-video-ctrl-btn" data-btn-restart="${faq.id}" title="Replay">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
-                </button>
-              </div>
-            </div>
-
-            <!-- Footer Action Bar -->
-            <div class="faq-footer-bar">
-              <div class="faq-feedback-group">
-                <span>Was this guide helpful?</span>
-                <button type="button" class="faq-feedback-btn" data-rating="yes" onclick="showToast('Thank you for your feedback!')" title="Mark helpful">👍 Yes</button>
-                <button type="button" class="faq-feedback-btn" data-rating="no" onclick="showToast('Feedback noted. We will improve this guide!')" title="Mark not helpful">👎 No</button>
-              </div>
-
-              <div style="display: flex; gap: 8px;">
-                <button type="button" class="btn-primary" data-action-target="${faq.actionTarget}" style="font-size: 12px; padding: 6px 14px;">
-                  ${faq.actionLabel}
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    // Attach Accordion Toggle
-    container.querySelectorAll('.faq-header').forEach(header => {
-      header.addEventListener('click', () => {
-        const id = header.getAttribute('data-toggle-id');
-        helpdeskState.openFaqId = helpdeskState.openFaqId === id ? null : id;
-        renderHelpDeskFaqs();
-      });
-    });
-
-    // Attach Video Expand / Collapse toggles
-    container.querySelectorAll('[data-toggle-video]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-toggle-video');
-        const videoCard = document.getElementById(`video-card-${id}`);
-        if (videoCard) {
-          const isHidden = videoCard.style.display === 'none';
-          videoCard.style.display = isHidden ? 'block' : 'none';
-          if (isHidden) {
-            btn.innerHTML = `
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
-              <span>Hide Screen Walkthrough</span>
-            `;
-            startFaqVideo(id);
-          } else {
-            const faqObj = helpdeskFaqsData.find(f => f.id === id);
-            btn.innerHTML = `
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              <span>Watch 45-sec Screen Walkthrough</span>
-              <span class="faq-video-badge-pill">${faqObj ? faqObj.duration : '0:45'}</span>
-            `;
-            stopFaqVideo(id);
-          }
-        }
-      });
-    });
-
-    // Attach Video Play triggers inside player
-    container.querySelectorAll('[data-play-id]').forEach(poster => {
-      poster.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = poster.getAttribute('data-play-id');
-        playInlineVideoWalkthrough(id);
-      });
-    });
-
-    container.querySelectorAll('[data-btn-play]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-btn-play');
-        playInlineVideoWalkthrough(id);
-      });
-    });
-
-    container.querySelectorAll('[data-btn-restart]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-btn-restart');
-        restartInlineVideoWalkthrough(id);
-      });
-    });
-
-    // Attach Primary Module Action
-    container.querySelectorAll('[data-action-target]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const target = btn.getAttribute('data-action-target');
-        if (target) {
-          window.location.hash = `#${target}`;
-        }
-      });
-    });
-
-    // Attach Feedback Rating
-    container.querySelectorAll('.faq-feedback-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isYes = btn.getAttribute('data-rating') === 'yes';
-        const parent = btn.parentElement;
-        parent.querySelectorAll('.faq-feedback-btn').forEach(b => b.classList.remove('rated-yes', 'rated-no'));
-        btn.classList.add(isYes ? 'rated-yes' : 'rated-no');
-        showToast(isYes ? '✓ Thank you! Glad this guide helped.' : 'Thanks for the feedback. We will improve this walkthrough.');
-      });
-    });
-  }
-
-  // Visual Simulated Video Player on Canvas
-  function playInlineVideoWalkthrough(faqId) {
-    const poster = document.getElementById(`poster-${faqId}`);
-    const canvas = document.getElementById(`canvas-${faqId}`);
-    const progress = document.getElementById(`progress-${faqId}`);
-    const timer = document.getElementById(`timer-${faqId}`);
-    const playIcon = document.getElementById(`playicon-${faqId}`);
-    if (!canvas) return;
-
-    if (poster) poster.style.display = 'none';
-
-    if (activeVideoTimers[faqId]) {
-      // Toggle Pause
-      if (activeVideoTimers[faqId].isPlaying) {
-        activeVideoTimers[faqId].isPlaying = false;
-        if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-        return;
-      } else {
-        activeVideoTimers[faqId].isPlaying = true;
-        if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-        return;
-      }
-    }
-
-    if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-
-    const ctx = canvas.getContext('2d');
-    const totalDuration = 45; // 45 seconds walkthrough
-    let currentTime = 0;
-
-    const faqObj = helpdeskFaqsData.find(f => f.id === faqId) || { videoTitle: 'Interactive Walkthrough', catLabel: 'Guide' };
-
-    activeVideoTimers[faqId] = {
-      isPlaying: true,
-      interval: setInterval(() => {
-        if (!activeVideoTimers[faqId] || !activeVideoTimers[faqId].isPlaying) return;
-
-        currentTime += 1;
-        if (currentTime > totalDuration) {
-          currentTime = totalDuration;
-          clearInterval(activeVideoTimers[faqId].interval);
-          activeVideoTimers[faqId] = null;
-          if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-          showToast(`✓ Completed walkthrough: ${faqObj.videoTitle}`);
-          return;
-        }
-
-        const pct = (currentTime / totalDuration) * 100;
-        if (progress) progress.style.width = `${pct}%`;
-        const mins = Math.floor(currentTime / 60);
-        const secs = String(currentTime % 60).padStart(2, '0');
-        if (timer) timer.textContent = `${mins}:${secs} / 0:${totalDuration}`;
-
-        // Draw animated screen frame
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Header bar
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, 0, canvas.width, 36);
-        ctx.fillStyle = '#38bdf8';
-        ctx.font = 'bold 12px Inter, sans-serif';
-        ctx.fillText(`▶ SimpleFloww Interactive Walkthrough • ${faqObj.catLabel}`, 18, 23);
-
-        // Sidebar mock
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(16, 50, 140, 290);
-        ctx.fillStyle = '#475569';
-        for (let i = 0; i < 5; i++) {
-          ctx.fillRect(26, 70 + (i * 38), 120, 14);
-        }
-
-        // Active highlighted tab
-        ctx.fillStyle = '#2563eb';
-        ctx.fillRect(26, 70 + (Math.floor(currentTime / 15) * 38), 120, 14);
-
-        // Content Area simulation
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px Inter, sans-serif';
-        ctx.fillText(faqObj.videoTitle, 175, 80);
-
-        // Step narration card
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.roundRect(175, 105, 440, 120, 8);
-        ctx.fill();
-
-        ctx.fillStyle = '#10b981';
-        ctx.font = 'bold 13px Inter, sans-serif';
-        let stepText = 'Step 1: Open Target Module';
-        let subText = 'Navigating to section and verifying connected credentials...';
-        if (currentTime > 15 && currentTime <= 30) {
-          stepText = 'Step 2: Configure Parameters & Filters';
-          subText = 'Selecting verified Meta business settings and rate-limiting...';
-        } else if (currentTime > 30) {
-          stepText = 'Step 3: Verification & Live Activation';
-          subText = 'Success! Settings applied and operational status confirmed.';
-        }
-        ctx.fillText(`✓ ${stepText}`, 195, 140);
-        ctx.fillStyle = '#cbd5e1';
-        ctx.font = '12px Inter, sans-serif';
-        ctx.fillText(subText, 195, 170);
-
-        // Live Simulated Metric pill
-        ctx.fillStyle = '#334155';
-        ctx.beginPath();
-        ctx.roundRect(195, 195, 200, 20, 4);
-        ctx.fill();
-        ctx.fillStyle = '#38bdf8';
-        ctx.font = '10px monospace';
-        ctx.fillText(`TIME: ${mins}:${secs} | SIMULATION: ACTIVE`, 205, 209);
-      }, 1000)
-    };
-  }
-
-  function restartInlineVideoWalkthrough(faqId) {
-    if (activeVideoTimers[faqId]) {
-      clearInterval(activeVideoTimers[faqId].interval);
-      activeVideoTimers[faqId] = null;
-    }
-    const progress = document.getElementById(`progress-${faqId}`);
-    const timer = document.getElementById(`timer-${faqId}`);
-    if (progress) progress.style.width = '0%';
-    if (timer) timer.textContent = '0:00 / 0:45';
-    playInlineVideoWalkthrough(faqId);
-  }
-
-  function updateHelpDeskCounts() {
-    const total = helpdeskFaqsData.length;
-    const troubleshoots = helpdeskFaqsData.filter(f => f.type === 'troubleshoot').length;
-    const guides = helpdeskFaqsData.filter(f => f.type === 'guide').length;
-
-    const elTotal = document.getElementById('hd-type-all');
-    const elTr = document.getElementById('hd-type-troubleshoot');
-    const elGd = document.getElementById('hd-type-guide');
-    if (elTotal) elTotal.textContent = total;
-    if (elTr) elTr.textContent = troubleshoots;
-    if (elGd) elGd.textContent = guides;
-
-    const btnAll = document.querySelector('.helpdesk-subfilter-btn[data-type="all"]');
-    const btnTr = document.querySelector('.helpdesk-subfilter-btn[data-type="troubleshoot"]');
-    const btnGd = document.querySelector('.helpdesk-subfilter-btn[data-type="guide"]');
-    if (btnAll) btnAll.textContent = `All Content (${total})`;
-    if (btnTr) btnTr.textContent = `⚡ Troubleshooting & Fixes (${troubleshoots})`;
-    if (btnGd) btnGd.textContent = `📖 Feature How-To Guides (${guides})`;
-  }
-
-    function initHelpDesk() {
-      mergeCustomArticles();
-      updateHelpDeskCounts();
-      renderHelpDeskFaqs();
-      renderResellerKbManageTable();
-
-      // Reseller KB Directory Search & Filter Listeners
-      const rkbSearchInp = document.getElementById('rkb-manage-search');
-      if (rkbSearchInp) {
-        rkbSearchInp.addEventListener('input', () => {
-          rkbManageState.search = rkbSearchInp.value.trim();
-          renderResellerKbManageTable();
-        });
-      }
-
-      const rkbAudPills = document.querySelectorAll('#rkb-audience-filters .rkb-filter-pill');
-      rkbAudPills.forEach(btn => {
-        btn.addEventListener('click', () => {
-          rkbAudPills.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          rkbManageState.audience = btn.getAttribute('data-aud') || 'all';
-          renderResellerKbManageTable();
-        });
-      });
-
-      // Category Tabs Filter (Supports .kb-cat-pill & .helpdesk-tab-btn)
-      const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn');
-      catTabs.forEach(btn => {
-        btn.addEventListener('click', () => {
-          catTabs.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          helpdeskState.cat = btn.getAttribute('data-cat') || 'all';
-          renderHelpDeskFaqs();
-        });
-      });
-
-      // Sub-filters (All / Troubleshooting / Guides)
-      const subfilterBtns = document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn');
-      subfilterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          subfilterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          helpdeskState.type = btn.getAttribute('data-type') || 'all';
-          renderHelpDeskFaqs();
-        });
-      });
-
-      // Search Input
-      const searchInput = document.getElementById('helpdesk-search-input');
-      const searchClear = document.getElementById('helpdesk-search-clear');
-
-      if (searchInput) {
-        searchInput.addEventListener('input', () => {
-          helpdeskState.search = searchInput.value.trim();
-          if (searchClear) searchClear.style.display = helpdeskState.search ? 'block' : 'none';
-          renderHelpDeskFaqs();
-        });
-      }
-
-      if (searchClear && searchInput) {
-        searchClear.addEventListener('click', () => {
-          searchInput.value = '';
-          helpdeskState.search = '';
-          searchClear.style.display = 'none';
-          renderHelpDeskFaqs();
-        });
-      }
-
-      // Trending Pills Click
-      document.querySelectorAll('.kb-trend-chip, .helpdesk-trend-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          const query = pill.getAttribute('data-query');
-          if (searchInput && query) {
-            searchInput.value = query;
-            helpdeskState.search = query;
-            if (searchClear) searchClear.style.display = 'block';
-            renderHelpDeskFaqs();
-          }
-        });
-      });
-
-      // 1-Click Fast FAQ Opener
-      window.openFaqGuide = function(faqId) {
-        const faq = helpdeskFaqsData.find(f => f.id === faqId);
-        if (!faq) return;
-        helpdeskState.cat = 'all';
-        helpdeskState.type = 'all';
-        helpdeskState.search = '';
-        helpdeskState.openFaqId = faqId;
-
-        document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.getAttribute('data-cat') === 'all');
-        });
-        document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.getAttribute('data-type') === 'all');
-        });
-        if (searchInput) {
-          searchInput.value = '';
-          if (searchClear) searchClear.style.display = 'none';
-        }
-
-        renderHelpDeskFaqs();
-
-        setTimeout(() => {
-          const el = document.querySelector(`[data-faq-id="${faqId}"]`);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 80);
-      };
-
-    // Modal: Feature Request
-    const btnOpenFeatureReq = document.getElementById('btn-open-feature-request');
-    const modalFeatureReq = document.getElementById('modal-feature-request');
-    const modalCloseFeatureReq = document.getElementById('modal-close-feature-request');
-    const modalCancelFeatureReq = document.getElementById('modal-cancel-feature-request');
-    const formFeatureReq = document.getElementById('form-feature-request');
-
-    function openFeatureRequestModal() {
-      if (modalFeatureReq) modalFeatureReq.style.display = 'flex';
-    }
-    function closeFeatureRequestModal() {
-      if (modalFeatureReq) modalFeatureReq.style.display = 'none';
-      if (formFeatureReq) formFeatureReq.reset();
-    }
-
-    if (btnOpenFeatureReq) btnOpenFeatureReq.addEventListener('click', openFeatureRequestModal);
-    if (modalCloseFeatureReq) modalCloseFeatureReq.addEventListener('click', closeFeatureRequestModal);
-    if (modalCancelFeatureReq) modalCancelFeatureReq.addEventListener('click', closeFeatureRequestModal);
-
-    if (formFeatureReq) {
-      formFeatureReq.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const title = document.getElementById('fr-title')?.value || 'Feature';
-        const cat = document.getElementById('fr-category')?.value || 'General';
-        showToast(`🚀 Feature request "${title}" (${cat}) received! Added to product roadmap.`);
-        closeFeatureRequestModal();
-      });
-    }
-
-    // Modal: Feedback
-    const btnOpenFeedback = document.getElementById('btn-open-feedback');
-    const modalFeedback = document.getElementById('modal-feedback');
-    const modalCloseFeedback = document.getElementById('modal-close-feedback');
-    const modalCancelFeedback = document.getElementById('modal-cancel-feedback');
-    const formFeedback = document.getElementById('form-feedback');
-    const starContainer = document.getElementById('feedback-star-container');
-    const ratingInput = document.getElementById('feedback-rating-val');
-    const ratingLabel = document.getElementById('feedback-rating-label');
-
-    const ratingDescriptions = {
-      '1': '1 - Disappointed (Needs work)',
-      '2': '2 - Below Average',
-      '3': '3 - Average / It is okay',
-      '4': '4 - Very Good & Useful',
-      '5': '5 - Excellent! Loves it'
-    };
-
-    function openFeedbackModal() {
-      if (modalFeedback) modalFeedback.style.display = 'flex';
-    }
-    function closeFeedbackModal() {
-      if (modalFeedback) modalFeedback.style.display = 'none';
-      if (formFeedback) formFeedback.reset();
-      updateStarRating(5);
-    }
-
-    function updateStarRating(rating) {
-      if (ratingInput) ratingInput.value = rating;
-      if (ratingLabel) ratingLabel.textContent = ratingDescriptions[rating] || `${rating} Stars`;
-      if (starContainer) {
-        starContainer.querySelectorAll('.feedback-star').forEach(star => {
-          const r = parseInt(star.getAttribute('data-rating') || '0', 10);
-          if (r <= rating) {
-            star.classList.add('active');
-          } else {
-            star.classList.remove('active');
-          }
-        });
-      }
-    }
-
-    if (starContainer) {
-      starContainer.querySelectorAll('.feedback-star').forEach(star => {
-        star.addEventListener('click', () => {
-          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
-          updateStarRating(r);
-        });
-      });
-    }
-
-    if (btnOpenFeedback) btnOpenFeedback.addEventListener('click', openFeedbackModal);
-    if (modalCloseFeedback) modalCloseFeedback.addEventListener('click', closeFeedbackModal);
-    if (modalCancelFeedback) modalCancelFeedback.addEventListener('click', closeFeedbackModal);
-
-    if (formFeedback) {
-      formFeedback.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const rating = ratingInput ? ratingInput.value : '5';
-        showToast(`⭐ Thank you for your ${rating}-star feedback! Sent to product team.`);
-        closeFeedbackModal();
-      });
-    }
-
-    // WhatsApp Support Escalation Buttons
-    const btnHeaderSupport = document.getElementById('btn-header-wa-support');
-    const btnRepChat = document.getElementById('btn-rep-wa-chat');
-
-    function openSupportWhatsApp() {
-      const phone = '919518649420';
-      const msg = encodeURIComponent('Hi SimpleFloww Support, I need assistance with our business account setup. Business ID: SF-9420.');
-      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-    }
-
-    if (btnHeaderSupport) btnHeaderSupport.addEventListener('click', openSupportWhatsApp);
-    if (btnRepChat) btnRepChat.addEventListener('click', openSupportWhatsApp);
-
     // =========================================================================
     // RESELLER & PARTNER KNOWLEDGE BASE / PLAYBOOKS ENGINE
     // =========================================================================
@@ -4856,6 +4252,612 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHelpDeskFaqs();
       }
     };
+
+
+
+  let helpdeskState = {
+    cat: 'all',
+    type: 'all',
+    search: '',
+    openFaqId: 'faq-wa-1'
+  };
+
+  const activeVideoTimers = {};
+
+  function renderHelpDeskFaqs() {
+    const container = document.getElementById('faq-accordion-list');
+    if (!container) return;
+
+    const filtered = helpdeskFaqsData.filter(faq => {
+      const matchCat = helpdeskState.cat === 'all' || faq.cat === helpdeskState.cat;
+      if (!matchCat) return false;
+      const matchType = helpdeskState.type === 'all' || faq.type === helpdeskState.type;
+      if (!matchType) return false;
+      if (!helpdeskState.search) return true;
+      const q = helpdeskState.search.toLowerCase();
+      return faq.title.toLowerCase().includes(q) ||
+             faq.keywords.toLowerCase().includes(q) ||
+             faq.catLabel.toLowerCase().includes(q) ||
+             faq.steps.some(s => s.toLowerCase().includes(q));
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div style="background:#fff; border:1px solid var(--sf-border); border-radius:12px; padding:40px 20px; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+          <h4 style="font-size:15px; font-weight:700; color:var(--sf-text-main); margin-bottom:4px;">No matching guide found for "${helpdeskState.search}"</h4>
+          <p style="font-size:12.5px; color:var(--sf-text-muted); margin-bottom:14px;">Try searching broader keywords like "QR", "Broadcast", or "Template".</p>
+          <button type="button" class="btn-secondary" id="btn-reset-hd-search" style="font-size:12px;">Clear Search</button>
+        </div>
+      `;
+      const btnClear = document.getElementById('btn-reset-hd-search');
+      if (btnClear) {
+        btnClear.addEventListener('click', () => {
+          helpdeskState.search = '';
+          const inp = document.getElementById('helpdesk-search-input');
+          if (inp) inp.value = '';
+          renderHelpDeskFaqs();
+        });
+      }
+      return;
+    }
+
+    container.innerHTML = filtered.map(faq => {
+      const isOpen = faq.id === helpdeskState.openFaqId;
+      const typeBadgeText = faq.type === 'troubleshoot' ? '⚡ Fix' : '📖 Guide';
+      const typeBadgeClass = faq.type === 'troubleshoot' ? 'troubleshoot' : 'guide';
+
+      const customBadge = faq.isCustom ? `<span class="faq-custom-badge">✨ Partner Authored</span>` : '';
+      const quickSummary = faq.summary || (faq.steps && faq.steps[0] ? faq.steps[0].replace(/<[^>]*>?/gm, '') : 'Follow resolution steps below.');
+
+      return `
+        <div class="faq-item ${isOpen ? 'is-open' : ''}" data-faq-id="${faq.id}">
+          <div class="faq-header" data-toggle-id="${faq.id}">
+            <div class="faq-header-left">
+              <span class="faq-category-badge ${faq.badgeClass}">${faq.catLabel}</span>
+              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
+              <h3 class="faq-title">${faq.title} ${customBadge}</h3>
+            </div>
+            <div class="faq-header-right">
+              <span class="faq-read-time">⏱️ ${faq.duration || '0:45'}</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+
+          <div class="faq-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
+            
+            <!-- Quick Answer Highlight (Instant 3-sec Resolution) -->
+            <div class="faq-quick-answer-card">
+              <span class="faq-quick-answer-badge">⚡ Quick Fix</span>
+              <span class="faq-quick-answer-text">${quickSummary}</span>
+            </div>
+
+            <!-- Step By Step List -->
+            <div class="faq-steps-card">
+              <div class="faq-steps-card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Step-by-Step Resolution Guide
+              </div>
+              ${faq.steps.map((st, i) => `
+                <div class="faq-step-item">
+                  <div class="faq-step-num">${i + 1}</div>
+                  <div style="font-size:12.5px; line-height:1.5;">${st}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            ${(faq.tip || faq.proTip) ? `
+              <div class="faq-pro-tip-box">
+                💡 <strong>Pro Tip:</strong> ${faq.tip || faq.proTip}
+              </div>
+            ` : ''}
+
+            <!-- Optional Screen Walkthrough Trigger -->
+            <div class="faq-video-trigger-wrap">
+              <button type="button" class="faq-video-trigger-btn" data-toggle-video="${faq.id}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Watch 45-sec Screen Walkthrough</span>
+                <span class="faq-video-badge-pill">${faq.duration}</span>
+              </button>
+            </div>
+
+            <!-- Inline Video Walkthrough Player (Reveals only when user clicks watch) -->
+            <div class="faq-video-card" id="video-card-${faq.id}" style="display: none;">
+              <div class="faq-video-screen">
+                <canvas class="faq-video-canvas" id="canvas-${faq.id}" width="640" height="360"></canvas>
+                <div class="faq-video-overlay-poster" id="poster-${faq.id}" data-play-id="${faq.id}">
+                  <div class="faq-video-play-btn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                  </div>
+                  <div style="font-size: 13.5px; font-weight: 700;">${faq.videoTitle}</div>
+                  <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">Click to play inline screen walkthrough</div>
+                </div>
+              </div>
+
+              <!-- Controls Bar -->
+              <div class="faq-video-controls-bar">
+                <button type="button" class="faq-video-ctrl-btn" data-btn-play="${faq.id}" title="Play / Pause">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="playicon-${faq.id}"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+                <div class="faq-video-timeline-wrap" data-seek-id="${faq.id}">
+                  <div class="faq-video-timeline-progress" id="progress-${faq.id}"></div>
+                </div>
+                <span id="timer-${faq.id}">0:00 / ${faq.duration}</span>
+                <button type="button" class="faq-video-ctrl-btn" data-btn-restart="${faq.id}" title="Replay">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Footer Action Bar -->
+            <div class="faq-footer-bar">
+              <div class="faq-feedback-group">
+                <span>Was this guide helpful?</span>
+                <button type="button" class="faq-feedback-btn" data-rating="yes" onclick="showToast('Thank you for your feedback!')" title="Mark helpful">👍 Yes</button>
+                <button type="button" class="faq-feedback-btn" data-rating="no" onclick="showToast('Feedback noted. We will improve this guide!')" title="Mark not helpful">👎 No</button>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-primary" data-action-target="${faq.actionTarget}" style="font-size: 12px; padding: 6px 14px;">
+                  ${faq.actionLabel}
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Attach Accordion Toggle
+    container.querySelectorAll('.faq-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const id = header.getAttribute('data-toggle-id');
+        helpdeskState.openFaqId = helpdeskState.openFaqId === id ? null : id;
+        renderHelpDeskFaqs();
+      });
+    });
+
+    // Attach Video Expand / Collapse toggles
+    container.querySelectorAll('[data-toggle-video]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-toggle-video');
+        const videoCard = document.getElementById(`video-card-${id}`);
+        if (videoCard) {
+          const isHidden = videoCard.style.display === 'none';
+          videoCard.style.display = isHidden ? 'block' : 'none';
+          if (isHidden) {
+            btn.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              <span>Hide Screen Walkthrough</span>
+            `;
+            startFaqVideo(id);
+          } else {
+            const faqObj = helpdeskFaqsData.find(f => f.id === id);
+            btn.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Watch 45-sec Screen Walkthrough</span>
+              <span class="faq-video-badge-pill">${faqObj ? faqObj.duration : '0:45'}</span>
+            `;
+            stopFaqVideo(id);
+          }
+        }
+      });
+    });
+
+    // Attach Video Play triggers inside player
+    container.querySelectorAll('[data-play-id]').forEach(poster => {
+      poster.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = poster.getAttribute('data-play-id');
+        playInlineVideoWalkthrough(id);
+      });
+    });
+
+    container.querySelectorAll('[data-btn-play]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-btn-play');
+        playInlineVideoWalkthrough(id);
+      });
+    });
+
+    container.querySelectorAll('[data-btn-restart]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-btn-restart');
+        restartInlineVideoWalkthrough(id);
+      });
+    });
+
+    // Attach Primary Module Action
+    container.querySelectorAll('[data-action-target]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const target = btn.getAttribute('data-action-target');
+        if (target) {
+          window.location.hash = `#${target}`;
+        }
+      });
+    });
+
+    // Attach Feedback Rating
+    container.querySelectorAll('.faq-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isYes = btn.getAttribute('data-rating') === 'yes';
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.faq-feedback-btn').forEach(b => b.classList.remove('rated-yes', 'rated-no'));
+        btn.classList.add(isYes ? 'rated-yes' : 'rated-no');
+        showToast(isYes ? '✓ Thank you! Glad this guide helped.' : 'Thanks for the feedback. We will improve this walkthrough.');
+      });
+    });
+  }
+
+  // Visual Simulated Video Player on Canvas
+  function playInlineVideoWalkthrough(faqId) {
+    const poster = document.getElementById(`poster-${faqId}`);
+    const canvas = document.getElementById(`canvas-${faqId}`);
+    const progress = document.getElementById(`progress-${faqId}`);
+    const timer = document.getElementById(`timer-${faqId}`);
+    const playIcon = document.getElementById(`playicon-${faqId}`);
+    if (!canvas) return;
+
+    if (poster) poster.style.display = 'none';
+
+    if (activeVideoTimers[faqId]) {
+      // Toggle Pause
+      if (activeVideoTimers[faqId].isPlaying) {
+        activeVideoTimers[faqId].isPlaying = false;
+        if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+        return;
+      } else {
+        activeVideoTimers[faqId].isPlaying = true;
+        if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        return;
+      }
+    }
+
+    if (playIcon) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+
+    const ctx = canvas.getContext('2d');
+    const totalDuration = 45; // 45 seconds walkthrough
+    let currentTime = 0;
+
+    const faqObj = helpdeskFaqsData.find(f => f.id === faqId) || { videoTitle: 'Interactive Walkthrough', catLabel: 'Guide' };
+
+    activeVideoTimers[faqId] = {
+      isPlaying: true,
+      interval: setInterval(() => {
+        if (!activeVideoTimers[faqId] || !activeVideoTimers[faqId].isPlaying) return;
+
+        currentTime += 1;
+        if (currentTime > totalDuration) {
+          currentTime = totalDuration;
+          clearInterval(activeVideoTimers[faqId].interval);
+          activeVideoTimers[faqId] = null;
+          if (playIcon) playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+          showToast(`✓ Completed walkthrough: ${faqObj.videoTitle}`);
+          return;
+        }
+
+        const pct = (currentTime / totalDuration) * 100;
+        if (progress) progress.style.width = `${pct}%`;
+        const mins = Math.floor(currentTime / 60);
+        const secs = String(currentTime % 60).padStart(2, '0');
+        if (timer) timer.textContent = `${mins}:${secs} / 0:${totalDuration}`;
+
+        // Draw animated screen frame
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Header bar
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, canvas.width, 36);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText(`▶ SimpleFloww Interactive Walkthrough • ${faqObj.catLabel}`, 18, 23);
+
+        // Sidebar mock
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(16, 50, 140, 290);
+        ctx.fillStyle = '#475569';
+        for (let i = 0; i < 5; i++) {
+          ctx.fillRect(26, 70 + (i * 38), 120, 14);
+        }
+
+        // Active highlighted tab
+        ctx.fillStyle = '#2563eb';
+        ctx.fillRect(26, 70 + (Math.floor(currentTime / 15) * 38), 120, 14);
+
+        // Content Area simulation
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.fillText(faqObj.videoTitle, 175, 80);
+
+        // Step narration card
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.roundRect(175, 105, 440, 120, 8);
+        ctx.fill();
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        let stepText = 'Step 1: Open Target Module';
+        let subText = 'Navigating to section and verifying connected credentials...';
+        if (currentTime > 15 && currentTime <= 30) {
+          stepText = 'Step 2: Configure Parameters & Filters';
+          subText = 'Selecting verified Meta business settings and rate-limiting...';
+        } else if (currentTime > 30) {
+          stepText = 'Step 3: Verification & Live Activation';
+          subText = 'Success! Settings applied and operational status confirmed.';
+        }
+        ctx.fillText(`✓ ${stepText}`, 195, 140);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(subText, 195, 170);
+
+        // Live Simulated Metric pill
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(195, 195, 200, 20, 4);
+        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`TIME: ${mins}:${secs} | SIMULATION: ACTIVE`, 205, 209);
+      }, 1000)
+    };
+  }
+
+  function restartInlineVideoWalkthrough(faqId) {
+    if (activeVideoTimers[faqId]) {
+      clearInterval(activeVideoTimers[faqId].interval);
+      activeVideoTimers[faqId] = null;
+    }
+    const progress = document.getElementById(`progress-${faqId}`);
+    const timer = document.getElementById(`timer-${faqId}`);
+    if (progress) progress.style.width = '0%';
+    if (timer) timer.textContent = '0:00 / 0:45';
+    playInlineVideoWalkthrough(faqId);
+  }
+
+  function updateHelpDeskCounts() {
+    const total = helpdeskFaqsData.length;
+    const troubleshoots = helpdeskFaqsData.filter(f => f.type === 'troubleshoot').length;
+    const guides = helpdeskFaqsData.filter(f => f.type === 'guide').length;
+
+    const elTotal = document.getElementById('hd-type-all');
+    const elTr = document.getElementById('hd-type-troubleshoot');
+    const elGd = document.getElementById('hd-type-guide');
+    if (elTotal) elTotal.textContent = total;
+    if (elTr) elTr.textContent = troubleshoots;
+    if (elGd) elGd.textContent = guides;
+
+    const btnAll = document.querySelector('.helpdesk-subfilter-btn[data-type="all"]');
+    const btnTr = document.querySelector('.helpdesk-subfilter-btn[data-type="troubleshoot"]');
+    const btnGd = document.querySelector('.helpdesk-subfilter-btn[data-type="guide"]');
+    if (btnAll) btnAll.textContent = `All Content (${total})`;
+    if (btnTr) btnTr.textContent = `⚡ Troubleshooting & Fixes (${troubleshoots})`;
+    if (btnGd) btnGd.textContent = `📖 Feature How-To Guides (${guides})`;
+  }
+
+    function initHelpDesk() {
+      mergeCustomArticles();
+      updateHelpDeskCounts();
+      renderHelpDeskFaqs();
+      renderResellerKbManageTable();
+
+      // Reseller KB Directory Search & Filter Listeners
+      const rkbSearchInp = document.getElementById('rkb-manage-search');
+      if (rkbSearchInp) {
+        rkbSearchInp.addEventListener('input', () => {
+          rkbManageState.search = rkbSearchInp.value.trim();
+          renderResellerKbManageTable();
+        });
+      }
+
+      const rkbAudPills = document.querySelectorAll('#rkb-audience-filters .rkb-filter-pill');
+      rkbAudPills.forEach(btn => {
+        btn.addEventListener('click', () => {
+          rkbAudPills.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          rkbManageState.audience = btn.getAttribute('data-aud') || 'all';
+          renderResellerKbManageTable();
+        });
+      });
+
+      // Category Tabs Filter (Supports .kb-cat-pill & .helpdesk-tab-btn)
+      const catTabs = document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn');
+      catTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catTabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          helpdeskState.cat = btn.getAttribute('data-cat') || 'all';
+          renderHelpDeskFaqs();
+        });
+      });
+
+      // Sub-filters (All / Troubleshooting / Guides)
+      const subfilterBtns = document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn');
+      subfilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          subfilterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          helpdeskState.type = btn.getAttribute('data-type') || 'all';
+          renderHelpDeskFaqs();
+        });
+      });
+
+      // Search Input
+      const searchInput = document.getElementById('helpdesk-search-input');
+      const searchClear = document.getElementById('helpdesk-search-clear');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          helpdeskState.search = searchInput.value.trim();
+          if (searchClear) searchClear.style.display = helpdeskState.search ? 'block' : 'none';
+          renderHelpDeskFaqs();
+        });
+      }
+
+      if (searchClear && searchInput) {
+        searchClear.addEventListener('click', () => {
+          searchInput.value = '';
+          helpdeskState.search = '';
+          searchClear.style.display = 'none';
+          renderHelpDeskFaqs();
+        });
+      }
+
+      // Trending Pills Click
+      document.querySelectorAll('.kb-trend-chip, .helpdesk-trend-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          const query = pill.getAttribute('data-query');
+          if (searchInput && query) {
+            searchInput.value = query;
+            helpdeskState.search = query;
+            if (searchClear) searchClear.style.display = 'block';
+            renderHelpDeskFaqs();
+          }
+        });
+      });
+
+      // 1-Click Fast FAQ Opener
+      window.openFaqGuide = function(faqId) {
+        const faq = helpdeskFaqsData.find(f => f.id === faqId);
+        if (!faq) return;
+        helpdeskState.cat = 'all';
+        helpdeskState.type = 'all';
+        helpdeskState.search = '';
+        helpdeskState.openFaqId = faqId;
+
+        document.querySelectorAll('#helpdesk-cat-tabs .kb-cat-pill, #helpdesk-cat-tabs .helpdesk-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-cat') === 'all');
+        });
+        document.querySelectorAll('#helpdesk-type-filters .kb-type-btn, .helpdesk-subfilter-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-type') === 'all');
+        });
+        if (searchInput) {
+          searchInput.value = '';
+          if (searchClear) searchClear.style.display = 'none';
+        }
+
+        renderHelpDeskFaqs();
+
+        setTimeout(() => {
+          const el = document.querySelector(`[data-faq-id="${faqId}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 80);
+      };
+
+    // Modal: Feature Request
+    const btnOpenFeatureReq = document.getElementById('btn-open-feature-request');
+    const modalFeatureReq = document.getElementById('modal-feature-request');
+    const modalCloseFeatureReq = document.getElementById('modal-close-feature-request');
+    const modalCancelFeatureReq = document.getElementById('modal-cancel-feature-request');
+    const formFeatureReq = document.getElementById('form-feature-request');
+
+    function openFeatureRequestModal() {
+      if (modalFeatureReq) modalFeatureReq.style.display = 'flex';
+    }
+    function closeFeatureRequestModal() {
+      if (modalFeatureReq) modalFeatureReq.style.display = 'none';
+      if (formFeatureReq) formFeatureReq.reset();
+    }
+
+    if (btnOpenFeatureReq) btnOpenFeatureReq.addEventListener('click', openFeatureRequestModal);
+    if (modalCloseFeatureReq) modalCloseFeatureReq.addEventListener('click', closeFeatureRequestModal);
+    if (modalCancelFeatureReq) modalCancelFeatureReq.addEventListener('click', closeFeatureRequestModal);
+
+    if (formFeatureReq) {
+      formFeatureReq.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('fr-title')?.value || 'Feature';
+        const cat = document.getElementById('fr-category')?.value || 'General';
+        showToast(`🚀 Feature request "${title}" (${cat}) received! Added to product roadmap.`);
+        closeFeatureRequestModal();
+      });
+    }
+
+    // Modal: Feedback
+    const btnOpenFeedback = document.getElementById('btn-open-feedback');
+    const modalFeedback = document.getElementById('modal-feedback');
+    const modalCloseFeedback = document.getElementById('modal-close-feedback');
+    const modalCancelFeedback = document.getElementById('modal-cancel-feedback');
+    const formFeedback = document.getElementById('form-feedback');
+    const starContainer = document.getElementById('feedback-star-container');
+    const ratingInput = document.getElementById('feedback-rating-val');
+    const ratingLabel = document.getElementById('feedback-rating-label');
+
+    const ratingDescriptions = {
+      '1': '1 - Disappointed (Needs work)',
+      '2': '2 - Below Average',
+      '3': '3 - Average / It is okay',
+      '4': '4 - Very Good & Useful',
+      '5': '5 - Excellent! Loves it'
+    };
+
+    function openFeedbackModal() {
+      if (modalFeedback) modalFeedback.style.display = 'flex';
+    }
+    function closeFeedbackModal() {
+      if (modalFeedback) modalFeedback.style.display = 'none';
+      if (formFeedback) formFeedback.reset();
+      updateStarRating(5);
+    }
+
+    function updateStarRating(rating) {
+      if (ratingInput) ratingInput.value = rating;
+      if (ratingLabel) ratingLabel.textContent = ratingDescriptions[rating] || `${rating} Stars`;
+      if (starContainer) {
+        starContainer.querySelectorAll('.feedback-star').forEach(star => {
+          const r = parseInt(star.getAttribute('data-rating') || '0', 10);
+          if (r <= rating) {
+            star.classList.add('active');
+          } else {
+            star.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    if (starContainer) {
+      starContainer.querySelectorAll('.feedback-star').forEach(star => {
+        star.addEventListener('click', () => {
+          const r = parseInt(star.getAttribute('data-rating') || '5', 10);
+          updateStarRating(r);
+        });
+      });
+    }
+
+    if (btnOpenFeedback) btnOpenFeedback.addEventListener('click', openFeedbackModal);
+    if (modalCloseFeedback) modalCloseFeedback.addEventListener('click', closeFeedbackModal);
+    if (modalCancelFeedback) modalCancelFeedback.addEventListener('click', closeFeedbackModal);
+
+    if (formFeedback) {
+      formFeedback.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rating = ratingInput ? ratingInput.value : '5';
+        showToast(`⭐ Thank you for your ${rating}-star feedback! Sent to product team.`);
+        closeFeedbackModal();
+      });
+    }
+
+    // WhatsApp Support Escalation Buttons
+    const btnHeaderSupport = document.getElementById('btn-header-wa-support');
+    const btnRepChat = document.getElementById('btn-rep-wa-chat');
+
+    function openSupportWhatsApp() {
+      const phone = '919518649420';
+      const msg = encodeURIComponent('Hi SimpleFloww Support, I need assistance with our business account setup. Business ID: SF-9420.');
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    if (btnHeaderSupport) btnHeaderSupport.addEventListener('click', openSupportWhatsApp);
+    if (btnRepChat) btnRepChat.addEventListener('click', openSupportWhatsApp);
 
     window.downloadPartnerAsset = function(assetType) {
       if (assetType === 'deck') {
