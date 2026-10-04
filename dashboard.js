@@ -3620,82 +3620,231 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         id: 'rpb-1',
         menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
-        submenuId: 'cname',
-        submenuTitle: 'Custom Domain CNAME',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'dashboard',
+        submenuTitle: 'Dashboard Overview',
         cat: 'whitelabel',
-        catLabel: '🏢 White-Label & Domain',
+        catLabel: '📊 Reseller Dashboard',
         badgeClass: 'badge-purple',
-        title: 'How to setup Custom Domain CNAME & White-Label SSL (portal.yourdomain.com)',
-        duration: '4:20',
-        summary: 'Complete DNS setup to remove SimpleFloww branding and map your own agency domain with automated SSL.',
+        title: 'Reseller Dashboard: Tracking Active Clients, MRR & Message Consumption',
+        duration: '3:45',
+        summary: 'Monitor partner analytics, client wallet consumption, active subscriptions, and monthly recurring revenue (MRR) from a unified cockpit.',
         steps: [
-          'Log in to your DNS provider (Cloudflare, GoDaddy, Hostinger, AWS Route53).',
-          'Add a CNAME record: Host = portal (or crm), Target = whitelabel.simplefloww.com, TTL = Auto (or 3600s).',
-          'Go to SimpleFloww Settings > White-Label Portal > Custom Domain, enter portal.yourdomain.com and click "Verify DNS".',
-          'Our system automatically issues an enterprise Cloudflare SSL certificate within 3 to 10 minutes.',
-          'Upload your custom SVG logo, favicon, portal brand color (#HEX), and custom footer copyright text.',
-          'Configure your transactional SMTP credentials (SendGrid, AWS SES, or custom SMTP) so password resets and notifications come from support@yourdomain.com.'
+          'Navigate to Reseller Panel > Dashboard (/reseller/dashboard) to view your partner command center.',
+          'Review the Top KPI Metrics: Total Active Businesses, Total Team Members, Monthly Recurring Revenue (MRR), and Live Message Streams.',
+          'Check the System Status Indicator: Monitor Meta Cloud API node latency (< 2ms) and Level-7 firewall uptime.',
+          'Identify clients with low message balances or upcoming subscription renewal deadlines within the next 7 days.',
+          'Use the top header "Switch App" button to toggle between your Reseller Admin Cockpit and Client Business CRM.'
         ],
-        tip: 'Pro Tip: Using Cloudflare with DNS Proxy (Orange Cloud turned OFF initially for SSL handshake) enables sub-30ms DNS resolution across India.'
+        tip: 'Pro Tip: Set up automated WhatsApp alerts when any client message volume surges by 200% so you can proactively offer addon packs.'
       },
       {
         id: 'rpb-2',
         menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
-        submenuId: 'pricing',
-        submenuTitle: 'Packaging & Margins',
-        cat: 'pricing',
-        catLabel: '💰 Pricing & Margins',
-        badgeClass: 'badge-green',
-        title: 'Packaging & Pricing Strategy: Charging Clients ₹2,999/mo with 100% Retained Margin',
-        duration: '5:15',
-        summary: 'How to package SimpleFloww features for local Indian businesses and maximize lifetime client retention.',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'clients',
+        submenuTitle: 'Our Clients',
+        cat: 'subaccounts',
+        catLabel: '👥 Client Management',
+        badgeClass: 'badge-cyan',
+        title: 'Client Onboarding & Business Tenancy Setup Playbook',
+        duration: '5:20',
+        summary: 'How to create client workspaces, assign admin credentials, allocate telecaller seats, and launch client business portals.',
         steps: [
-          'White-Label Partners pay SimpleFloww flat ₹25,000/year (₹2,083/mo). There is zero per-seat royalty or revenue cut to SimpleFloww.',
-          'Standard Package for SMEs: Charge ₹2,999/month (or ₹29,999/year upfront) including WhatsApp CRM + 5 telecaller logins + Round-Robin auto assignment.',
-          'Premium Automation Package: Charge ₹5,999/month including AI Auto-Reply Bot + Shopify/WooCommerce lead sync + unlimited broadcast campaigns.',
-          'Setup & Onboarding Fee: Charge a 1-time ₹5,000 - ₹10,000 onboarding fee for Meta Business verification, green tick application, and chatbot flow design.',
-          'Meta Conversation Charges: Bill client on actuals (Utility: ~₹0.11, Marketing: ~₹0.78 per message) with a 15-20% management markup or let them link their own credit card directly to Meta.'
+          'Navigate to Reseller Panel > Our Clients (/reseller/clients) and click "+ Add New Business".',
+          'Enter the client details: Business Name, Admin Full Name, Email Address, and Phone Number.',
+          'Assign their initial plan tier (e.g. Starter, Growth, or Pro) and set maximum telecaller seat limits.',
+          'Launch Meta Embedded Signup to link their official WhatsApp Business Account (WABA) or scan QR code.',
+          'Once provisioned, click "Switch into Business" or copy their dedicated login URL (portal.yourbrand.com/login) to deliver client access.',
+          'Client permissions can be managed anytime: toggle live inbox access, broadcast permissions, and contacts export rights.'
         ],
-        tip: 'With just 10 active clients on ₹2,999/mo, your agency generates ₹3,60,000/yr gross revenue against a ₹25,000 cost — a 1,340% annual ROI!'
+        tip: 'Best Practice: Keep "Contacts Export" restricted for staff telecallers to protect your client businesses from internal lead leakage.'
       },
       {
         id: 'rpb-3',
         menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
-        submenuId: 'waba',
-        submenuTitle: 'Client WABA Onboarding',
-        cat: 'meta',
-        catLabel: '📱 Meta Cloud API',
-        badgeClass: 'badge-blue',
-        title: 'Client WhatsApp Cloud API Onboarding & Embedded Signup Playbook',
-        duration: '6:30',
-        summary: 'Effortlessly onboard client phone numbers into official Meta WABA without technical friction.',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'plans',
+        submenuTitle: 'Billing Plans',
+        cat: 'pricing',
+        catLabel: '💳 Billing Plans & Pricing',
+        badgeClass: 'badge-green',
+        title: 'Configuring Tiered Client Subscription Plans (Starter, Growth & Pro)',
+        duration: '4:30',
+        summary: 'Create custom monthly and annual subscription packages for your clients with tailored message quotas and agent limits.',
         steps: [
-          'Ensure the client phone number is NOT currently registered on WhatsApp personal or WhatsApp Business App (delete existing account from app settings if already used).',
-          'Have client ready with their Meta Business Manager admin login and official business documents (GST Certificate, MSME Udyam, or Certificate of Incorporation).',
-          'From your white-label portal, click "+ Onboard Client WABA" which launches Meta Embedded Signup popup.',
-          'Select or create the client Business Manager, verify OTP on the client SIM card, and accept Meta Cloud API terms.',
-          'Meta will instantly grant 250 conversations/24h Tier. Submit legal business documents under Meta Business Settings > Security Center for permanent 1,000 - 100,000 limit.',
-          'Webhook HMAC handshake is auto-completed by SimpleFloww backend with 0 code required.'
+          'Go to Reseller Panel > Billing Plans (/reseller/plans) and click "+ Create Plan".',
+          'Define Tier Identity: Name (e.g. Starter @ ₹1,999/mo, Growth @ ₹3,999/mo, Enterprise @ ₹7,999/mo).',
+          'Configure Limits: Maximum WhatsApp Numbers (1 to 5), Telecaller Agent Seats (3 to 20), Monthly Included Conversations, and AI Chatbot flows.',
+          'Set Recurring Interval: Choose Monthly or Annual billing (offer 2 months free on upfront annual prepayment for faster cash flow).',
+          'Toggle Included Add-ons: Auto-assign round robin, Webhook API access, Shopify sync, and Google Sheets integration.',
+          'Click "Publish Plan" — the new plan is instantly available on your client portal upgrade page.'
         ],
-        tip: 'Always advise clients to use a dedicated SIM (e.g. Jio/Airtel ₹149 plan) rather than personal numbers to avoid personal WhatsApp data loss.'
+        tip: 'Pricing Strategy: Most SMEs happily pay ₹2,999/mo for 5 seats + AI Bot. With 20 clients, that generates ₹60,000/mo pure profit with zero SimpleFloww royalty cut.'
       },
       {
         id: 'rpb-4',
         menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'addons',
+        submenuTitle: 'Addons',
+        cat: 'pricing',
+        catLabel: '🛍️ Addons & Quotas',
+        badgeClass: 'badge-orange',
+        title: 'Packaging & Selling Addon Quotas (Extra Credits, AI Bots & Agent Seats)',
+        duration: '4:15',
+        summary: 'How to monetize upsells by creating extra conversation packs, additional telecaller seats, and chatbot flow extensions.',
+        steps: [
+          'Go to Reseller Panel > Addons (/reseller/addons) and click "+ Create Addon".',
+          'Select Addon Type: Agent Seat Pack (+3 Telecallers), Extra Conversation Balance (e.g. 5,000 Messages), or Advanced AI Flow Builder.',
+          'Set Addon Price & Billing Cycle: One-time payment (e.g. ₹999 per 5,000 messages) or recurring monthly add-on (e.g. ₹500/mo per extra seat).',
+          'Link Eligible Plans: Specify which subscription tiers can purchase this add-on.',
+          'Save & Activate: Clients can purchase addons directly from their business billing dashboard, or you can manually allocate them.'
+        ],
+        tip: 'Upsell Tip: When a client reaches 80% of their telecaller or message limit, our automated banner prompts them to buy your addon with 1 click.'
+      },
+      {
+        id: 'rpb-5',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'subscriptions',
+        submenuTitle: 'Subscriptions',
+        cat: 'billing',
+        catLabel: '🔄 Subscriptions & Billing',
+        badgeClass: 'badge-blue',
+        title: 'Managing Client Subscriptions, Auto-Renewals & Plan Upgrades',
+        duration: '3:50',
+        summary: 'Track subscription renewals, manually activate accounts, process plan upgrades/downgrades, and manage billing cycles.',
+        steps: [
+          'Go to Reseller Panel > Subscriptions (/reseller/subscriptions) to see the global subscriber table.',
+          'Monitor Subscription Status: Active (Green), Expiring in 3 Days (Yellow), or Overdue/Suspended (Red).',
+          'Upgrade or Downgrade: Select any business and click "Change Plan" to adjust their quota immediately with prorated billing.',
+          'Manual Subscription Activation: If a client pays you via NEFT, cash, or UPI QR code, click "Mark as Paid / Activate" to bypass gateway.',
+          'Automated Invoicing: System automatically generates tax invoices and dispatches them via WhatsApp & email to the business owner.'
+        ],
+        tip: 'Retention Play: Reach out 5 days before renewal with a WhatsApp template highlighting their messages sent and leads generated to ensure 95%+ renewal rates.'
+      },
+      {
+        id: 'rpb-6',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'wallet',
+        submenuTitle: 'Wallet & Credits',
+        cat: 'billing',
+        catLabel: '👛 Master Wallet',
+        badgeClass: 'badge-green',
+        title: 'Master Wallet Management & Client Balance Allocation Playbook',
+        duration: '4:45',
+        summary: 'How to top up your reseller wallet, transfer message balances to client accounts, and revert unused credits.',
+        steps: [
+          'Navigate to Reseller Panel > Wallet (/reseller/wallet) to inspect your Master Conversation Credit Balance.',
+          'Recharge Master Wallet: Click "+ Top-up Wallet", enter amount (e.g. ₹10,000), and pay via Razorpay/UPI/Credit Card with instant credit.',
+          'Transfer Balance to Client: Click "Transfer Credits", select the target business account, enter credit amount (e.g. ₹2,000), and confirm transfer.',
+          'Revert Unused Balance: If a client cancels service, use "Revert Balance" to pull unused credits back into your master wallet instantly.',
+          'Configure Low Balance Threshold: Set threshold (e.g. ₹1,000) to trigger instant WhatsApp notifications to your phone before credits run out.'
+        ],
+        tip: 'Margin Booster: Purchase wholesale Meta conversation credits in bulk (e.g. ₹25,000) to receive partner volume discounts while charging clients retail rates.'
+      },
+      {
+        id: 'rpb-7',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'transactions',
+        submenuTitle: 'Wallet History',
+        cat: 'billing',
+        catLabel: '📜 Financial Ledger',
+        badgeClass: 'badge-purple',
+        title: 'Wallet History, Transaction Reconciliation & GST Tax Invoices',
+        duration: '3:30',
+        summary: 'Review real-time credit debits/credits, download client payment receipts, and reconcile tax invoices for accounting.',
+        steps: [
+          'Go to Reseller Panel > Wallet History (/reseller/transactions) for full double-entry financial audit logs.',
+          'Filter transactions by: Date Range, Business Account, Transaction Type (Top-up, Debit, Transfer, Revert, Refund), or Status.',
+          'Audit Per-Message Consumption: See exact conversation deduction logs (Marketing: ₹0.85, Utility: ₹0.12, Service: ₹0.35).',
+          'Download Invoices: Click on any order to download compliant PDF Tax Invoices featuring your agency GSTIN, PAN, and address.',
+          'Export CSV: Generate monthly audit CSV spreadsheets for your chartered accountant in 1 click.'
+        ],
+        tip: 'Reconciliation Tip: Filter by "Category: Marketing" at month end to analyze which clients run highest broadcast volumes and pitch them retainer ad management.'
+      },
+      {
+        id: 'rpb-8',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'template-pricing',
+        submenuTitle: 'Template Pricing',
+        cat: 'pricing',
+        catLabel: '💰 Template Pricing & Margins',
+        badgeClass: 'badge-orange',
+        title: 'Template Pricing & Conversation Margin Optimization Playbook',
+        duration: '5:10',
+        summary: 'How to configure per-category conversation markup (Marketing, Utility, Authentication, Service) and maximize profit.',
+        steps: [
+          'Go to Reseller Panel > Template Pricing (/reseller/template-pricing).',
+          'Review Base Meta Rates: Marketing (~₹0.78), Utility (~₹0.11), Authentication (~₹0.11), Service (~₹0.29) per conversation in India.',
+          'Set Reseller Markup: Configure a percentage markup (e.g. +15% to 25%) or flat margin per message (e.g. +₹0.10/msg) across categories.',
+          'Configure GST Display: Toggle 18% GST display (Inclusive vs Exclusive) depending on whether your clients are GST registered.',
+          'International Country Pricing: Set custom rates for international broadcast traffic (e.g. UAE, US, UK, Singapore) if clients message global buyers.',
+          'Click "Save & Apply Rates": All client workspaces immediately reflect the updated pricing in their campaign calculators.'
+        ],
+        tip: 'Profit Strategy: On 5,00,000 monthly marketing messages across 10 clients, a ₹0.10 margin generates ₹50,000/month recurring passive profit on conversation billing alone.'
+      },
+      {
+        id: 'rpb-9',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'contacts',
+        submenuTitle: 'Web Contacts',
+        cat: 'sales',
+        catLabel: '📬 Inbound Leads',
+        badgeClass: 'badge-cyan',
+        title: 'Capturing & Converting Web Contacts from White-Label Website',
+        duration: '4:00',
+        summary: 'How to capture demo inquiries from your agency website, initiate 1-click WhatsApp follow-ups, and convert leads into paying clients.',
+        steps: [
+          'Navigate to Reseller Panel > Web Contacts (/reseller/contacts) to see inbound inquiries captured from your white-label landing page.',
+          'Review Lead Data: Lead Name, Company, Email, Phone Number, Selected Interest (WhatsApp CRM, AI Bot, Green Tick, Bulk Broadcast).',
+          '1-Click WhatsApp Engagement: Click the green WhatsApp icon next to any lead to immediately launch a personalized conversational sales pitch.',
+          'Lead Status Workflow: Update status from "New" to "Demo Scheduled", "Trial Created", or "Converted to Paid".',
+          '1-Click Account Provisioning: Convert qualified leads into active sub-accounts directly from the contacts row without re-typing data.'
+        ],
+        tip: 'Speed-to-Lead: Answering web contacts within 3 minutes on WhatsApp yields an 84% conversion rate compared to email follow-ups that get ignored.'
+      },
+      {
+        id: 'rpb-10',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
+        submenuId: 'settings',
+        submenuTitle: 'Settings & White-Label',
+        cat: 'whitelabel',
+        catLabel: '🏢 White-Label & Domain',
+        badgeClass: 'badge-purple',
+        title: 'White-Label Branding: Custom Domain CNAME, Logo & Payment Gateway Setup',
+        duration: '6:15',
+        summary: 'Step-by-step setup for mapping portal.yourdomain.com, automated SSL, custom branding, SMTP email, and payment gateway keys.',
+        steps: [
+          'Go to Reseller Panel > Settings (/reseller/settings) to configure your full agency identity.',
+          'DNS CNAME Mapping: Add a CNAME in Cloudflare/GoDaddy: Host = portal (or crm), Target = whitelabel.simplefloww.com. Cloudflare automated SSL takes 3-10 minutes.',
+          'Brand Assets: Upload SVG/PNG Logo, Favicon (32x32), Portal Brand Color (#HEX code), and custom footer copyright text.',
+          'Payment Gateway: Enter your Razorpay Key ID & Key Secret (or Stripe keys) so client subscription & wallet payments land directly in your bank account.',
+          'Custom Email SMTP: Connect SendGrid, AWS SES, or Google Workspace SMTP so welcome emails and password resets come from support@youragency.com.',
+          'Support WhatsApp Number: Enter your dedicated support helpline number to enable the floating WhatsApp badge across all client dashboards.'
+        ],
+        tip: '100% Brand Shield: SimpleFloww is 100% invisible. All URLs, emails, invoices, and login screens feature exclusively your agency name and domain.'
+      },
+      {
+        id: 'rpb-11',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Panel',
         submenuId: 'sales',
         submenuTitle: 'Objection Handling',
         cat: 'sales',
-        catLabel: '🎯 Sales & Closing',
+        catLabel: '🎯 Sales & Closing Scripts',
         badgeClass: 'badge-orange',
         title: 'Objection Handling Playbook: Closing Against Wati, Interakt & Aisensy',
         duration: '4:50',
-        summary: 'Proven scripts and counter-arguments to win SME deals when clients compare with competing tools.',
+        summary: 'Proven scripts and counter-arguments to win SME deals when prospects compare with competing platforms.',
         steps: [
-          'Objection: "Wati / Interakt charges ₹2,499/mo, why should I buy from you?" -> Response: "Wati charges per-user seat fees (₹1,000 extra per agent). With us, you get unlimited telecaller seats and automated round-robin lead distribution included."',
+          'Objection: "Wati / Interakt charges ₹2,499/mo, why should I buy from you?" -> Response: "Wati charges heavy per-user seat fees (₹1,000 extra per agent). With us, you get unlimited telecaller seats and automated round-robin lead distribution included."',
           'Objection: "Can I send 50,000 messages in 1 hour without getting banned?" -> Response: "No platform can guarantee zero ban if guidelines are violated. But we provide an algorithmic smart-throttling queue and warmed-up template rotators that keep your Meta number rating in High Green."',
           'Objection: "Who will train my sales staff?" -> Response: "Unlike self-serve tools where you talk to bots, you get a dedicated WhatsApp support group with our certified technical engineers for 1-on-1 team training."',
           'Objection: "Do you integrate with my website or Google Sheets?" -> Response: "Yes, we connect directly via Webhook, Zapier, Pabbly, or direct Google Sheet two-way sync within 5 minutes."'
@@ -3703,13 +3852,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tip: 'Focus on lead response time: Show the prospect how answering leads within 60 seconds increases conversion by 391% compared to manual calling.'
       },
       {
-        id: 'rpb-5',
+        id: 'rpb-12',
         menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
+        menuTitle: 'Reseller Panel',
         submenuId: 'compliance',
-        submenuTitle: 'Number Warmup & Bans',
+        submenuTitle: 'Ban Prevention Protocol',
         cat: 'compliance',
-        catLabel: '🛡️ Ban Prevention',
+        catLabel: '🛡️ Ban Prevention & Warmup',
         badgeClass: 'badge-red',
         title: 'Meta Broadcast Ban Prevention & Number Warm-Up Schedule',
         duration: '3:45',
@@ -3722,27 +3871,6 @@ document.addEventListener('DOMContentLoaded', () => {
           'Golden Rule: Never blast cold purchased contact lists. Meta algorithms detect rapid user blocks/reports and will downgrade quality to Red within 2 hours.'
         ],
         tip: 'Include client name and personalized details in parameters {{1}} and {{2}} to prevent Meta spam pattern heuristics from flagging identical bulk payloads.'
-      },
-      {
-        id: 'rpb-6',
-        menuId: 'reseller',
-        menuTitle: 'Reseller Agency',
-        submenuId: 'subtenants',
-        submenuTitle: 'Client Tenancy & Seats',
-        cat: 'subaccounts',
-        catLabel: '👥 Sub-Accounts',
-        badgeClass: 'badge-cyan',
-        title: 'Managing Client Sub-Tenants, Telecaller Seats & Wallet Balances',
-        duration: '4:10',
-        summary: 'How to administer multiple businesses under one master partner command center.',
-        steps: [
-          'From Reseller Portal > Sub-Accounts, click "Add Organization" and assign the client their custom login URL.',
-          'Set permission scopes: Admin (full access), Manager (campaigns & leads), Telecaller (assigned leads and live inbox chat only).',
-          'Configure lead assignment rule: Round-Robin (equal distribution), Weighted (by closer seniority), or Region-wise routing.',
-          'Recharge conversation wallet: Set automated low-balance email alerts when client wallet falls below ₹500.',
-          'Export audit logs: Generate monthly telecaller activity reports and campaign conversion metrics with your agency logo.'
-        ],
-        tip: 'Restrict Telecallers from exporting full phone number CSVs in User Roles to prevent telecallers from stealing client lead databases.'
       }
     ];
 
@@ -4085,12 +4213,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'invoices', label: 'GST Invoices' }
       ],
       'reseller': [
-        { id: 'cname', label: 'Custom Domain CNAME' },
-        { id: 'pricing', label: 'Packaging & Margins' },
-        { id: 'waba', label: 'Client WABA Onboarding' },
-        { id: 'sales', label: 'Objection Handling' },
-        { id: 'compliance', label: 'Number Warmup & Bans' },
-        { id: 'subtenants', label: 'Client Tenancy & Seats' }
+        { id: 'dashboard', label: '📊 Dashboard Overview' },
+        { id: 'clients', label: '👥 Our Clients & Tenancy' },
+        { id: 'plans', label: '💳 Billing Plans & Pricing' },
+        { id: 'addons', label: '🛍️ Addons & Extra Quotas' },
+        { id: 'subscriptions', label: '🔄 Subscriptions & Renewals' },
+        { id: 'wallet', label: '👛 Master Wallet & Top-Up' },
+        { id: 'transactions', label: '📜 Wallet History & Orders' },
+        { id: 'template-pricing', label: '💰 Template Pricing & Margins' },
+        { id: 'contacts', label: '📬 Web Contacts & Leads' },
+        { id: 'settings', label: '⚙️ White-Label & Domain Settings' },
+        { id: 'sales', label: '🎯 Objection Handling & Sales' },
+        { id: 'compliance', label: '🛡️ Ban Prevention & Warmup' }
       ]
     };
 
@@ -4516,15 +4650,21 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'reseller',
-        title: 'Reseller Agency',
+        title: 'Reseller Panel',
         icon: '💼',
         submenus: [
-          { id: 'cname', title: 'Custom Domain CNAME', hash: 'general-settings' },
-          { id: 'pricing', title: 'Packaging & Margins', hash: 'referral' },
-          { id: 'waba', title: 'Client WABA Onboarding', hash: 'inbox' },
+          { id: 'dashboard', title: 'Dashboard Overview', hash: 'dashboard' },
+          { id: 'clients', title: 'Our Clients', hash: 'all-leads' },
+          { id: 'plans', title: 'Billing Plans', hash: 'billing' },
+          { id: 'addons', title: 'Addons', hash: 'billing' },
+          { id: 'subscriptions', title: 'Subscriptions', hash: 'billing' },
+          { id: 'wallet', title: 'Wallet & Credits', hash: 'billing' },
+          { id: 'transactions', title: 'Wallet History', hash: 'billing' },
+          { id: 'template-pricing', title: 'Template Pricing', hash: 'campaigns' },
+          { id: 'contacts', title: 'Web Contacts', hash: 'all-leads' },
+          { id: 'settings', title: 'Settings & White-Label', hash: 'general-settings' },
           { id: 'sales', title: 'Objection Handling', hash: 'referral' },
-          { id: 'compliance', title: 'Number Warmup & Bans', hash: 'campaigns' },
-          { id: 'subtenants', title: 'Client Tenancy & Seats', hash: 'team' }
+          { id: 'compliance', title: 'Ban Prevention Protocol', hash: 'campaigns' }
         ]
       }
     ];
@@ -4896,7 +5036,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnKbClient) btnKbClient.classList.remove('active');
         if (btnAddGuide) btnAddGuide.style.display = 'inline-flex';
         kbDocsState.activeMenuId = 'reseller';
-        kbDocsState.activeSubmenuId = 'cname';
+        kbDocsState.activeSubmenuId = 'dashboard';
       } else {
         if (btnKbClient) btnKbClient.classList.add('active');
         if (btnKbReseller) btnKbReseller.classList.remove('active');
