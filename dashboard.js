@@ -4120,11 +4120,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (submitBtn) submitBtn.innerHTML = '💾 Save & Publish Article ➔';
       if (customWrap) customWrap.style.display = 'none';
 
-      // Default menu & submenu
+      // Set audience radio based on current portal
+      const defaultAud = kbDocsState.portal === 'reseller' ? 'reseller' : 'client';
+      const radAud = document.querySelector(`input[name="kb-audience"][value="${defaultAud}"]`);
+      if (radAud) radAud.checked = true;
+      if (window.onKbAudienceChange) window.onKbAudienceChange(defaultAud);
+
+      // Default menu & submenu matching current active menu or reseller
       const menuSelect = document.getElementById('kb-crm-menu');
       if (menuSelect) {
-        menuSelect.value = 'comm';
-        window.onKbMenuChange('comm');
+        menuSelect.value = kbDocsState.activeMenuId || (defaultAud === 'reseller' ? 'reseller' : 'comm');
+        if (window.onKbMenuChange) window.onKbMenuChange(menuSelect.value);
+        const subSelect = document.getElementById('kb-crm-submenu');
+        if (subSelect && kbDocsState.activeSubmenuId) {
+          subSelect.value = kbDocsState.activeSubmenuId;
+        }
       }
 
       const durInp = document.getElementById('kb-duration');
@@ -4551,9 +4561,19 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCountEl.textContent = audienceArticles.length;
       }
 
+      // Filter menu groups: Client portal only sees client CRM menus, never Reseller Agency!
+      let menusToRender;
+      if (currentAudience === 'client') {
+        menusToRender = KB_CRM_MENUS_STRUCTURE.filter(m => m.id !== 'reseller');
+      } else {
+        // Reseller Studio: Put Reseller Agency module on top, followed by CRM modules
+        const resellerMenu = KB_CRM_MENUS_STRUCTURE.find(m => m.id === 'reseller');
+        const otherMenus = KB_CRM_MENUS_STRUCTURE.filter(m => m.id !== 'reseller');
+        menusToRender = resellerMenu ? [resellerMenu, ...otherMenus] : KB_CRM_MENUS_STRUCTURE;
+      }
+
       // Render menu groups
-      container.innerHTML = KB_CRM_MENUS_STRUCTURE.map(menu => {
-        // If in client portal, we can still show reseller as a section or keep all menus
+      container.innerHTML = menusToRender.map(menu => {
         const isOpen = menu.id === kbDocsState.activeMenuId || menu.submenus.some(s => s.id === kbDocsState.activeSubmenuId);
         
         // Count guides in this menu
@@ -4631,6 +4651,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (kbDocsState.search.trim()) {
         const q = kbDocsState.search.toLowerCase().trim();
         const searchMatches = allArticles.filter(item => {
+          // Client portal should strictly NEVER see reseller internal guides or playbooks!
+          if (currentAudience === 'client' && item.audience === 'reseller') {
+            return false;
+          }
           return (item.title && item.title.toLowerCase().includes(q)) ||
                  (item.summary && item.summary.toLowerCase().includes(q)) ||
                  (item.catLabel && item.catLabel.toLowerCase().includes(q)) ||
@@ -4685,6 +4709,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         attachKbGuideCardEvents(container);
         return;
+      }
+
+      // Safeguard: if in client portal, ensure activeMenuId is never 'reseller'
+      if (currentAudience === 'client' && kbDocsState.activeMenuId === 'reseller') {
+        kbDocsState.activeMenuId = 'comm';
+        kbDocsState.activeSubmenuId = 'wa-accounts';
       }
 
       // Normal Menu Mode: Find Active Menu & Submenu metadata
@@ -4749,10 +4779,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 36px 20px; text-align: center;">
               <div style="font-size: 28px; margin-bottom: 8px;">📝</div>
               <h4 style="font-size: 14.5px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">No guides published yet for this screen</h4>
-              <p style="font-size: 12.5px; color: #64748b; margin-bottom: 14px;">Super admin can add resolution walkthroughs for ${currentSubmenu.title} in 1 click.</p>
+              ${currentAudience === 'reseller' ? `
+              <p style="font-size: 12.5px; color: #64748b; margin-bottom: 14px;">Super admin / Reseller can publish resolution walkthroughs for ${currentSubmenu.title} in 1 click.</p>
               <button type="button" class="btn-primary" onclick="window.openAddKbArticleModal && window.openAddKbArticleModal()" style="font-size: 12px;">
                 + Add Guide for ${currentSubmenu.title}
               </button>
+              ` : `
+              <p style="font-size: 12.5px; color: #64748b; margin-bottom: 4px;">Resolution walkthroughs for ${currentSubmenu.title} are being compiled.</p>
+              <p style="font-size: 11.5px; color: #94a3b8;">Need instant help? Click "Partner Line" above to reach support.</p>
+              `}
             </div>
           ` : subGuides.map(guide => renderSingleKbGuideCard(guide)).join('')}
         </div>
@@ -4852,20 +4887,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.switchKbPortal = function(portal) {
       const btnKbClient = document.getElementById('btn-kb-client');
       const btnKbReseller = document.getElementById('btn-kb-reseller');
+      const btnAddGuide = document.getElementById('btn-add-kb-guide');
 
       kbDocsState.portal = portal;
 
       if (portal === 'reseller') {
         if (btnKbReseller) btnKbReseller.classList.add('active');
         if (btnKbClient) btnKbClient.classList.remove('active');
+        if (btnAddGuide) btnAddGuide.style.display = 'inline-flex';
         kbDocsState.activeMenuId = 'reseller';
         kbDocsState.activeSubmenuId = 'cname';
       } else {
         if (btnKbClient) btnKbClient.classList.add('active');
         if (btnKbReseller) btnKbReseller.classList.remove('active');
+        if (btnAddGuide) btnAddGuide.style.display = 'none';
         kbDocsState.activeMenuId = 'comm';
         kbDocsState.activeSubmenuId = 'wa-accounts';
       }
+
+      // Reset search on tab change
+      kbDocsState.search = '';
+      const searchInp = document.getElementById('kb-universal-search');
+      if (searchInp) searchInp.value = '';
+      const clearBtn = document.getElementById('kb-universal-search-clear');
+      if (clearBtn) clearBtn.style.display = 'none';
 
       renderKbNavTree();
       renderKbActiveContent();
@@ -5268,6 +5313,12 @@ document.addEventListener('DOMContentLoaded', () => {
       updateHelpDeskCounts();
       renderHelpDeskFaqs();
       renderResellerKbManageTable();
+
+      // Ensure Add Guide button visibility matches initial portal state (client = hidden)
+      const btnAddGuide = document.getElementById('btn-add-kb-guide');
+      if (btnAddGuide) {
+        btnAddGuide.style.display = kbDocsState.portal === 'reseller' ? 'inline-flex' : 'none';
+      }
 
       // Initialize Menu-Driven 2-Pane Docs
       renderKbNavTree();
