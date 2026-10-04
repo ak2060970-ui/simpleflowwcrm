@@ -1300,6 +1300,242 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // =========================================================================
+  // INTEGRATIONS & CONNECTED APPS HUB (WhatsApp, Facebook, IndiaMART, etc.)
+  // =========================================================================
+  let currentActiveIntegrationKey = null;
+
+  const INTEGRATIONS_CONFIG = {
+    whatsapp: {
+      name: 'WhatsApp Business API',
+      subtitle: 'Official Meta Cloud API & QR Multi-Agent Inbox',
+      category: 'communication',
+      color: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+      logoHtml: `<svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>`,
+      status: 'Connected',
+      fields: [
+        { label: 'WhatsApp Business Account ID (WABA)', id: 'waba_id', value: 'waba_908219482103' },
+        { label: 'Phone Number ID', id: 'phone_id', value: '10928374619283' },
+        { label: 'Display Phone Number', id: 'display_phone', value: '+91 98765 43210' },
+        { label: 'Permanent Access Token', id: 'token', type: 'password', value: 'EAAG9082LiveMetaCloudTokenKeySecret' },
+        { label: 'Webhook Verify Token', id: 'verify_tok', value: 'wh_simplefloww_verify_tok_2026' }
+      ]
+    },
+    facebook: {
+      name: 'Facebook & Instagram Leads',
+      subtitle: 'Meta Instant Forms & Lead Ads Synchronization',
+      category: 'leads',
+      color: 'linear-gradient(135deg, #1877F2 0%, #0866FF 100%)',
+      logoHtml: `<svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+      status: 'Active',
+      fields: [
+        { label: 'Connected Meta Business Account', id: 'fb_bm', value: 'SimpleFloww Marketing Hub (ID: 88192019)' },
+        { label: 'Facebook Page', id: 'fb_page', value: 'Simple Floww Enterprise Solutions' },
+        { label: 'Lead Ad Form', id: 'fb_form', value: 'High Intent SME Enquiry Form (Active)' },
+        { label: 'Instant Welcome WhatsApp Template', id: 'fb_template', value: 'welcome_offer_brochure_2026' },
+        { label: 'Auto-Assign Telecaller', id: 'fb_agent', value: 'Round-Robin (All Telecallers)' }
+      ]
+    },
+    indiamart: {
+      name: 'IndiaMART Lead Manager',
+      subtitle: 'B2B Inquiries, RFQs & Buyer Requirements API',
+      category: 'leads',
+      color: 'linear-gradient(135deg, #004b87 0%, #002d54 100%)',
+      logoHtml: `<span style="color:#ffffff; font-weight:900; font-size:18px; letter-spacing:-0.5px;">i<span style="color:#ef4444;">M</span></span>`,
+      status: 'Ready to Connect',
+      fields: [
+        { label: 'IndiaMART Registered Mobile / Email', id: 'im_mobile', value: '+91 98765 43210' },
+        { label: 'IndiaMART CRM Key (GLUS_KEY)', id: 'im_key', type: 'password', value: 'GLUS_KEY_9082X1122BB776' },
+        { label: 'Inbound Webhook URL (Paste in IndiaMART Lead Manager)', id: 'im_wh', value: 'https://connect.simplefloww.com/api/v1/inbound/indiamart/wh_live_ak9082', readonly: true },
+        { label: 'Auto WhatsApp Response', id: 'im_auto_resp', value: 'Enabled: Send Product Catalogue PDF instantly' }
+      ]
+    },
+    justdial: {
+      name: 'Justdial Lead Capture',
+      subtitle: 'Local Search Inquiries & Call Leads Push Webhook',
+      category: 'leads',
+      color: 'linear-gradient(135deg, #ff6a00 0%, #e05500 100%)',
+      logoHtml: `<span style="color:#ffffff; font-weight:900; font-size:18px;">J<span style="color:#ffffff; font-style:italic;">d</span></span>`,
+      status: 'Ready to Connect',
+      fields: [
+        { label: 'Justdial Vendor / Account ID', id: 'jd_account', value: 'JD_NCR_90821' },
+        { label: 'Security Auth Token', id: 'jd_token', type: 'password', value: 'jd_auth_token_secret_2026' },
+        { label: 'Inbound Webhook URL (Paste in Justdial API Settings)', id: 'jd_wh', value: 'https://connect.simplefloww.com/api/v1/inbound/justdial/wh_live_ak9082', readonly: true },
+        { label: 'Lead Source Tag in CRM', id: 'jd_tag', value: 'Justdial Local' }
+      ]
+    },
+    googlesheet: {
+      name: 'Google Sheets Two-Way Sync',
+      subtitle: 'Live Row Trigger & Inbound Chat Reply Exporter',
+      category: 'data',
+      color: 'linear-gradient(135deg, #0F9D58 0%, #0B8043 100%)',
+      logoHtml: `<svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm0-4H6v-2h6v2zm0-4H6V7h6v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>`,
+      status: 'Connected',
+      fields: [
+        { label: 'Connected Google Account', id: 'gs_acc', value: 'marketing.simplefloww@gmail.com' },
+        { label: 'Spreadsheet URL / ID', id: 'gs_url', value: 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBIIlS2_demo' },
+        { label: 'Worksheet Sheet Tab', id: 'gs_sheet', value: 'Leads_2026_Sheet1' },
+        { label: 'Row Trigger Column for Phone Number', id: 'gs_col_phone', value: 'Column B (Phone Number)' },
+        { label: 'Inbound Customer Reply Column', id: 'gs_col_reply', value: 'Column F (Customer Reply / Status)' }
+      ]
+    },
+    webhook: {
+      name: 'Universal Webhooks & REST API',
+      subtitle: 'HMAC-Signed Real-Time JSON Event Delivery & Inbound Endpoints',
+      category: 'developer',
+      color: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+      logoHtml: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c0-2.21 1.79-4 4-4h.5"/><path d="M18 7.02h-5.99c-1.1 0-1.95-.94-2.48-1.9A4 4 0 0 0 2 7c0 2.21 1.79 4 4 4h.5"/><circle cx="18" cy="7" r="3"/><circle cx="18" cy="17" r="3"/></svg>`,
+      status: 'Active',
+      fields: [
+        { label: 'Inbound Webhook URL (To Push Leads from Zapier/Pabbly/Elementor)', id: 'wh_inbound', value: 'https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082', readonly: true },
+        { label: 'Outgoing Webhook Target Endpoint', id: 'wh_outgoing', value: 'https://api.mycrmservice.com/webhooks/simplefloww' },
+        { label: 'HMAC Signing Secret Key', id: 'wh_secret', type: 'password', value: 'whsec_9082FlowwSecretKeyMeta' },
+        { label: 'Event Subscriptions', id: 'wh_events', value: 'lead.created, lead.status_updated, message.received, ticket.created' }
+      ]
+    },
+    tradeindia: {
+      name: 'TradeIndia Buy Leads',
+      subtitle: 'B2B Verified Buy Lead Inquiries & Product Keywords',
+      category: 'leads',
+      color: 'linear-gradient(135deg, #c8102e 0%, #99001a 100%)',
+      logoHtml: `<span style="color:#ffffff; font-weight:900; font-size:17px; letter-spacing:-0.5px;">T<span style="color:#facc15;">i</span></span>`,
+      status: 'Ready to Connect',
+      fields: [
+        { label: 'TradeIndia User / Member ID', id: 'ti_user', value: 'TI_MBR_89210' },
+        { label: 'Profile Auth Key', id: 'ti_key', type: 'password', value: 'ti_auth_live_key_9082' },
+        { label: 'Inbound Webhook URL (Paste in TradeIndia Settings)', id: 'ti_wh', value: 'https://connect.simplefloww.com/api/v1/inbound/tradeindia/wh_live_ak9082', readonly: true },
+        { label: 'Product Keywords Filter', id: 'ti_keywords', value: 'Industrial Machinery, Automation Software, B2B Supplies' }
+      ]
+    },
+    '99acres': {
+      name: '99acres Real Estate Leads',
+      subtitle: 'Property Portal Buyer Inquiries & Project Sync',
+      category: 'leads',
+      color: 'linear-gradient(135deg, #0050b3 0%, #003a8c 100%)',
+      logoHtml: `<span style="color:#ffffff; font-weight:900; font-size:16px;">99<span style="color:#fbbf24; font-size:13px;">ac</span></span>`,
+      status: 'Ready to Connect',
+      fields: [
+        { label: '99acres Developer API Key', id: 'acres_key', type: 'password', value: '99acres_api_live_sec_89210' },
+        { label: 'Project Listing ID(s)', id: 'acres_project', value: 'PRJ_GURGAON_SEC82, PRJ_NOIDA_EXPR' },
+        { label: 'Inbound Webhook Endpoint URL', id: 'acres_wh', value: 'https://connect.simplefloww.com/api/v1/inbound/99acres/wh_live_ak9082', readonly: true },
+        { label: 'Auto Property Brochure Dispatch', id: 'acres_brochure', value: 'Enabled: Attach Floor Plan PDF & Pricing Sheet' }
+      ]
+    }
+  };
+
+  window.filterIntegrationsCategory = function(cat, btnEl) {
+    if (btnEl) {
+      document.querySelectorAll('#integration-filter-pills .kb-content-pill').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+    const cards = document.querySelectorAll('.integrations-grid .integration-card');
+    cards.forEach(card => {
+      if (cat === 'all' || card.getAttribute('data-category') === cat) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  };
+
+  window.filterIntegrationsSearch = function(query) {
+    const q = (query || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.integrations-grid .integration-card');
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      if (!q || text.includes(q)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  };
+
+  window.openIntegrationModal = function(key) {
+    const config = INTEGRATIONS_CONFIG[key];
+    if (!config) return;
+    currentActiveIntegrationKey = key;
+
+    const modal = document.getElementById('modal-integration-config');
+    const logoBox = document.getElementById('modal-int-logo-box');
+    const titleEl = document.getElementById('modal-int-title');
+    const subtitleEl = document.getElementById('modal-int-subtitle');
+    const statusTextEl = document.getElementById('modal-int-status-text');
+    const statusBadgeEl = document.getElementById('modal-int-status-badge');
+    const fieldsContainer = document.getElementById('modal-int-fields-container');
+
+    if (logoBox) {
+      logoBox.style.background = config.color;
+      logoBox.innerHTML = config.logoHtml;
+    }
+    if (titleEl) titleEl.textContent = `Configure ${config.name}`;
+    if (subtitleEl) subtitleEl.textContent = config.subtitle;
+    if (statusTextEl) statusTextEl.textContent = `${config.name} channel synchronization ready`;
+    if (statusBadgeEl) {
+      statusBadgeEl.textContent = config.status;
+      statusBadgeEl.className = `status-chip ${config.status === 'Active' || config.status === 'Connected' ? 'resolved' : 'open'}`;
+    }
+
+    if (fieldsContainer) {
+      fieldsContainer.innerHTML = config.fields.map(f => `
+        <div class="form-group" style="margin: 0;">
+          <label style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">
+            <span>${f.label}</span>
+            ${f.readonly ? `<span style="font-size: 11px; color: #2563eb; cursor: pointer;" onclick="navigator.clipboard.writeText('${f.value}'); if(window.showToast) window.showToast('📋 Copied to clipboard!');">Copy URL</span>` : ''}
+          </label>
+          <input type="${f.type || 'text'}" class="inbox-search-input" value="${f.value}" style="width: 100%; font-size: 12.5px;" ${f.readonly ? 'readonly' : ''} />
+        </div>
+      `).join('');
+    }
+
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.closeIntegrationModal = function() {
+    const modal = document.getElementById('modal-integration-config');
+    if (modal) modal.style.display = 'none';
+    currentActiveIntegrationKey = null;
+  };
+
+  window.saveIntegrationSettings = function() {
+    if (!currentActiveIntegrationKey) return;
+    const config = INTEGRATIONS_CONFIG[currentActiveIntegrationKey];
+    config.status = 'Connected';
+
+    const card = document.querySelector(`.integration-card[data-integration-id="${currentActiveIntegrationKey}"]`);
+    if (card) {
+      const statusChip = card.querySelector('.status-chip');
+      if (statusChip) {
+        statusChip.textContent = 'Connected';
+        statusChip.className = 'status-chip resolved';
+      }
+    }
+
+    showToast(`🎉 ${config.name} integration settings saved & activated!`);
+    window.closeIntegrationModal();
+  };
+
+  window.testIntegrationPayload = function() {
+    if (!currentActiveIntegrationKey) return;
+    const config = INTEGRATIONS_CONFIG[currentActiveIntegrationKey];
+
+    // Add entry to webhook delivery logs
+    const tbody = document.getElementById('webhook-logs-table-body');
+    if (tbody) {
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td><strong>lead.${currentActiveIntegrationKey}.sync</strong></td>
+        <td>Just now</td>
+        <td><span class="status-chip resolved">200 OK</span></td>
+        <td>31ms</td>
+        <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;" onclick="if(window.showToast) window.showToast('Payload: { source: \"${config.name}\", status: \"Delivered\" }');">View JSON</button></td>
+      `;
+      tbody.insertBefore(newRow, tbody.firstChild);
+    }
+
+    showToast(`⚡ Test lead received from ${config.name}! Webhook status: 200 OK.`);
+  };
+
   const btnInviteTeam = document.getElementById('btn-invite-team-member');
   if (btnInviteTeam) {
     btnInviteTeam.addEventListener('click', () => {
@@ -2931,6 +3167,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleHashRoute() {
     let rawHash = window.location.hash.replace('#', '').trim();
     if (!rawHash) return;
+    if (rawHash === 'webhooks') rawHash = 'integrations';
 
     // Direct match with view panels
     const targetPanel = document.getElementById(`view-${rawHash}`);
@@ -2952,6 +3189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (rawHash === 'inbox') topBreadcrumb.textContent = 'Communication > Live Chat Inbox';
         else if (rawHash === 'dashboard') topBreadcrumb.textContent = 'Sales & Revenue Overview';
         else if (rawHash === 'referral') topBreadcrumb.textContent = 'Growth > Refer & Earn';
+        else if (rawHash === 'integrations') topBreadcrumb.textContent = 'Workspace > Integrations & Connected Apps';
         else if (activeLink && activeLink.getAttribute('data-breadcrumb')) {
           topBreadcrumb.textContent = activeLink.getAttribute('data-breadcrumb');
         }

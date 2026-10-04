@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=4.0" />
+  <link rel="stylesheet" href="dashboard.css?v=4.4" />
 </head>
 <body>
 
@@ -144,7 +144,7 @@
         </div>
 
         <!-- 8. INTEGRATIONS (Direct Link - No Dropdown) -->
-        <a href="#integrations" class="nav-item" data-view="webhooks" data-breadcrumb="Workspace > Integrations">
+        <a href="#integrations" class="nav-item" data-view="integrations" data-breadcrumb="Workspace > Integrations & Connected Apps">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path><path d="M21 12h-3"></path></svg>
           <span>Integrations</span>
         </a>
@@ -2690,103 +2690,360 @@
       </div>
 
       <!-- ====================================================================
-           VIEW 8: DEVELOPER & WEBHOOKS
+           VIEW 8: INTEGRATIONS & CONNECTED APPS
            ==================================================================== -->
-      <div class="view-panel" id="view-webhooks">
+      <div class="view-panel" id="view-integrations">
         <div class="module-page">
+          <!-- Module Header -->
           <div class="module-header-row">
             <div class="module-title-box">
-              <h2>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                Developer & Webhook Manager
-              </h2>
-              <p>Receive instant real-time HTTP POST alerts for new leads, chat messages, and workflow automation.</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;">Integrations & Connected Apps</h2>
+                <span class="hd-status-pill">
+                  <span class="pulse-dot"></span> 8 Connectors Available
+                </span>
+              </div>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Connect lead portals, ad platforms, Google Sheets, and custom webhooks for instant automated WhatsApp engagement.</p>
             </div>
             <div class="module-actions-row">
-              <button class="btn-primary" id="btn-test-webhook-ping">⚡ Send Test Webhook Ping</button>
+              <button class="btn-secondary" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('all')" id="btn-sync-all-integrations">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Check Status</span>
+              </button>
+              <button class="btn-primary" onclick="window.openIntegrationModal && window.openIntegrationModal('webhook')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>+ Custom Webhook</span>
+              </button>
             </div>
           </div>
 
-          <div class="card-grid-2">
-            <div class="module-card">
-              <div class="module-card-header">
-                <h3>🔗 Outgoing Webhook Endpoint</h3>
-                <span class="status-chip resolved">Active</span>
+          <!-- Filter Pills Bar & Real-time Search -->
+          <div class="kb-content-filter-bar" style="margin-bottom: 22px;">
+            <div class="kb-content-pills" id="integration-filter-pills">
+              <button type="button" class="kb-content-pill active" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('all', this)">All Connectors (8)</button>
+              <button type="button" class="kb-content-pill" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('leads', this)">🎯 Lead Engines (5)</button>
+              <button type="button" class="kb-content-pill" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('communication', this)">💬 WhatsApp (1)</button>
+              <button type="button" class="kb-content-pill" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('data', this)">📊 Google Sheets (1)</button>
+              <button type="button" class="kb-content-pill" onclick="window.filterIntegrationsCategory && window.filterIntegrationsCategory('developer', this)">🔌 Webhooks & API (1)</button>
+            </div>
+            <div style="min-width: 250px;">
+              <input type="text" class="inbox-search-input" id="integration-search-input" placeholder="Search apps (e.g. IndiaMART, Justdial, Sheets)..." style="width: 100%; font-size: 12.5px; padding: 7px 12px;" oninput="window.filterIntegrationsSearch && window.filterIntegrationsSearch(this.value)" />
+            </div>
+          </div>
+
+          <!-- 8 Primary Integration Cards Grid -->
+          <div class="integrations-grid" id="integrations-grid-container">
+
+            <!-- 1. WHATSAPP -->
+            <div class="integration-card" data-integration-id="whatsapp" data-category="communication">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                  </div>
+                  <span class="status-chip resolved" id="status-chip-whatsapp">Connected</span>
+                </div>
+                <h3 class="integration-name">WhatsApp Business API</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Official Meta Cloud API</span>
+                <p class="integration-desc">Connect official Meta WABA or QR numbers to run 24/7 automated flows, broadcast campaigns, and multi-agent team inbox.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">Cloud API</span>
+                  <span class="integration-tag">24h Window</span>
+                  <span class="integration-tag">Auto-Reply Bot</span>
+                  <span class="integration-tag">Broadcasts</span>
+                </div>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div>
-                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Target URL (Zapier, Make, or Custom Backend)</label>
-                  <input type="text" class="inbox-search-input" value="https://api.mycrmservice.com/webhooks/simplefloww" style="width: 100%;" />
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #16a34a; font-weight: 600;">● Active Sync</span>
+                <button type="button" class="btn-primary" onclick="window.openIntegrationModal && window.openIntegrationModal('whatsapp')" style="font-size: 12px; padding: 6px 14px;">
+                  Configure WhatsApp ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. FACEBOOK LEAD ADS -->
+            <div class="integration-card" data-integration-id="facebook" data-category="leads">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #1877F2 0%, #0866FF 100%);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </div>
+                  <span class="status-chip resolved" id="status-chip-facebook">Active</span>
                 </div>
-                <div>
-                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Signing Secret Token (HMAC SHA-256)</label>
-                  <input type="password" class="inbox-search-input" value="whsec_9082FlowwSecretKeyMeta" style="width: 100%;" />
+                <h3 class="integration-name">Facebook & Instagram Leads</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Meta Lead Ads Engine</span>
+                <p class="integration-desc">Capture Facebook & Instagram lead ad form submissions within 3 seconds, fire an instant WhatsApp greeting, and auto-assign telecallers.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">&lt; 3s Latency</span>
+                  <span class="integration-tag">Instant WhatsApp</span>
+                  <span class="integration-tag">Lead Form Map</span>
+                  <span class="integration-tag">Round Robin</span>
                 </div>
-                <div>
-                  <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 6px;">Subscribe to Events</label>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
-                    <label><input type="checkbox" checked /> lead.created</label>
-                    <label><input type="checkbox" checked /> lead.status_updated</label>
-                    <label><input type="checkbox" checked /> message.received</label>
-                    <label><input type="checkbox" checked /> ticket.created</label>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #16a34a; font-weight: 600;">● Real-time Webhook</span>
+                <button type="button" class="btn-primary" onclick="window.openIntegrationModal && window.openIntegrationModal('facebook')" style="font-size: 12px; padding: 6px 14px;">
+                  Manage Facebook ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. INDIAMART -->
+            <div class="integration-card" data-integration-id="indiamart" data-category="leads">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #004b87 0%, #002d54 100%);">
+                    <span style="color:#ffffff; font-weight:900; font-size:18px; letter-spacing:-0.5px;">i<span style="color:#ef4444;">M</span></span>
+                  </div>
+                  <span class="status-chip open" id="status-chip-indiamart">Ready to Connect</span>
+                </div>
+                <h3 class="integration-name">IndiaMART Lead Manager</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">B2B Marketplace</span>
+                <p class="integration-desc">Automatically pull buyer inquiries, RFQs, and contact numbers from IndiaMART CRM API directly into your sales pipeline with auto-catalogue dispatch.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">GLUS Key Sync</span>
+                  <span class="integration-tag">Buyer Requirement</span>
+                  <span class="integration-tag">Auto Brochure</span>
+                  <span class="integration-tag">Instant Alert</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #64748b;">CRM API Ready</span>
+                <button type="button" class="btn-secondary" onclick="window.openIntegrationModal && window.openIntegrationModal('indiamart')" style="font-size: 12px; padding: 6px 14px;">
+                  Connect IndiaMART ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. JUSTDIAL -->
+            <div class="integration-card" data-integration-id="justdial" data-category="leads">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #ff6a00 0%, #e05500 100%);">
+                    <span style="color:#ffffff; font-weight:900; font-size:18px;">J<span style="color:#ffffff; font-style:italic;">d</span></span>
+                  </div>
+                  <span class="status-chip open" id="status-chip-justdial">Ready to Connect</span>
+                </div>
+                <h3 class="integration-name">Justdial Lead Capture</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Local Search Engine</span>
+                <p class="integration-desc">Capture phone call leads and web inquiries from Justdial in real-time, notify telecallers via WhatsApp, and trigger automated SMS responses.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">Instant Push</span>
+                  <span class="integration-tag">Caller ID Map</span>
+                  <span class="integration-tag">Agent Notification</span>
+                  <span class="integration-tag">City Tagging</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #64748b;">Push Webhook Ready</span>
+                <button type="button" class="btn-secondary" onclick="window.openIntegrationModal && window.openIntegrationModal('justdial')" style="font-size: 12px; padding: 6px 14px;">
+                  Connect Justdial ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 5. GOOGLE SHEETS -->
+            <div class="integration-card" data-integration-id="googlesheet" data-category="data">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #0F9D58 0%, #0B8043 100%);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm0-4H6v-2h6v2zm0-4H6V7h6v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>
+                  </div>
+                  <span class="status-chip resolved" id="status-chip-googlesheet">Connected</span>
+                </div>
+                <h3 class="integration-name">Google Sheets Two-Way Sync</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Live Spreadsheet Bridge</span>
+                <p class="integration-desc">Two-way live synchronization: trigger personalized WhatsApp template when a new row is added, and export inbound customer chat replies back to sheets.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">Row Trigger</span>
+                  <span class="integration-tag">Column Mapping</span>
+                  <span class="integration-tag">Reply Logging</span>
+                  <span class="integration-tag">Zero Code</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #16a34a; font-weight: 600;">● Active 2-Way Sync</span>
+                <button type="button" class="btn-primary" onclick="window.openIntegrationModal && window.openIntegrationModal('googlesheet')" style="font-size: 12px; padding: 6px 14px;">
+                  Configure Sheets ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 6. WEBHOOKS -->
+            <div class="integration-card" data-integration-id="webhook" data-category="developer">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c0-2.21 1.79-4 4-4h.5"/><path d="M18 7.02h-5.99c-1.1 0-1.95-.94-2.48-1.9A4 4 0 0 0 2 7c0 2.21 1.79 4 4 4h.5"/><circle cx="18" cy="7" r="3"/><circle cx="18" cy="17" r="3"/></svg>
+                  </div>
+                  <span class="status-chip resolved" id="status-chip-webhook">Active</span>
+                </div>
+                <h3 class="integration-name">Universal Webhooks & REST API</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Developer & Automation Hub</span>
+                <p class="integration-desc">Connect any landing page, custom website, Elementor, Zapier, Make, or Pabbly Connect using secure incoming and outgoing HMAC-signed webhooks.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">HMAC SHA-256</span>
+                  <span class="integration-tag">JSON Payload</span>
+                  <span class="integration-tag">Delivery Logs</span>
+                  <span class="integration-tag">REST Endpoints</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #16a34a; font-weight: 600;">● Endpoints Active</span>
+                <button type="button" class="btn-primary" onclick="window.openIntegrationModal && window.openIntegrationModal('webhook')" style="font-size: 12px; padding: 6px 14px;">
+                  Manage Webhooks ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 7. TRADEINDIA -->
+            <div class="integration-card" data-integration-id="tradeindia" data-category="leads">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #c8102e 0%, #99001a 100%);">
+                    <span style="color:#ffffff; font-weight:900; font-size:17px; letter-spacing:-0.5px;">T<span style="color:#facc15;">i</span></span>
+                  </div>
+                  <span class="status-chip open" id="status-chip-tradeindia">Ready to Connect</span>
+                </div>
+                <h3 class="integration-name">TradeIndia Buy Leads</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">B2B Trade Portal</span>
+                <p class="integration-desc">Direct sync for verified TradeIndia inquiry leads, category inquiries, and buyer specifications with automated telecaller round-robin distribution.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">User ID Sync</span>
+                  <span class="integration-tag">Product Keywords</span>
+                  <span class="integration-tag">Auto WhatsApp Pitch</span>
+                  <span class="integration-tag">Lead Tagging</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #64748b;">Inbound API Ready</span>
+                <button type="button" class="btn-secondary" onclick="window.openIntegrationModal && window.openIntegrationModal('tradeindia')" style="font-size: 12px; padding: 6px 14px;">
+                  Connect TradeIndia ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- 8. 99ACRES -->
+            <div class="integration-card" data-integration-id="99acres" data-category="leads">
+              <div>
+                <div class="integration-card-top">
+                  <div class="integration-logo-box" style="background: linear-gradient(135deg, #0050b3 0%, #003a8c 100%);">
+                    <span style="color:#ffffff; font-weight:900; font-size:16px;">99<span style="color:#fbbf24; font-size:13px;">ac</span></span>
+                  </div>
+                  <span class="status-chip open" id="status-chip-99acres">Ready to Connect</span>
+                </div>
+                <h3 class="integration-name">99acres Real Estate Leads</h3>
+                <span class="integration-badge" style="margin-bottom: 10px;">Property Portals</span>
+                <p class="integration-desc">Synchronize property buyer inquiries, project listing leads, and budget preferences directly from 99acres with instant PDF brochure delivery.</p>
+                <div class="integration-tags">
+                  <span class="integration-tag">Project ID Map</span>
+                  <span class="integration-tag">Budget Filter</span>
+                  <span class="integration-tag">Property Brochure</span>
+                  <span class="integration-tag">Site Visit Booking</span>
+                </div>
+              </div>
+              <div class="integration-footer">
+                <span style="font-size: 11.5px; color: #64748b;">Developer Webhook</span>
+                <button type="button" class="btn-secondary" onclick="window.openIntegrationModal && window.openIntegrationModal('99acres')" style="font-size: 12px; padding: 6px 14px;">
+                  Connect 99acres ➔
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Developer Webhook Endpoints & Live Delivery Logs (Persistent) -->
+          <div style="margin-top: 36px; border-top: 1px solid #e2e8f0; padding-top: 24px;" id="developer-webhook-tools-section">
+            <div class="module-header-row" style="margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0;">Developer Endpoints & Real-Time Delivery Stream</h3>
+                <p style="font-size: 12.5px; color: #64748b; margin: 2px 0 0 0;">Inspect raw HTTP payloads, copy inbound webhook URLs, and test server delivery latency.</p>
+              </div>
+              <button class="btn-primary" id="btn-test-webhook-ping" style="font-size: 12px;">⚡ Send Test Webhook Ping</button>
+            </div>
+
+            <div class="card-grid-2">
+              <div class="module-card">
+                <div class="module-card-header">
+                  <h3>🔗 Outgoing Webhook Endpoint</h3>
+                  <span class="status-chip resolved">Active</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Target URL (Zapier, Make, or Custom Backend)</label>
+                    <input type="text" class="inbox-search-input" value="https://api.mycrmservice.com/webhooks/simplefloww" style="width: 100%;" id="txt-outgoing-webhook-url" />
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 4px;">Signing Secret Token (HMAC SHA-256)</label>
+                    <input type="password" class="inbox-search-input" value="whsec_9082FlowwSecretKeyMeta" style="width: 100%;" />
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); display: block; margin-bottom: 6px;">Subscribe to Events</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
+                      <label><input type="checkbox" checked /> lead.created</label>
+                      <label><input type="checkbox" checked /> lead.status_updated</label>
+                      <label><input type="checkbox" checked /> message.received</label>
+                      <label><input type="checkbox" checked /> ticket.created</label>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <div class="module-card">
+                <div class="module-card-header">
+                  <h3>📡 Incoming Webhook (Push Leads)</h3>
+                  <span class="status-chip open">Ready</span>
+                </div>
+                <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">Use this URL to push leads directly into Simple Floww from Facebook Lead Ads, Elementor, or Google Forms:</p>
+                <div style="padding: 10px 14px; background: var(--sf-surface-alt); border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--sf-primary); margin-bottom: 14px; word-break: break-all;">
+                  https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082
+                </div>
+                <button class="btn-secondary" style="font-size: 12px;" onclick="navigator.clipboard.writeText('https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082'); if(window.showToast) window.showToast('📋 Copied inbound webhook URL!');">Copy Inbound URL</button>
+              </div>
             </div>
 
-            <div class="module-card">
+            <!-- Webhook Logs -->
+            <div class="module-card" style="margin-top: 18px;">
               <div class="module-card-header">
-                <h3>📡 Incoming Webhook (Push Leads)</h3>
-                <span class="status-chip open">Ready</span>
+                <h3>Recent Delivery Logs (Live Stream)</h3>
               </div>
-              <p style="font-size: 13px; color: var(--sf-text-muted); margin-bottom: 12px;">Use this URL to push leads directly into Simple Floww from Facebook Lead Ads, Elementor, or Google Forms:</p>
-              <div style="padding: 10px 14px; background: var(--sf-surface-alt); border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--sf-primary); margin-bottom: 14px; word-break: break-all;">
-                https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082
-              </div>
-              <button class="btn-secondary" style="font-size: 12px;" onclick="navigator.clipboard.writeText('https://connect.simplefloww.com/api/v1/inbound/wh_live_ak9082'); alert('Copied inbound webhook URL!');">Copy Inbound URL</button>
+              <table class="crm-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Timestamp</th>
+                    <th>Payload Status</th>
+                    <th>Latency</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="webhook-logs-table-body">
+                  <tr>
+                    <td><strong>lead.created</strong></td>
+                    <td>2 mins ago</td>
+                    <td><span class="status-chip resolved">200 OK</span></td>
+                    <td>42ms</td>
+                    <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;" onclick="if(window.showToast) window.showToast('Payload: { source: \"Facebook Lead Ads\", name: \"Rahul Verma\" }');">View JSON</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>message.received</strong></td>
+                    <td>6 mins ago</td>
+                    <td><span class="status-chip resolved">200 OK</span></td>
+                    <td>58ms</td>
+                    <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;" onclick="if(window.showToast) window.showToast('Payload: { from: \"919876543210\", text: \"Interested in catalogue\" }');">View JSON</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ticket.created</strong></td>
+                    <td>18 mins ago</td>
+                    <td><span class="status-chip resolved">200 OK</span></td>
+                    <td>36ms</td>
+                    <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;" onclick="if(window.showToast) window.showToast('Payload: { ticketId: \"HD-9821\", priority: \"High\" }');">View JSON</button></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <!-- Webhook Logs -->
-          <div class="module-card">
-            <div class="module-card-header">
-              <h3>Recent Delivery Logs (Live Stream)</h3>
-            </div>
-            <table class="crm-table">
-              <thead>
-                <tr>
-                  <th>Event</th>
-                  <th>Timestamp</th>
-                  <th>Payload Status</th>
-                  <th>Latency</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="webhook-logs-table-body">
-                <tr>
-                  <td><strong>lead.created</strong></td>
-                  <td>2 mins ago</td>
-                  <td><span class="status-chip resolved">200 OK</span></td>
-                  <td>42ms</td>
-                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
-                </tr>
-                <tr>
-                  <td><strong>message.received</strong></td>
-                  <td>6 mins ago</td>
-                  <td><span class="status-chip resolved">200 OK</span></td>
-                  <td>58ms</td>
-                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
-                </tr>
-                <tr>
-                  <td><strong>ticket.created</strong></td>
-                  <td>18 mins ago</td>
-                  <td><span class="status-chip resolved">200 OK</span></td>
-                  <td>36ms</td>
-                  <td><button class="btn-secondary" style="font-size: 11px; padding: 2px 8px;">View JSON</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
 
@@ -4060,6 +4317,59 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </div>
   </div>
 
+  <!-- ====================================================================
+       INTERACTIVE INTEGRATION CONFIGURATION MODAL
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-integration-config" style="display: none; z-index: 999999;">
+    <div class="modal-card" style="max-width: 600px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="modal-int-logo-box" style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <!-- Dynamic Logo -->
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #0f172a;" id="modal-int-title">Configure Integration</h3>
+            <span style="font-size: 12px; color: #64748b; font-weight: 500;" id="modal-int-subtitle">Set up API keys, webhooks and automated lead routing</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeIntegrationModal && window.closeIntegrationModal()">&times;</button>
+      </div>
+
+      <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
+        <!-- Status Row -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px;">
+          <div>
+            <strong style="display: block; font-size: 13px; color: #0f172a;">Channel Connection Status</strong>
+            <span style="font-size: 11.5px; color: #64748b;" id="modal-int-status-text">Ready to connect with SimpleFloww CRM</span>
+          </div>
+          <span class="status-chip resolved" id="modal-int-status-badge">Active Sync</span>
+        </div>
+
+        <!-- Dynamic Form Fields Container -->
+        <div id="modal-int-fields-container" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Populated dynamically via dashboard.js depending on selected app -->
+        </div>
+
+        <!-- Connection Test Box -->
+        <div style="margin-top: 18px; padding: 12px 14px; background: #eff6ff; border: 1px dashed #93c5fd; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 12px; color: #1e40af;">
+            <strong>Test Simulation:</strong> Send a sample lead payload to verify field mapping.
+          </div>
+          <button type="button" class="btn-secondary" style="font-size: 11.5px; padding: 5px 12px;" onclick="window.testIntegrationPayload && window.testIntegrationPayload()">
+            ⚡ Send Test Lead
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #eaecf0; padding: 14px 20px;">
+        <button type="button" class="btn-secondary" onclick="window.closeIntegrationModal && window.closeIntegrationModal()">Cancel</button>
+        <button type="button" class="btn-primary" id="btn-save-integration-settings" onclick="window.saveIntegrationSettings && window.saveIntegrationSettings()">
+          💾 Save & Activate Integration
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Live Notification Toast Container -->
   <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
@@ -4088,6 +4398,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=4.3"></script>
+  <script src="dashboard.js?v=4.4"></script>
 </body>
 </html>
