@@ -3026,9 +3026,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // HELP DESK & VIDEO KNOWLEDGE BASE ENGINE (Self-Service Center)
   // =========================================================================
   let helpdeskFaqsData = [
-    // --- WhatsApp & API (4) ---
+    // --- Communication > WhatsApp Accounts (4) ---
     {
       id: 'faq-wa-1',
+      menuId: 'comm',
+      menuTitle: 'Communication',
+      submenuId: 'wa-accounts',
+      submenuTitle: 'WhatsApp Accounts',
       cat: 'whatsapp',
       catLabel: 'WhatsApp & QR',
       type: 'guide',
@@ -3047,6 +3051,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-wa-2',
+      menuId: 'comm',
+      menuTitle: 'Communication',
+      submenuId: 'wa-accounts',
+      submenuTitle: 'WhatsApp Accounts',
       cat: 'whatsapp',
       catLabel: 'WhatsApp & QR',
       type: 'troubleshoot',
@@ -3065,8 +3073,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-wa-3',
+      menuId: 'comm',
+      menuTitle: 'Communication',
+      submenuId: 'inbox',
+      submenuTitle: 'Live Inbox',
       cat: 'whatsapp',
-      catLabel: 'WhatsApp & QR',
+      catLabel: 'Live Inbox & 24h Window',
       type: 'troubleshoot',
       title: 'Outgoing message par single tick (✓) aa raha hai ya delivery delay ho rahi hai?',
       duration: '0:40',
@@ -3083,8 +3095,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-wa-4',
+      menuId: 'comm',
+      menuTitle: 'Communication',
+      submenuId: 'wa-accounts',
+      submenuTitle: 'WhatsApp Accounts',
       cat: 'whatsapp',
-      catLabel: 'WhatsApp & QR',
+      catLabel: 'Meta Verification',
       type: 'guide',
       title: 'WhatsApp Green Tick (Official Meta Verified Badge) ke liye apply kaise karein?',
       duration: '0:50',
@@ -3100,9 +3116,13 @@ document.addEventListener('DOMContentLoaded', () => {
       keywords: 'green tick verified badge official business account oba meta trust brand identity'
     },
 
-    // --- Broadcast & Campaigns (4) ---
+    // --- Campaigns & Marketing (4) ---
     {
       id: 'faq-bc-1',
+      menuId: 'campaigns',
+      menuTitle: 'Campaigns & Marketing',
+      submenuId: 'broadcast',
+      submenuTitle: 'Broadcast Campaigns',
       cat: 'broadcast',
       catLabel: 'Broadcast & Campaigns',
       type: 'guide',
@@ -3121,6 +3141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bc-2',
+      menuId: 'campaigns',
+      menuTitle: 'Campaigns & Marketing',
+      submenuId: 'templates',
+      submenuTitle: 'Message Templates',
       cat: 'broadcast',
       catLabel: 'Meta Templates',
       type: 'troubleshoot',
@@ -3139,8 +3163,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bc-3',
+      menuId: 'campaigns',
+      menuTitle: 'Campaigns & Marketing',
+      submenuId: 'broadcast',
+      submenuTitle: 'Broadcast Campaigns',
       cat: 'broadcast',
-      catLabel: 'Broadcast & Campaigns',
+      catLabel: 'Quality Health',
       type: 'troubleshoot',
       title: 'Broadcast campaign fail ya pause kyun ho jati hai (Quality Rating Flagged)?',
       duration: '0:45',
@@ -3157,6 +3185,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bc-4',
+      menuId: 'campaigns',
+      menuTitle: 'Campaigns & Marketing',
+      submenuId: 'broadcast',
+      submenuTitle: 'Broadcast Campaigns',
       cat: 'broadcast',
       catLabel: 'Audience & CSV',
       type: 'guide',
@@ -3174,9 +3206,13 @@ document.addEventListener('DOMContentLoaded', () => {
       keywords: 'csv import excel contacts bulk audience tag list upload map columns'
     },
 
-    // --- AI & Chatbot (4) ---
+    // --- Automation & AI (4) ---
     {
       id: 'faq-cb-1',
+      menuId: 'automation',
+      menuTitle: 'Automation & AI',
+      submenuId: 'chatbot',
+      submenuTitle: 'Chatbot Builder',
       cat: 'chatbot',
       catLabel: 'Chatbot & AI',
       type: 'guide',
@@ -3195,8 +3231,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-cb-2',
+      menuId: 'automation',
+      menuTitle: 'Automation & AI',
+      submenuId: 'chatbot',
+      submenuTitle: 'Chatbot Builder',
       cat: 'chatbot',
-      catLabel: 'Chatbot & AI',
+      catLabel: 'Human Takeover',
       type: 'troubleshoot',
       title: 'Chatbot customer ke messages ka automatic reply kyun nahi de raha hai?',
       duration: '0:35',
@@ -3213,6 +3253,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-cb-3',
+      menuId: 'automation',
+      menuTitle: 'Automation & AI',
+      submenuId: 'ai-agents',
+      submenuTitle: 'AI Agent & Training',
       cat: 'chatbot',
       catLabel: 'AI Knowledge Base',
       type: 'guide',
@@ -3231,6 +3275,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-cb-4',
+      menuId: 'automation',
+      menuTitle: 'Automation & AI',
+      submenuId: 'ai-agents',
+      submenuTitle: 'AI Agent & Training',
       cat: 'chatbot',
       catLabel: 'AI Accuracy & Prompts',
       type: 'troubleshoot',
@@ -3251,6 +3299,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CRM & Leads (4) ---
     {
       id: 'faq-crm-1',
+      menuId: 'automation',
+      menuTitle: 'Automation & AI',
+      submenuId: 'auto-assign',
+      submenuTitle: 'Auto Assign Rules',
       cat: 'crm',
       catLabel: 'CRM & Routing',
       type: 'guide',
@@ -3269,6 +3321,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-crm-2',
+      menuId: 'crm',
+      menuTitle: 'CRM & Leads',
+      submenuId: 'all-leads',
+      submenuTitle: 'All Leads',
       cat: 'crm',
       catLabel: 'Meta Lead Ads',
       type: 'troubleshoot',
@@ -3287,6 +3343,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-crm-3',
+      menuId: 'crm',
+      menuTitle: 'CRM & Leads',
+      submenuId: 'pipeline',
+      submenuTitle: 'Deals Pipeline',
       cat: 'crm',
       catLabel: 'Deals Pipeline',
       type: 'guide',
@@ -3305,6 +3365,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-crm-4',
+      menuId: 'crm',
+      menuTitle: 'CRM & Leads',
+      submenuId: 'tags',
+      submenuTitle: 'Tags & Segments',
       cat: 'crm',
       catLabel: 'Data & Contacts',
       type: 'troubleshoot',
@@ -3322,9 +3386,13 @@ document.addEventListener('DOMContentLoaded', () => {
       keywords: 'duplicate leads merge phone number clash crm clean up contacts sync'
     },
 
-    // --- Tasks & Operations (3) ---
+    // --- Team & Operations (3) ---
     {
       id: 'faq-tsk-1',
+      menuId: 'team',
+      menuTitle: 'Team Management',
+      submenuId: 'team-members',
+      submenuTitle: 'Team Members',
       cat: 'tasks',
       catLabel: 'Tasks & Checklist',
       type: 'guide',
@@ -3343,6 +3411,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-tsk-2',
+      menuId: 'team',
+      menuTitle: 'Team Management',
+      submenuId: 'roles',
+      submenuTitle: 'Roles & Permissions',
       cat: 'tasks',
       catLabel: 'Custom Categories',
       type: 'troubleshoot',
@@ -3361,6 +3433,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-tsk-3',
+      menuId: 'team',
+      menuTitle: 'Team Management',
+      submenuId: 'team-members',
+      submenuTitle: 'Team Members',
       cat: 'tasks',
       catLabel: 'Kanban Reschedule',
       type: 'troubleshoot',
@@ -3378,9 +3454,13 @@ document.addEventListener('DOMContentLoaded', () => {
       keywords: 'drag drop kanban reschedule overdue today tomorrow column due date update'
     },
 
-    // --- Integrations & APIs (3) ---
+    // --- Developer & Integrations (3) ---
     {
       id: 'faq-int-1',
+      menuId: 'dev',
+      menuTitle: 'Developer & Integrations',
+      submenuId: 'integrations',
+      submenuTitle: 'Integrations & Apps',
       cat: 'integrations',
       catLabel: 'E-Commerce & Carts',
       type: 'guide',
@@ -3399,6 +3479,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-int-2',
+      menuId: 'dev',
+      menuTitle: 'Developer & Integrations',
+      submenuId: 'webhooks',
+      submenuTitle: 'Webhooks & API Keys',
       cat: 'integrations',
       catLabel: 'API & Webhooks',
       type: 'troubleshoot',
@@ -3417,6 +3501,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-int-3',
+      menuId: 'dev',
+      menuTitle: 'Developer & Integrations',
+      submenuId: 'integrations',
+      submenuTitle: 'Integrations & Apps',
       cat: 'integrations',
       catLabel: 'Zapier & Make',
       type: 'troubleshoot',
@@ -3434,9 +3522,13 @@ document.addEventListener('DOMContentLoaded', () => {
       keywords: 'google sheets zapier make automation trigger new row zap error field mapping'
     },
 
-    // --- Billing & GST (4) ---
+    // --- Billing & Credits (4) ---
     {
       id: 'faq-bil-1',
+      menuId: 'billing',
+      menuTitle: 'Billing & Credits',
+      submenuId: 'invoices',
+      submenuTitle: 'GST Invoices',
       cat: 'billing',
       catLabel: 'Invoices & Tax',
       type: 'guide',
@@ -3455,6 +3547,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bil-2',
+      menuId: 'billing',
+      menuTitle: 'Billing & Credits',
+      submenuId: 'wallet',
+      submenuTitle: 'Conversation Wallet',
       cat: 'billing',
       catLabel: 'Wallet & Payments',
       type: 'troubleshoot',
@@ -3473,6 +3569,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bil-3',
+      menuId: 'billing',
+      menuTitle: 'Billing & Credits',
+      submenuId: 'wallet',
+      submenuTitle: 'Conversation Wallet',
       cat: 'billing',
       catLabel: 'Meta Pricing Rules',
       type: 'guide',
@@ -3491,6 +3591,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'faq-bil-4',
+      menuId: 'billing',
+      menuTitle: 'Billing & Credits',
+      submenuId: 'invoices',
+      submenuTitle: 'GST Invoices',
       cat: 'billing',
       catLabel: 'Company Tax Profile',
       type: 'troubleshoot',
@@ -3515,6 +3619,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let resellerPlaybooksData = [
       {
         id: 'rpb-1',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'cname',
+        submenuTitle: 'Custom Domain CNAME',
         cat: 'whitelabel',
         catLabel: '🏢 White-Label & Domain',
         badgeClass: 'badge-purple',
@@ -3533,6 +3641,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'rpb-2',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'pricing',
+        submenuTitle: 'Packaging & Margins',
         cat: 'pricing',
         catLabel: '💰 Pricing & Margins',
         badgeClass: 'badge-green',
@@ -3550,6 +3662,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'rpb-3',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'waba',
+        submenuTitle: 'Client WABA Onboarding',
         cat: 'meta',
         catLabel: '📱 Meta Cloud API',
         badgeClass: 'badge-blue',
@@ -3568,6 +3684,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'rpb-4',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'sales',
+        submenuTitle: 'Objection Handling',
         cat: 'sales',
         catLabel: '🎯 Sales & Closing',
         badgeClass: 'badge-orange',
@@ -3584,6 +3704,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'rpb-5',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'compliance',
+        submenuTitle: 'Number Warmup & Bans',
         cat: 'compliance',
         catLabel: '🛡️ Ban Prevention',
         badgeClass: 'badge-red',
@@ -3601,6 +3725,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 'rpb-6',
+        menuId: 'reseller',
+        menuTitle: 'Reseller Agency',
+        submenuId: 'subtenants',
+        submenuTitle: 'Client Tenancy & Seats',
         cat: 'subaccounts',
         catLabel: '👥 Sub-Accounts',
         badgeClass: 'badge-cyan',
@@ -3922,6 +4050,59 @@ document.addEventListener('DOMContentLoaded', () => {
       }).join('');
     }
 
+    // Submenu mapping dictionary for modal dropdown
+    const KB_CRM_SUBMENUS_CONFIG = {
+      'comm': [
+        { id: 'wa-accounts', label: 'WhatsApp Accounts' },
+        { id: 'inbox', label: 'Live Inbox' },
+        { id: 'quick-replies', label: 'Quick Replies' },
+        { id: 'opt-mgmt', label: 'Opt Management & Media' }
+      ],
+      'campaigns': [
+        { id: 'broadcast', label: 'Broadcast Campaigns' },
+        { id: 'templates', label: 'Message Templates' }
+      ],
+      'crm': [
+        { id: 'all-leads', label: 'All Leads' },
+        { id: 'pipeline', label: 'Deals Pipeline' },
+        { id: 'tags', label: 'Tags & Segments' }
+      ],
+      'automation': [
+        { id: 'chatbot', label: 'Chatbot Builder' },
+        { id: 'auto-assign', label: 'Auto Assign Rules' },
+        { id: 'ai-agents', label: 'AI Agent & Training' }
+      ],
+      'team': [
+        { id: 'roles', label: 'Roles & Permissions' },
+        { id: 'team-members', label: 'Team Members' }
+      ],
+      'dev': [
+        { id: 'webhooks', label: 'Webhooks & API Keys' },
+        { id: 'integrations', label: 'Integrations & Apps' }
+      ],
+      'billing': [
+        { id: 'wallet', label: 'Conversation Wallet' },
+        { id: 'invoices', label: 'GST Invoices' }
+      ],
+      'reseller': [
+        { id: 'cname', label: 'Custom Domain CNAME' },
+        { id: 'pricing', label: 'Packaging & Margins' },
+        { id: 'waba', label: 'Client WABA Onboarding' },
+        { id: 'sales', label: 'Objection Handling' },
+        { id: 'compliance', label: 'Number Warmup & Bans' },
+        { id: 'subtenants', label: 'Client Tenancy & Seats' }
+      ]
+    };
+
+    window.onKbMenuChange = function(menuId) {
+      const subSelect = document.getElementById('kb-crm-submenu');
+      if (!subSelect) return;
+      const subs = KB_CRM_SUBMENUS_CONFIG[menuId] || [
+        { id: 'default', label: 'General Screen' }
+      ];
+      subSelect.innerHTML = subs.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+    };
+
     // Modal Operations
     window.openAddKbArticleModal = function() {
       const modal = document.getElementById('modal-add-kb-article');
@@ -3938,6 +4119,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (modalTitle) modalTitle.textContent = 'Add New Knowledge Base Article';
       if (submitBtn) submitBtn.innerHTML = '💾 Save & Publish Article ➔';
       if (customWrap) customWrap.style.display = 'none';
+
+      // Default menu & submenu
+      const menuSelect = document.getElementById('kb-crm-menu');
+      if (menuSelect) {
+        menuSelect.value = 'comm';
+        window.onKbMenuChange('comm');
+      }
 
       const durInp = document.getElementById('kb-duration');
       if (durInp) durInp.value = '0:45';
@@ -3978,6 +4166,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const elAction = document.getElementById('kb-action-target');
       const modalTitle = document.getElementById('modal-kb-title');
       const submitBtn = document.getElementById('kb-submit-btn');
+      const elMenu = document.getElementById('kb-crm-menu');
+      const elSubmenu = document.getElementById('kb-crm-submenu');
 
       if (elId) elId.value = item.id;
       if (elTitle) elTitle.value = item.title || '';
@@ -3987,6 +4177,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (elTip) elTip.value = item.tip || item.proTip || '';
       if (elDur) elDur.value = item.duration || '0:45';
       if (elAction) elAction.value = item.actionTarget || 'none';
+
+      // Set Mapped Menu & Submenu
+      if (elMenu) {
+        elMenu.value = item.menuId || (item.audience === 'reseller' ? 'reseller' : 'comm');
+        window.onKbMenuChange(elMenu.value);
+        if (elSubmenu && item.submenuId) {
+          elSubmenu.value = item.submenuId;
+        }
+      }
 
       // Set Audience Radio
       const aud = item.audience || audience || 'client';
@@ -4051,6 +4250,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const catVal = document.getElementById('kb-category') ? document.getElementById('kb-category').value : 'whatsapp';
       const customCatName = document.getElementById('kb-custom-category-name') ? document.getElementById('kb-custom-category-name').value.trim() : '';
 
+      const elMenu = document.getElementById('kb-crm-menu');
+      const elSubmenu = document.getElementById('kb-crm-submenu');
+      const menuId = elMenu ? elMenu.value : (audience === 'reseller' ? 'reseller' : 'comm');
+      const menuTitle = elMenu && elMenu.options[elMenu.selectedIndex] ? elMenu.options[elMenu.selectedIndex].text.replace(/^[^\w\s]+\s*/, '') : 'Communication';
+      const submenuId = elSubmenu ? elSubmenu.value : 'inbox';
+      const submenuTitle = elSubmenu && elSubmenu.options[elSubmenu.selectedIndex] ? elSubmenu.options[elSubmenu.selectedIndex].text : 'Live Inbox';
+
       const title = document.getElementById('kb-title') ? document.getElementById('kb-title').value.trim() : '';
       const summary = document.getElementById('kb-summary') ? document.getElementById('kb-summary').value.trim() : '';
       const stepsRaw = document.getElementById('kb-steps') ? document.getElementById('kb-steps').value : '';
@@ -4108,6 +4314,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const updatedArticle = {
           id: id,
           audience: audience,
+          menuId: menuId,
+          menuTitle: menuTitle,
+          submenuId: submenuId,
+          submenuTitle: submenuTitle,
           cat: cat,
           catLabel: catLabel,
           type: type,
@@ -4138,6 +4348,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const newArticle = {
           id: newId,
           audience: audience,
+          menuId: menuId,
+          menuTitle: menuTitle,
+          submenuId: submenuId,
+          submenuTitle: submenuTitle,
           cat: cat,
           catLabel: catLabel,
           type: type,
@@ -4162,6 +4376,8 @@ document.addEventListener('DOMContentLoaded', () => {
       saveCustomKbArticles(customArticles);
       mergeCustomArticles();
       updateHelpDeskCounts();
+      if (window.renderKbNavTree) window.renderKbNavTree();
+      if (window.renderKbActiveContent) window.renderKbActiveContent();
       renderHelpDeskFaqs();
       renderResellerPlaybooks();
       renderResellerKbManageTable();
@@ -4217,41 +4433,446 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initResellerKnowledgeBase();
 
-    // Portal Switcher for Knowledge Base
+    // =========================================================================
+    // MENU-DRIVEN 2-PANE DOCUMENTATION ENGINE (Linear / Stripe Docs Style)
+    // =========================================================================
+    const KB_CRM_MENUS_STRUCTURE = [
+      {
+        id: 'comm',
+        title: 'Communication',
+        icon: '💬',
+        submenus: [
+          { id: 'wa-accounts', title: 'WhatsApp Accounts', hash: 'inbox' },
+          { id: 'inbox', title: 'Live Inbox', hash: 'inbox' },
+          { id: 'quick-replies', title: 'Quick Replies', hash: 'inbox' },
+          { id: 'opt-mgmt', title: 'Opt Management & Media', hash: 'inbox' }
+        ]
+      },
+      {
+        id: 'campaigns',
+        title: 'Campaigns & Marketing',
+        icon: '📢',
+        submenus: [
+          { id: 'broadcast', title: 'Broadcast Campaigns', hash: 'campaigns' },
+          { id: 'templates', title: 'Message Templates', hash: 'campaigns' }
+        ]
+      },
+      {
+        id: 'crm',
+        title: 'CRM & Leads',
+        icon: '🎯',
+        submenus: [
+          { id: 'all-leads', title: 'All Leads', hash: 'all-leads' },
+          { id: 'pipeline', title: 'Deals Pipeline', hash: 'pipeline' },
+          { id: 'tags', title: 'Tags & Segments', hash: 'tags' }
+        ]
+      },
+      {
+        id: 'automation',
+        title: 'Automation & AI',
+        icon: '⚡',
+        submenus: [
+          { id: 'chatbot', title: 'Chatbot Builder', hash: 'chatbot' },
+          { id: 'auto-assign', title: 'Auto Assign Rules', hash: 'auto-assign' },
+          { id: 'ai-agents', title: 'AI Agent & Training', hash: 'ai-agents' }
+        ]
+      },
+      {
+        id: 'team',
+        title: 'Team Management',
+        icon: '👥',
+        submenus: [
+          { id: 'roles', title: 'Roles & Permissions', hash: 'roles' },
+          { id: 'team-members', title: 'Team Members', hash: 'team' }
+        ]
+      },
+      {
+        id: 'dev',
+        title: 'Developer & Integrations',
+        icon: '🔌',
+        submenus: [
+          { id: 'webhooks', title: 'Webhooks & API Keys', hash: 'webhooks' },
+          { id: 'integrations', title: 'Integrations & Apps', hash: 'integrations' }
+        ]
+      },
+      {
+        id: 'billing',
+        title: 'Billing & Credits',
+        icon: '💳',
+        submenus: [
+          { id: 'wallet', title: 'Conversation Wallet', hash: 'billing' },
+          { id: 'invoices', title: 'GST Invoices', hash: 'billing' }
+        ]
+      },
+      {
+        id: 'reseller',
+        title: 'Reseller Agency',
+        icon: '💼',
+        submenus: [
+          { id: 'cname', title: 'Custom Domain CNAME', hash: 'general-settings' },
+          { id: 'pricing', title: 'Packaging & Margins', hash: 'referral' },
+          { id: 'waba', title: 'Client WABA Onboarding', hash: 'inbox' },
+          { id: 'sales', title: 'Objection Handling', hash: 'referral' },
+          { id: 'compliance', title: 'Number Warmup & Bans', hash: 'campaigns' },
+          { id: 'subtenants', title: 'Client Tenancy & Seats', hash: 'team' }
+        ]
+      }
+    ];
+
+    const kbDocsState = {
+      portal: 'client', // 'client' | 'reseller'
+      activeMenuId: 'comm',
+      activeSubmenuId: 'wa-accounts',
+      search: '',
+      openGuideId: null,
+      typeFilter: 'all' // 'all' | 'troubleshoot' | 'guide' | 'playbook'
+    };
+
+    function getAllDocsArticles() {
+      const all = [
+        ...helpdeskFaqsData.map(f => ({ ...f, audience: f.audience || 'client' })),
+        ...resellerPlaybooksData.map(p => ({ ...p, audience: p.audience || 'reseller' }))
+      ];
+      return all;
+    }
+
+    function renderKbNavTree() {
+      const container = document.getElementById('kb-tree-nav-container');
+      if (!container) return;
+
+      const allArticles = getAllDocsArticles();
+      const currentAudience = kbDocsState.portal;
+
+      // Filter articles relevant to the current portal
+      const audienceArticles = allArticles.filter(a => a.audience === currentAudience);
+
+      const totalCountEl = document.getElementById('kb-total-guides-count');
+      if (totalCountEl) {
+        totalCountEl.textContent = audienceArticles.length;
+      }
+
+      // Render menu groups
+      container.innerHTML = KB_CRM_MENUS_STRUCTURE.map(menu => {
+        // If in client portal, we can still show reseller as a section or keep all menus
+        const isOpen = menu.id === kbDocsState.activeMenuId || menu.submenus.some(s => s.id === kbDocsState.activeSubmenuId);
+        
+        // Count guides in this menu
+        const menuArticles = audienceArticles.filter(a => a.menuId === menu.id);
+        const totalMenuCount = menuArticles.length;
+
+        return `
+          <div class="kb-menu-group ${isOpen ? 'open' : ''}" data-kb-menu-id="${menu.id}">
+            <div class="kb-menu-parent" data-toggle-menu="${menu.id}">
+              <div class="kb-menu-parent-left">
+                <span>${menu.icon}</span>
+                <span>${menu.title}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                ${totalMenuCount > 0 ? `<span class="kb-sub-badge">${totalMenuCount}</span>` : ''}
+                <svg class="kb-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+            <div class="kb-submenu-list">
+              ${menu.submenus.map(sub => {
+                const isActive = sub.id === kbDocsState.activeSubmenuId && menu.id === kbDocsState.activeMenuId;
+                const subArticles = audienceArticles.filter(a => a.menuId === menu.id && a.submenuId === sub.id);
+                const subCount = subArticles.length;
+
+                return `
+                  <a href="javascript:void(0)" class="kb-sub-item ${isActive ? 'active' : ''}" data-sub-menu="${menu.id}" data-sub-id="${sub.id}">
+                    <span>${sub.title}</span>
+                    <span class="kb-sub-badge">${subCount}</span>
+                  </a>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Attach clicks
+      container.querySelectorAll('[data-toggle-menu]').forEach(parentEl => {
+        parentEl.addEventListener('click', () => {
+          const mId = parentEl.getAttribute('data-toggle-menu');
+          const group = container.querySelector(`.kb-menu-group[data-kb-menu-id="${mId}"]`);
+          if (group) {
+            group.classList.toggle('open');
+          }
+        });
+      });
+
+      container.querySelectorAll('[data-sub-id]').forEach(subEl => {
+        subEl.addEventListener('click', () => {
+          const mId = subEl.getAttribute('data-sub-menu');
+          const sId = subEl.getAttribute('data-sub-id');
+          kbDocsState.activeMenuId = mId;
+          kbDocsState.activeSubmenuId = sId;
+          kbDocsState.search = '';
+          const searchInp = document.getElementById('kb-universal-search');
+          if (searchInp) searchInp.value = '';
+          const clearBtn = document.getElementById('kb-universal-search-clear');
+          if (clearBtn) clearBtn.style.display = 'none';
+
+          renderKbNavTree();
+          renderKbActiveContent();
+        });
+      });
+    }
+
+    function renderKbActiveContent() {
+      const container = document.getElementById('kb-active-content-container');
+      if (!container) return;
+
+      const allArticles = getAllDocsArticles();
+      const currentAudience = kbDocsState.portal;
+      const audienceArticles = allArticles.filter(a => a.audience === currentAudience);
+
+      // Search Mode vs Menu-Selected Mode
+      if (kbDocsState.search.trim()) {
+        const q = kbDocsState.search.toLowerCase().trim();
+        const searchMatches = allArticles.filter(item => {
+          return (item.title && item.title.toLowerCase().includes(q)) ||
+                 (item.summary && item.summary.toLowerCase().includes(q)) ||
+                 (item.catLabel && item.catLabel.toLowerCase().includes(q)) ||
+                 (item.menuTitle && item.menuTitle.toLowerCase().includes(q)) ||
+                 (item.submenuTitle && item.submenuTitle.toLowerCase().includes(q)) ||
+                 (item.keywords && item.keywords.toLowerCase().includes(q)) ||
+                 (item.steps && item.steps.some(st => st.toLowerCase().includes(q)));
+        });
+
+        if (searchMatches.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 50px 20px;">
+              <div style="font-size: 36px; margin-bottom: 12px;">🔍</div>
+              <h3 style="font-size: 17px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">No guides or fixes found for "${kbDocsState.search}"</h3>
+              <p style="font-size: 13px; color: #64748b; margin-bottom: 18px;">Try searching broader keywords like "QR", "Broadcast", "Template", or "Webhook".</p>
+              <button type="button" class="btn-secondary" id="btn-clear-universal-search" style="font-size: 12.5px;">
+                Clear Search & View Menu
+              </button>
+            </div>
+          `;
+          const btnClear = document.getElementById('btn-clear-universal-search');
+          if (btnClear) {
+            btnClear.addEventListener('click', () => {
+              kbDocsState.search = '';
+              const searchInp = document.getElementById('kb-universal-search');
+              if (searchInp) searchInp.value = '';
+              const clearBtn = document.getElementById('kb-universal-search-clear');
+              if (clearBtn) clearBtn.style.display = 'none';
+              renderKbActiveContent();
+            });
+          }
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="kb-content-head">
+            <div>
+              <div class="kb-breadcrumb">
+                <span>🔍 Search Results</span>
+                <span>•</span>
+                <span>${searchMatches.length} matching guides across all menus</span>
+              </div>
+              <h2 class="kb-content-title">Search for "${kbDocsState.search}"</h2>
+              <p class="kb-content-desc">Click any guide below to open its step-by-step resolution or jump directly to its CRM screen.</p>
+            </div>
+          </div>
+
+          <div class="kb-guides-list" id="kb-guides-list">
+            ${searchMatches.map(guide => renderSingleKbGuideCard(guide)).join('')}
+          </div>
+        `;
+
+        attachKbGuideCardEvents(container);
+        return;
+      }
+
+      // Normal Menu Mode: Find Active Menu & Submenu metadata
+      const currentMenu = KB_CRM_MENUS_STRUCTURE.find(m => m.id === kbDocsState.activeMenuId) || KB_CRM_MENUS_STRUCTURE[0];
+      const currentSubmenu = currentMenu.submenus.find(s => s.id === kbDocsState.activeSubmenuId) || currentMenu.submenus[0];
+
+      // Guides for this specific submenu
+      let subGuides = audienceArticles.filter(a => a.menuId === currentMenu.id && a.submenuId === currentSubmenu.id);
+
+      // If no subGuides mapped directly, fallback to menu guides
+      if (subGuides.length === 0) {
+        subGuides = audienceArticles.filter(a => a.menuId === currentMenu.id);
+      }
+
+      // Filter by type if set
+      if (kbDocsState.typeFilter !== 'all') {
+        subGuides = subGuides.filter(g => g.type === kbDocsState.typeFilter);
+      }
+
+      container.innerHTML = `
+        <div class="kb-content-head">
+          <div>
+            <div class="kb-breadcrumb">
+              <span>${currentMenu.icon} ${currentMenu.title}</span>
+              <span>›</span>
+              <span>${currentSubmenu.title}</span>
+            </div>
+            <h2 class="kb-content-title">
+              <span>${currentSubmenu.title}</span>
+              <span style="font-size: 13px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 999px;">
+                ${subGuides.length} Guides & Fixes
+              </span>
+            </h2>
+            <p class="kb-content-desc">
+              Step-by-step resolution guides, screen walkthroughs, and error diagnostics for the <strong>${currentSubmenu.title}</strong> module.
+            </p>
+          </div>
+
+          <div>
+            <button type="button" class="kb-jump-btn" onclick="window.location.hash='#${currentSubmenu.hash || 'dashboard'}'" title="Jump to this CRM screen">
+              <span>Open ${currentSubmenu.title} Screen ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Pills Bar (All / Quick Fixes / Guides) -->
+        <div class="kb-content-filter-bar">
+          <div class="kb-content-pills" id="kb-screen-filter-pills">
+            <button type="button" class="kb-content-pill ${kbDocsState.typeFilter === 'all' ? 'active' : ''}" data-type="all">All Content (${subGuides.length})</button>
+            <button type="button" class="kb-content-pill ${kbDocsState.typeFilter === 'troubleshoot' ? 'active' : ''}" data-type="troubleshoot">⚡ Quick Fixes</button>
+            <button type="button" class="kb-content-pill ${kbDocsState.typeFilter === 'guide' ? 'active' : ''}" data-type="guide">📖 Step Guides</button>
+            ${kbDocsState.portal === 'reseller' ? `<button type="button" class="kb-content-pill ${kbDocsState.typeFilter === 'playbook' ? 'active' : ''}" data-type="playbook">💼 SOPs</button>` : ''}
+          </div>
+
+          <div style="font-size: 12px; color: #64748b;">
+            Mapped to: <code>#${currentSubmenu.hash}</code>
+          </div>
+        </div>
+
+        <div class="kb-guides-list" id="kb-guides-list">
+          ${subGuides.length === 0 ? `
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 36px 20px; text-align: center;">
+              <div style="font-size: 28px; margin-bottom: 8px;">📝</div>
+              <h4 style="font-size: 14.5px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">No guides published yet for this screen</h4>
+              <p style="font-size: 12.5px; color: #64748b; margin-bottom: 14px;">Super admin can add resolution walkthroughs for ${currentSubmenu.title} in 1 click.</p>
+              <button type="button" class="btn-primary" onclick="window.openAddKbArticleModal && window.openAddKbArticleModal()" style="font-size: 12px;">
+                + Add Guide for ${currentSubmenu.title}
+              </button>
+            </div>
+          ` : subGuides.map(guide => renderSingleKbGuideCard(guide)).join('')}
+        </div>
+      `;
+
+      // Filter pills events
+      container.querySelectorAll('#kb-screen-filter-pills .kb-content-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          kbDocsState.typeFilter = pill.getAttribute('data-type') || 'all';
+          renderKbActiveContent();
+        });
+      });
+
+      attachKbGuideCardEvents(container);
+    }
+
+    function renderSingleKbGuideCard(guide) {
+      const isOpen = guide.id === kbDocsState.openGuideId;
+      const typeBadgeText = guide.type === 'troubleshoot' ? '⚡ Quick Fix' : (guide.type === 'playbook' ? '💼 Playbook' : '📖 Step Guide');
+      const typeBadgeClass = guide.type === 'troubleshoot' ? 'troubleshoot' : (guide.type === 'playbook' ? 'playbook' : 'guide');
+
+      const quickSummary = guide.summary || (guide.steps && guide.steps[0] ? guide.steps[0].replace(/<[^>]*>?/gm, '') : 'Follow resolution steps below.');
+      const customBadge = guide.isCustom ? `<span class="faq-custom-badge">✨ Partner Authored</span>` : '';
+
+      return `
+        <div class="kb-guide-card ${isOpen ? 'is-open' : ''}" data-guide-id="${guide.id}">
+          <div class="kb-guide-header" data-toggle-guide="${guide.id}">
+            <div class="kb-guide-header-left">
+              <span class="faq-type-badge ${typeBadgeClass}">${typeBadgeText}</span>
+              ${guide.catLabel ? `<span class="faq-category-badge ${guide.badgeClass || 'whatsapp'}">${guide.catLabel}</span>` : ''}
+              <h3 class="faq-title" style="margin: 0;">${guide.title} ${customBadge}</h3>
+            </div>
+            <div class="kb-guide-header-right">
+              <span class="faq-read-time">⏱️ ${guide.duration || '0:45'}</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="${isOpen ? 'transform:rotate(180deg);' : ''}"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+
+          <div class="kb-guide-body" style="${isOpen ? 'display:block;' : 'display:none;'}">
+            <!-- 3-Second Quick Answer Card -->
+            <div class="faq-quick-answer-card" style="margin-top: 14px;">
+              <span class="faq-quick-answer-badge">⚡ Quick Fix</span>
+              <span class="faq-quick-answer-text">${quickSummary}</span>
+            </div>
+
+            <!-- Resolution Steps -->
+            <div class="faq-steps-card">
+              <div class="faq-steps-card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Step-by-Step Resolution Guide
+              </div>
+              ${guide.steps.map((st, i) => `
+                <div class="faq-step-item">
+                  <div class="faq-step-num">${i + 1}</div>
+                  <div style="font-size:12.5px; line-height:1.5;">${st}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            ${(guide.tip || guide.proTip) ? `
+              <div class="faq-pro-tip-box" style="margin-top: 12px;">
+                💡 <strong>Pro Tip:</strong> ${guide.tip || guide.proTip}
+              </div>
+            ` : ''}
+
+            <!-- Bottom Action & Feedback Bar -->
+            <div class="faq-footer-bar" style="margin-top: 14px;">
+              <div class="faq-feedback-group">
+                <span>Did this resolve your issue?</span>
+                <button type="button" class="faq-feedback-btn" onclick="showToast('👍 Thank you! Glad this fix resolved it.')">👍 Yes, Solved</button>
+                <button type="button" class="faq-feedback-btn" onclick="window.openSupportWhatsApp && window.openSupportWhatsApp()">💬 Contact Line</button>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                ${guide.actionTarget && guide.actionTarget !== 'none' ? `
+                  <button type="button" class="btn-primary" onclick="window.location.hash='#${guide.actionTarget}'" style="font-size: 12px; padding: 6px 14px;">
+                    ${guide.actionLabel || 'Open Screen ➔'}
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachKbGuideCardEvents(container) {
+      container.querySelectorAll('[data-toggle-guide]').forEach(header => {
+        header.addEventListener('click', () => {
+          const id = header.getAttribute('data-toggle-guide');
+          kbDocsState.openGuideId = kbDocsState.openGuideId === id ? null : id;
+          renderKbActiveContent();
+        });
+      });
+    }
+
     window.switchKbPortal = function(portal) {
       const btnKbClient = document.getElementById('btn-kb-client');
       const btnKbReseller = document.getElementById('btn-kb-reseller');
-      const kbClientView = document.getElementById('kb-client-view');
-      const kbResellerView = document.getElementById('kb-reseller-view');
-      const kbBadgeEl = document.getElementById('kb-portal-status-pill');
+
+      kbDocsState.portal = portal;
 
       if (portal === 'reseller') {
         if (btnKbReseller) btnKbReseller.classList.add('active');
         if (btnKbClient) btnKbClient.classList.remove('active');
-        if (kbResellerView) kbResellerView.style.display = 'block';
-        if (kbClientView) kbClientView.style.display = 'none';
-        if (kbBadgeEl) {
-          kbBadgeEl.textContent = '💼 Reseller & Partner Playbooks Active';
-          kbBadgeEl.style.color = '#7c3aed';
-          kbBadgeEl.style.background = '#f5f3ff';
-          kbBadgeEl.style.borderColor = '#ddd6fe';
-        }
-        renderResellerPlaybooks();
-        renderResellerKbManageTable();
+        kbDocsState.activeMenuId = 'reseller';
+        kbDocsState.activeSubmenuId = 'cname';
       } else {
         if (btnKbClient) btnKbClient.classList.add('active');
         if (btnKbReseller) btnKbReseller.classList.remove('active');
-        if (kbClientView) kbClientView.style.display = 'block';
-        if (kbResellerView) kbResellerView.style.display = 'none';
-        if (kbBadgeEl) {
-          kbBadgeEl.textContent = '👤 Client Self-Service Guides';
-          kbBadgeEl.style.color = '#2563eb';
-          kbBadgeEl.style.background = '#eff6ff';
-          kbBadgeEl.style.borderColor = '#bfdbfe';
-        }
-        renderHelpDeskFaqs();
+        kbDocsState.activeMenuId = 'comm';
+        kbDocsState.activeSubmenuId = 'wa-accounts';
       }
+
+      renderKbNavTree();
+      renderKbActiveContent();
     };
+
+    window.renderKbNavTree = renderKbNavTree;
+    window.renderKbActiveContent = renderKbActiveContent;
 
 
 
@@ -4647,6 +5268,29 @@ document.addEventListener('DOMContentLoaded', () => {
       updateHelpDeskCounts();
       renderHelpDeskFaqs();
       renderResellerKbManageTable();
+
+      // Initialize Menu-Driven 2-Pane Docs
+      renderKbNavTree();
+      renderKbActiveContent();
+
+      // Universal Top Search Input Listener
+      const kbUniSearch = document.getElementById('kb-universal-search');
+      const kbUniClear = document.getElementById('kb-universal-search-clear');
+      if (kbUniSearch) {
+        kbUniSearch.addEventListener('input', () => {
+          kbDocsState.search = kbUniSearch.value.trim();
+          if (kbUniClear) kbUniClear.style.display = kbDocsState.search ? 'block' : 'none';
+          renderKbActiveContent();
+        });
+      }
+      if (kbUniClear && kbUniSearch) {
+        kbUniClear.addEventListener('click', () => {
+          kbUniSearch.value = '';
+          kbDocsState.search = '';
+          kbUniClear.style.display = 'none';
+          renderKbActiveContent();
+        });
+      }
 
       // Reseller KB Directory Search & Filter Listeners
       const rkbSearchInp = document.getElementById('rkb-manage-search');
