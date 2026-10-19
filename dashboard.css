@@ -8067,6 +8067,349 @@ html, body {
   margin-top: auto;
 }
 
+/* ==========================================================================
+   QUOTATIONS & ESTIMATES GENERATOR WITH WHATSAPP DISPATCH
+   ========================================================================== */
+.quotation-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.quotation-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.quotation-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.quotation-kpi-info h4 {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quotation-kpi-info .kpi-val {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.quotation-kpi-info .kpi-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.quotation-kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.quotation-kpi-icon.blue { background: #eff6ff; color: #2563eb; }
+.quotation-kpi-icon.green { background: #f0fdf4; color: #16a34a; }
+.quotation-kpi-icon.purple { background: #faf5ff; color: #9333ea; }
+.quotation-kpi-icon.amber { background: #fffbeb; color: #d97706; }
+
+/* Quotations Table */
+.quotations-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.quotation-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.quotation-table th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.quotation-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.quotation-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* Status Chips for Quotation */
+.quote-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.quote-status-badge.sent-whatsapp {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.quote-status-badge.accepted {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+.quote-status-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.quote-status-badge.draft {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+/* Quotation Builder Modal Styling */
+.modal-quotation-card {
+  max-width: 960px !important;
+  width: 95% !important;
+  max-height: 92vh !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.quote-builder-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.quote-builder-section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quote-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.quote-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .quote-grid-3, .quote-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.quote-input-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+.quote-input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.quote-input-field:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Items Builder Table */
+.quote-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.quote-items-table th {
+  background: #f1f5f9;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+  text-align: left;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.quote-items-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.quote-item-row:hover td {
+  background: #fafafa;
+}
+
+.btn-remove-item {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-remove-item:hover {
+  background: #fecaca;
+}
+
+/* Summary Box */
+.quote-summary-panel {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.quote-summary-table {
+  width: 340px;
+  border-collapse: collapse;
+}
+
+.quote-summary-table td {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.quote-summary-table .summary-total td {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  border-top: 2px solid #cbd5e1;
+  border-bottom: 2px solid #cbd5e1;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+/* WhatsApp Message Preview Bubble */
+.wa-chat-mockup-wrapper {
+  background: #efeae2;
+  background-image: radial-gradient(#d5cbbf 10%, transparent 11%);
+  background-size: 16px 16px;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.wa-chat-bubble-preview {
+  background: #ffffff;
+  border-radius: 8px 8px 8px 0;
+  padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  max-width: 96%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #111b21;
+  white-space: pre-wrap;
+  position: relative;
+  border-left: 4px solid #25d366;
+}
+
+/* Printable Quotation Paper */
+.quotation-print-paper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 36px 40px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #quotation-printable-area, #quotation-printable-area * {
+    visibility: visible !important;
+  }
+  #quotation-printable-area {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    z-index: 9999999 !important;
+  }
+  .modal-overlay {
+    background: transparent !important;
+    position: static !important;
+  }
+  .modal-header, .modal-footer, .no-print {
+    display: none !important;
+  }
+}
+
 
 
 

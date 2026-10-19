@@ -6,7 +6,7 @@
   <title>Sales Dashboard — Simple Floww Business Portal</title>
   <meta name="description" content="Simple Floww Business Portal - Real-Time Sales Overview, Pipeline Velocity, Follow-ups, and Team Analytics." />
   
-  <link rel="stylesheet" href="dashboard.css?v=4.4" />
+  <link rel="stylesheet" href="dashboard.css?v=4.5" />
 </head>
 <body>
 
@@ -85,6 +85,10 @@
             </a>
             <a href="#pipeline" class="nav-subitem" data-view="pipeline" data-breadcrumb="CRM & Leads > Pipeline (Kanban Deals)">
               <span>Pipeline</span>
+            </a>
+            <a href="#quotations" class="nav-subitem" data-view="quotations" data-breadcrumb="Sales & Deals > Quotations & Estimates">
+              <span>Quotations (कोटेशन)</span>
+              <span class="nav-badge green" style="background: #dcfce7; color: #15803d;">WhatsApp</span>
             </a>
             <a href="#tags" class="nav-subitem" data-view="leads" data-breadcrumb="CRM & Leads > Tags">
               <span>Tags</span>
@@ -561,6 +565,10 @@
                   </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn-secondary" style="font-size: 11.5px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; color: #15803d; border-color: #86efac; background: #f0fdf4; font-weight: 600;" onclick="window.createQuotationForCurrentChat && window.createQuotationForCurrentChat()" title="Create & Send Quotation to this Contact">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span>Send Quote</span>
+                  </button>
                   <button class="inbox-action-icon-btn" title="Create Helpdesk Ticket" id="chat-create-ticket-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
                   </button>
@@ -950,8 +958,9 @@
                   <td><span class="status-chip open">Demo Scheduled</span></td>
                   <td><span class="status-chip resolved">Connected</span></td>
                   <td>Rahul Sharma</td>
-                  <td>
-                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Adnan Qureshi...')">💬 WhatsApp</button>
+                  <td style="white-space: nowrap;">
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="window.sendWhatsAppToLead && window.sendWhatsAppToLead('+91 98765 43210', 'Adnan Qureshi')">💬 WhatsApp</button>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.createQuotationForLead && window.createQuotationForLead('Adnan Qureshi', '+91 98765 43210', 'Adnan Enterprises')">📑 Quote</button>
                   </td>
                 </tr>
                 <tr>
@@ -964,8 +973,9 @@
                   <td><span class="status-chip in-progress">Proposal Sent</span></td>
                   <td><span class="status-chip in-progress">Busy / Call Back</span></td>
                   <td>Aman Gupta</td>
-                  <td>
-                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Backend Team...')">💬 WhatsApp</button>
+                  <td style="white-space: nowrap;">
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="window.sendWhatsAppToLead && window.sendWhatsAppToLead('+91 79832 98464', 'Backend Support Team')">💬 WhatsApp</button>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.createQuotationForLead && window.createQuotationForLead('Backend Support Team', '+91 79832 98464', 'Apex Logistics Hub')">📑 Quote</button>
                   </td>
                 </tr>
                 <tr>
@@ -978,8 +988,9 @@
                   <td><span class="status-chip resolved">Closed Won 🎉</span></td>
                   <td><span class="status-chip resolved">Connected</span></td>
                   <td>Abhinandan K.</td>
-                  <td>
-                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with faiz...')">💬 WhatsApp</button>
+                  <td style="white-space: nowrap;">
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="window.sendWhatsAppToLead && window.sendWhatsAppToLead('+91 98111 22334', 'faiz57185')">💬 WhatsApp</button>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.createQuotationForLead && window.createQuotationForLead('faiz57185', '+91 98111 22334', 'NextGen Digital Agency')">📑 Quote</button>
                   </td>
                 </tr>
                 <tr>
@@ -992,8 +1003,9 @@
                   <td><span class="status-chip open">Qualified</span></td>
                   <td><span class="status-chip open">Ringing / No Answer</span></td>
                   <td>Priya Patel</td>
-                  <td>
-                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Divya...')">💬 WhatsApp</button>
+                  <td style="white-space: nowrap;">
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="window.sendWhatsAppToLead && window.sendWhatsAppToLead('+91 99887 76655', 'Divya Agrawal')">💬 WhatsApp</button>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.createQuotationForLead && window.createQuotationForLead('Divya Agrawal', '+91 99887 76655', 'Aura Aesthetics Wellness')">📑 Quote</button>
                   </td>
                 </tr>
                 <tr>
@@ -1006,8 +1018,9 @@
                   <td><span class="status-chip in-progress">Negotiation</span></td>
                   <td><span class="status-chip resolved">Connected</span></td>
                   <td>Rahul Sharma</td>
-                  <td>
-                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="alert('Opening WhatsApp chat with Satyam...')">💬 WhatsApp</button>
+                  <td style="white-space: nowrap;">
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="window.sendWhatsAppToLead && window.sendWhatsAppToLead('+91 91234 56789', 'Satyam Singh')">💬 WhatsApp</button>
+                    <button class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.createQuotationForLead && window.createQuotationForLead('Satyam Singh', '+91 91234 56789', 'Varanasi Silk Emporium')">📑 Quote</button>
                   </td>
                 </tr>
               </tbody>
@@ -1127,6 +1140,112 @@
               </div>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VIEW: QUOTATIONS & ESTIMATES GENERATOR WITH WHATSAPP DISPATCH
+           ==================================================================== -->
+      <div class="view-panel" id="view-quotations">
+        <div class="module-page">
+          <div class="module-header-row">
+            <div class="module-title-box">
+              <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Quotations & Estimates (कोटेशन जनरेटर)
+              </h2>
+              <p>Create GST-compliant professional estimates & quotations in seconds and dispatch them directly to clients on WhatsApp with 1 click.</p>
+            </div>
+            <div class="module-actions-row">
+              <button class="btn-secondary" id="btn-export-quotes" onclick="window.exportQuotationsCSV && window.exportQuotationsCSV()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export CSV
+              </button>
+              <button class="btn-primary" id="btn-open-quote-builder" onclick="window.openQuotationBuilder && window.openQuotationBuilder()" style="background: #16a34a; border-color: #15803d;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                + Create New Quotation
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Summary Cards -->
+          <div class="quotation-kpi-grid">
+            <div class="quotation-kpi-card">
+              <div class="quotation-kpi-info">
+                <h4>Total Quotations</h4>
+                <div class="kpi-val" id="kpi-quote-total-count">5</div>
+                <div class="kpi-sub" id="kpi-quote-total-val">₹2,84,380 Quoted Value</div>
+              </div>
+              <div class="quotation-kpi-icon blue">📑</div>
+            </div>
+
+            <div class="quotation-kpi-card">
+              <div class="quotation-kpi-info">
+                <h4>Sent on WhatsApp</h4>
+                <div class="kpi-val" id="kpi-quote-wa-count" style="color: #16a34a;">2</div>
+                <div class="kpi-sub">Direct WhatsApp Dispatch</div>
+              </div>
+              <div class="quotation-kpi-icon green">💬</div>
+            </div>
+
+            <div class="quotation-kpi-card">
+              <div class="quotation-kpi-info">
+                <h4>Accepted / Won</h4>
+                <div class="kpi-val" id="kpi-quote-won-count" style="color: #2563eb;">1</div>
+                <div class="kpi-sub" id="kpi-quote-won-val">₹94,400 Closed Deal</div>
+              </div>
+              <div class="quotation-kpi-icon purple">🎉</div>
+            </div>
+
+            <div class="quotation-kpi-card">
+              <div class="quotation-kpi-info">
+                <h4>Pending Review</h4>
+                <div class="kpi-val" id="kpi-quote-pending-count" style="color: #d97706;">1</div>
+                <div class="kpi-sub" id="kpi-quote-pending-val">₹56,640 Active Proposal</div>
+              </div>
+              <div class="quotation-kpi-icon amber">⏳</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="module-card" style="margin-bottom: 20px; padding: 14px 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+              <div class="inbox-search-input-wrap" style="max-width: 400px; flex: 1;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="quote-search-input" class="inbox-search-input" placeholder="Search Quote #, Client, Company or Phone..." oninput="window.filterQuotations && window.filterQuotations()" />
+              </div>
+              <div class="inbox-filter-tabs" style="border: none; padding: 0;" id="quote-filter-tabs">
+                <button class="inbox-filter-tab active" data-quote-tab="all" onclick="window.setQuotationTab && window.setQuotationTab('all', this)">All Quotes</button>
+                <button class="inbox-filter-tab" data-quote-tab="sent-whatsapp" onclick="window.setQuotationTab && window.setQuotationTab('sent-whatsapp', this)">💬 Sent on WhatsApp</button>
+                <button class="inbox-filter-tab" data-quote-tab="accepted" onclick="window.setQuotationTab && window.setQuotationTab('accepted', this)">✅ Accepted</button>
+                <button class="inbox-filter-tab" data-quote-tab="pending" onclick="window.setQuotationTab && window.setQuotationTab('pending', this)">⏳ Pending</button>
+                <button class="inbox-filter-tab" data-quote-tab="draft" onclick="window.setQuotationTab && window.setQuotationTab('draft', this)">📝 Drafts</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quotations List Table -->
+          <div class="module-card" style="padding: 0; overflow: hidden;">
+            <div class="quotations-table-wrap">
+              <table class="quotation-table" id="quotations-main-table">
+                <thead>
+                  <tr>
+                    <th>Quote # & Date</th>
+                    <th>Client & Business</th>
+                    <th>WhatsApp Phone</th>
+                    <th>Items Quoted</th>
+                    <th>Grand Total (₹)</th>
+                    <th>Valid Till</th>
+                    <th>Status</th>
+                    <th style="text-align: right; padding-right: 20px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="quotations-table-body">
+                  <!-- Dynamically populated via dashboard.js -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -4370,6 +4489,302 @@ Use my partner link to get an exclusive 10% Discount on signup:
     </div>
   </div>
 
+  <!-- ====================================================================
+       1. MODAL: QUOTATION & ESTIMATE BUILDER
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-quotation-builder" style="display: none; z-index: 999999;">
+    <div class="modal-card modal-quotation-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #bbf7d0;">
+            📑
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;" id="quote-modal-heading">Create Quotation & Estimate</h3>
+            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Fill in client & item details, calculate GST, and dispatch via WhatsApp</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeQuotationBuilder && window.closeQuotationBuilder()">&times;</button>
+      </div>
+
+      <div style="padding: 16px 22px; overflow-y: auto; flex: 1;">
+        <input type="hidden" id="quote-editing-id" value="" />
+
+        <!-- Top Details: Quotation ID, Dates -->
+        <div class="quote-builder-section">
+          <div class="quote-grid-3">
+            <div>
+              <label class="quote-input-label">Quotation Number *</label>
+              <input type="text" id="quote-number-input" class="quote-input-field" placeholder="SF-QT-2026-101" required />
+            </div>
+            <div>
+              <label class="quote-input-label">Issue Date *</label>
+              <input type="date" id="quote-date-input" class="quote-input-field" required />
+            </div>
+            <div>
+              <label class="quote-input-label">Valid Till *</label>
+              <input type="date" id="quote-validity-input" class="quote-input-field" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Client & Business Details -->
+        <div class="quote-builder-section">
+          <div class="quote-builder-section-title">
+            <span>👤 Client & Business Information</span>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: #64748b; font-weight: normal;">Auto-fill from CRM:</span>
+              <select id="quote-lead-autofill" class="quote-input-field" style="width: auto; padding: 4px 8px; font-size: 12px;" onchange="window.handleQuoteAutofillLead && window.handleQuoteAutofillLead(this.value)">
+                <option value="">-- Select Existing CRM Lead --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="quote-grid-3" style="margin-bottom: 12px;">
+            <div>
+              <label class="quote-input-label">Client / Contact Person *</label>
+              <input type="text" id="quote-client-name" class="quote-input-field" placeholder="e.g. Adnan Qureshi" required />
+            </div>
+            <div>
+              <label class="quote-input-label">Company / Firm Name</label>
+              <input type="text" id="quote-company-name" class="quote-input-field" placeholder="e.g. Adnan Enterprises" />
+            </div>
+            <div>
+              <label class="quote-input-label">WhatsApp Number * (With +91)</label>
+              <input type="text" id="quote-client-phone" class="quote-input-field" placeholder="+91 98765 43210" required />
+            </div>
+          </div>
+
+          <div class="quote-grid-3">
+            <div>
+              <label class="quote-input-label">Email Address</label>
+              <input type="email" id="quote-client-email" class="quote-input-field" placeholder="client@company.com" />
+            </div>
+            <div>
+              <label class="quote-input-label">GSTIN / Tax ID (Optional)</label>
+              <input type="text" id="quote-client-gstin" class="quote-input-field" placeholder="07AAAAA0000A1Z5" />
+            </div>
+            <div>
+              <label class="quote-input-label">Billing Address / City</label>
+              <input type="text" id="quote-client-address" class="quote-input-field" placeholder="e.g. Connaught Place, New Delhi" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Items Section -->
+        <div class="quote-builder-section">
+          <div class="quote-builder-section-title" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📦 Products & Services Items</span>
+              <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px; font-weight: 600;" id="quote-items-count-badge">1 Item</span>
+            </div>
+            <!-- Quick Preset Dropdown -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11.5px; color: #64748b; font-weight: normal;">+ Quick Preset Item:</span>
+              <select id="quote-preset-selector" class="quote-input-field" style="width: auto; padding: 4px 8px; font-size: 12px;" onchange="window.addPresetItemToQuote && window.addPresetItemToQuote(this.value)">
+                <option value="">-- Choose Common Service --</option>
+                <option value="whatsapp_api">WhatsApp Cloud API Setup & Green Tick (₹12,000)</option>
+                <option value="crm_pro">SimpleFloww CRM Pro Annual (5 Seats) (₹36,000)</option>
+                <option value="ai_agent">Custom AI Agent & Chatbot Workflow Training (₹25,000)</option>
+                <option value="meta_indiamart">Meta & IndiaMART Lead Automation Sync (₹10,000)</option>
+                <option value="wa_broadcast">WhatsApp Broadcast Pack (50k msgs) (₹15,000)</option>
+                <option value="reseller_whitelabel">Reseller White-label CRM Setup (₹55,000)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="quote-items-table" id="quote-items-table">
+              <thead>
+                <tr>
+                  <th style="width: 38%;">Item / Service Description *</th>
+                  <th style="width: 10%;">Qty</th>
+                  <th style="width: 12%;">Unit</th>
+                  <th style="width: 14%;">Rate (₹)</th>
+                  <th style="width: 10%;">GST %</th>
+                  <th style="width: 12%; text-align: right;">Total (₹)</th>
+                  <th style="width: 4%; text-align: center;"></th>
+                </tr>
+              </thead>
+              <tbody id="quote-items-tbody">
+                <!-- Dynamically rendered row items -->
+              </tbody>
+            </table>
+          </div>
+
+          <button type="button" class="btn-secondary" style="font-size: 12px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; color: #2563eb; border-color: #bfdbfe;" onclick="window.addQuoteItemRow && window.addQuoteItemRow()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            + Add Another Item
+          </button>
+        </div>
+
+        <!-- Calculations & Terms Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 360px; gap: 16px;">
+          <!-- Notes & Payment Terms -->
+          <div class="quote-builder-section" style="margin-bottom: 0;">
+            <div class="quote-builder-section-title">
+              <span>💳 Payment Terms & Bank Details</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <label class="quote-input-label">Payment Terms / Notes</label>
+              <textarea id="quote-notes-input" class="quote-input-field" rows="2" placeholder="e.g. 50% advance with purchase order, 50% upon deployment. Delivery within 3 business days."></textarea>
+            </div>
+            <div>
+              <label class="quote-input-label">Bank Account & UPI ID</label>
+              <input type="text" id="quote-bank-input" class="quote-input-field" value="HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank" />
+            </div>
+          </div>
+
+          <!-- Financial Summary -->
+          <div class="quote-builder-section" style="margin-bottom: 0; background: #ffffff;">
+            <div class="quote-builder-section-title">
+              <span>💰 Quotation Summary</span>
+            </div>
+            <table class="quote-summary-table" style="width: 100%;">
+              <tr>
+                <td style="color: #64748b;">Subtotal (Taxable):</td>
+                <td style="text-align: right; font-weight: 600;" id="quote-calc-subtotal">₹0</td>
+              </tr>
+              <tr>
+                <td style="color: #64748b; vertical-align: middle;">
+                  Discount (₹):
+                </td>
+                <td style="text-align: right;">
+                  <input type="number" id="quote-discount-input" class="quote-input-field" style="width: 110px; padding: 4px 8px; font-size: 12px; text-align: right;" value="0" min="0" oninput="window.recalcQuoteTotals && window.recalcQuoteTotals()" placeholder="0" />
+                </td>
+              </tr>
+              <tr>
+                <td style="color: #64748b;" id="quote-calc-gst-label">Total GST Tax:</td>
+                <td style="text-align: right; font-weight: 600;" id="quote-calc-gst">₹0</td>
+              </tr>
+              <tr class="summary-total">
+                <td>Grand Total (₹):</td>
+                <td style="text-align: right; color: #16a34a;" id="quote-calc-grandtotal">₹0</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eaecf0; padding: 14px 22px;">
+        <button type="button" class="btn-secondary" onclick="window.closeQuotationBuilder && window.closeQuotationBuilder()">Cancel</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn-secondary" onclick="window.saveQuotationFromBuilder('draft')">
+            💾 Save as Draft
+          </button>
+          <button type="button" class="btn-secondary" style="color: #2563eb; border-color: #bfdbfe;" onclick="window.previewQuotationFromBuilder && window.previewQuotationFromBuilder()">
+            👁️ Preview / Print PDF
+          </button>
+          <button type="button" class="btn-primary" style="background: #16a34a; border-color: #15803d; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="window.saveAndDispatchWhatsApp && window.saveAndDispatchWhatsApp()">
+            <span>🚀 Save & Send on WhatsApp</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       2. MODAL: WHATSAPP QUOTATION DISPATCHER & MESSAGE COMPOSER
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-quotation-whatsapp" style="display: none; z-index: 9999999;">
+    <div class="modal-card" style="max-width: 640px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #25d366; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+            💬
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #0f172a;">Send Quotation via WhatsApp</h3>
+            <span style="font-size: 12px; color: #64748b; font-weight: 500;">Review formatted message and dispatch directly to client's phone</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeWhatsAppQuoteModal && window.closeWhatsAppQuoteModal()">&times;</button>
+      </div>
+
+      <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
+        <!-- Recipient Info Card -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; margin-bottom: 16px;">
+          <div>
+            <strong style="display: block; font-size: 13.5px; color: #14532d;" id="wa-quote-recipient-name">Adnan Qureshi (Adnan Enterprises)</strong>
+            <span style="font-size: 12px; color: #15803d; font-weight: 600;" id="wa-quote-recipient-phone">+91 98765 43210</span>
+          </div>
+          <span class="status-chip resolved" style="background: #25d366; color: #fff;">WhatsApp Ready</span>
+        </div>
+
+        <!-- Live WhatsApp Bubble Mockup -->
+        <label class="quote-input-label" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>WhatsApp Message Preview (Exact Client View):</span>
+          <span style="font-size: 11px; color: #64748b;">Formatted with WhatsApp bold & bullets</span>
+        </label>
+        
+        <div class="wa-chat-mockup-wrapper">
+          <div class="wa-chat-bubble-preview" id="wa-chat-bubble-view">
+            <!-- Formatted message populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Editable Message Textarea -->
+        <div style="margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="quote-input-label" style="margin-bottom: 0;">Edit Raw Message Text (Optional):</label>
+            <button type="button" class="btn-secondary" style="font-size: 11px; padding: 2px 8px;" onclick="window.resetWhatsAppQuoteTemplate && window.resetWhatsAppQuoteTemplate()">Reset Template</button>
+          </div>
+          <textarea id="wa-quote-raw-textarea" class="quote-input-field" rows="6" style="font-family: monospace; font-size: 12px; line-height: 1.4;" oninput="window.updateWhatsAppBubblePreview && window.updateWhatsAppBubblePreview(this.value)"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eaecf0; padding: 14px 20px;">
+        <button type="button" class="btn-secondary" onclick="window.copyWhatsAppQuoteText && window.copyWhatsAppQuoteText()">
+          📋 Copy Text
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-secondary" style="color: #2563eb; border-color: #bfdbfe;" onclick="window.injectQuoteIntoInboxChat && window.injectQuoteIntoInboxChat()">
+            💬 Log to CRM Inbox
+          </button>
+          <button type="button" class="btn-primary" style="background: #25d366; border-color: #16a34a; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="window.launchWhatsAppClientWithQuote && window.launchWhatsAppClientWithQuote()">
+            <span>📱 Open WhatsApp & Send ➔</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       3. MODAL: PRINTABLE / PDF PREVIEW OF QUOTATION
+       ==================================================================== -->
+  <div class="modal-overlay hd-drawer-backdrop" id="modal-quotation-preview" style="display: none; z-index: 9999999;">
+    <div class="modal-card" style="max-width: 860px; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header no-print">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;" id="quote-preview-modal-title">Quotation Preview</h3>
+          <span class="status-chip open" id="quote-preview-status-pill">Draft</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn-secondary no-print" onclick="window.printCurrentQuotation && window.printCurrentQuotation()" style="display: flex; align-items: center; gap: 6px;">
+            🖨️ Print / Download PDF
+          </button>
+          <button type="button" class="btn-primary no-print" style="background: #25d366; border-color: #16a34a;" onclick="window.openWhatsAppModalFromPreview && window.openWhatsAppModalFromPreview()">
+            💬 Send via WhatsApp
+          </button>
+          <button type="button" class="modal-close-btn" onclick="window.closeQuotationPreviewModal && window.closeQuotationPreviewModal()">&times;</button>
+        </div>
+      </div>
+
+      <div style="padding: 20px; overflow-y: auto; flex: 1; background: #f8fafc;">
+        <!-- Printable Quotation Sheet Container -->
+        <div class="quotation-print-paper" id="quotation-printable-area">
+          <!-- Populated dynamically via dashboard.js renderPrintableQuotation -->
+        </div>
+      </div>
+
+      <div class="modal-footer no-print" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #eaecf0; padding: 12px 20px;">
+        <button type="button" class="btn-secondary" onclick="window.closeQuotationPreviewModal && window.closeQuotationPreviewModal()">Close Preview</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Live Notification Toast Container -->
   <div id="hd-notification-toast-container" class="hd-notif-container"></div>
 
@@ -4398,6 +4813,6 @@ Use my partner link to get an exclusive 10% Discount on signup:
   </nav>
 
   <script src="data-service.js?v=3.2"></script>
-  <script src="dashboard.js?v=4.4"></script>
+  <script src="dashboard.js?v=4.5"></script>
 </body>
 </html>

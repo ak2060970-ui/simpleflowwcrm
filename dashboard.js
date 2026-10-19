@@ -3190,6 +3190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (rawHash === 'dashboard') topBreadcrumb.textContent = 'Sales & Revenue Overview';
         else if (rawHash === 'referral') topBreadcrumb.textContent = 'Growth > Refer & Earn';
         else if (rawHash === 'integrations') topBreadcrumb.textContent = 'Workspace > Integrations & Connected Apps';
+        else if (rawHash === 'quotations') topBreadcrumb.textContent = 'Sales & Deals > Quotations & Estimates';
         else if (activeLink && activeLink.getAttribute('data-breadcrumb')) {
           topBreadcrumb.textContent = activeLink.getAttribute('data-breadcrumb');
         }
@@ -3215,6 +3216,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.renderKnowledgeBaseAll) window.renderKnowledgeBaseAll();
       } else if (rawHash === 'referral') {
         if (window.switchReferralView) window.switchReferralView('partner');
+      } else if (rawHash === 'quotations') {
+        if (window.renderQuotationsView) window.renderQuotationsView();
       }
     }
   }
@@ -9102,8 +9105,1014 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateCalcMath = updateCalcMath;
   }
 
+  // =========================================================================
+  // MODULE: QUOTATIONS & ESTIMATES GENERATOR WITH WHATSAPP DISPATCH
+  // =========================================================================
+
+  function initQuotationsModule() {
+    const SF_DEFAULT_QUOTATIONS = [
+      {
+        id: 'SF-QT-2026-101',
+        clientName: 'Adnan Qureshi',
+        company: 'Adnan Enterprises',
+        phone: '+91 98765 43210',
+        email: 'adnan@adnanenterprises.in',
+        gstin: '07AAAAA0000A1Z5',
+        address: 'Connaught Place, New Delhi',
+        date: '2026-10-19',
+        validTill: '2026-11-03',
+        status: 'sent-whatsapp',
+        items: [
+          { name: 'WhatsApp Business Cloud API Setup & Green Tick Verification', qty: 1, unit: 'Setup', rate: 12000, tax: 18 },
+          { name: 'SimpleFloww CRM Pro Annual License (5 Team Seats)', qty: 1, unit: 'Year', rate: 36000, tax: 18 }
+        ],
+        discount: 3000,
+        notes: '50% advance on PO, 50% on live onboarding. Includes 24/7 dedicated account manager.',
+        bankDetails: 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'
+      },
+      {
+        id: 'SF-QT-2026-102',
+        clientName: 'Backend Support Team',
+        company: 'Apex Logistics Hub',
+        phone: '+91 79832 98464',
+        email: 'support@apexlogistics.in',
+        gstin: '27AABCA1234F1Z8',
+        address: 'Andheri East, Mumbai',
+        date: '2026-10-18',
+        validTill: '2026-11-02',
+        status: 'pending',
+        items: [
+          { name: 'Custom AI Agent Workflow & Chatbot Training', qty: 1, unit: 'Setup', rate: 25000, tax: 18 },
+          { name: 'IndiaMART & Justdial Lead Realtime Webhook Sync', qty: 1, unit: 'Module', rate: 10000, tax: 18 },
+          { name: 'WhatsApp Broadcasting Credit Pack (50,000 Messages)', qty: 1, unit: 'Pack', rate: 15000, tax: 18 }
+        ],
+        discount: 2000,
+        notes: 'Setup turnaround time 48 hours. Training included for up to 10 staff members.',
+        bankDetails: 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'
+      },
+      {
+        id: 'SF-QT-2026-103',
+        clientName: 'faiz57185',
+        company: 'NextGen Digital Agency',
+        phone: '+91 98111 22334',
+        email: 'faiz@nextgenagency.co',
+        gstin: '09AABCN9999K1Z1',
+        address: 'Sector 62, Noida',
+        date: '2026-10-16',
+        validTill: '2026-10-31',
+        status: 'accepted',
+        items: [
+          { name: 'SimpleFloww Reseller Whitelabel Portal Setup', qty: 1, unit: 'Brand', rate: 55000, tax: 18 },
+          { name: 'Multi-tenant WhatsApp Cloud API Gateway Integration', qty: 1, unit: 'License', rate: 30000, tax: 18 }
+        ],
+        discount: 5000,
+        notes: 'Payment completed via RTGS. White-label domain SSL mapped.',
+        bankDetails: 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'
+      },
+      {
+        id: 'SF-QT-2026-104',
+        clientName: 'Divya Agrawal',
+        company: 'Aura Aesthetics Wellness',
+        phone: '+91 99887 76655',
+        email: 'divya@aurawellness.com',
+        gstin: '29ABCDE1234F1Z5',
+        address: 'Indiranagar, Bengaluru',
+        date: '2026-10-15',
+        validTill: '2026-10-30',
+        status: 'sent-whatsapp',
+        items: [
+          { name: 'Instagram & Facebook Ads Lead Automation Sync', qty: 1, unit: 'Channel', rate: 8000, tax: 18 },
+          { name: 'Automated Appointment Booking WhatsApp Chatbot', qty: 1, unit: 'Bot', rate: 18000, tax: 18 }
+        ],
+        discount: 1000,
+        notes: 'Integration with clinic Google Calendar included.',
+        bankDetails: 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'
+      },
+      {
+        id: 'SF-QT-2026-105',
+        clientName: 'Satyam Singh',
+        company: 'Varanasi Silk Emporium',
+        phone: '+91 91234 56789',
+        email: 'satyam@varanasisilk.in',
+        gstin: '09AAACG1234M1Z2',
+        address: 'Godowlia, Varanasi',
+        date: '2026-10-14',
+        validTill: '2026-10-29',
+        status: 'draft',
+        items: [
+          { name: 'WhatsApp Catalog & Abandoned Cart Recovery Suite', qty: 1, unit: 'Suite', rate: 22000, tax: 18 }
+        ],
+        discount: 0,
+        notes: 'Draft awaiting customer confirmation on Shopify store credentials.',
+        bankDetails: 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'
+      }
+    ];
+
+    let quotations = [];
+    try {
+      const stored = localStorage.getItem('sf_quotations_list');
+      quotations = stored ? JSON.parse(stored) : [...SF_DEFAULT_QUOTATIONS];
+    } catch (e) {
+      quotations = [...SF_DEFAULT_QUOTATIONS];
+    }
+
+    function saveQuotationsStorage() {
+      try {
+        localStorage.setItem('sf_quotations_list', JSON.stringify(quotations));
+      } catch (e) {
+        console.warn('Could not save quotations to localStorage', e);
+      }
+    }
+
+    const SF_QUOTE_PRESETS = {
+      whatsapp_api: { name: 'WhatsApp Business Cloud API Setup & Green Tick Verification', qty: 1, unit: 'Setup', rate: 12000, tax: 18 },
+      crm_pro: { name: 'SimpleFloww CRM Pro Annual License (5 Team Seats)', qty: 1, unit: 'Year', rate: 36000, tax: 18 },
+      ai_agent: { name: 'Custom AI Agent & Chatbot Workflow Training', qty: 1, unit: 'Setup', rate: 25000, tax: 18 },
+      meta_indiamart: { name: 'Meta & IndiaMART Lead Automation Sync', qty: 1, unit: 'Module', rate: 10000, tax: 18 },
+      wa_broadcast: { name: 'WhatsApp Broadcast Pack (50,000 Messages)', qty: 1, unit: 'Pack', rate: 15000, tax: 18 },
+      reseller_whitelabel: { name: 'SimpleFloww Reseller Whitelabel Portal Setup', qty: 1, unit: 'Brand', rate: 55000, tax: 18 }
+    };
+
+    let activeTab = 'all';
+    let activeDispatchQuote = null;
+
+    function formatINR(val) {
+      return '₹' + Number(val || 0).toLocaleString('en-IN');
+    }
+
+    function calculateQuoteTotals(items, discount = 0) {
+      let subtotal = 0;
+      let totalTax = 0;
+      (items || []).forEach(it => {
+        const q = parseFloat(it.qty) || 0;
+        const r = parseFloat(it.rate) || 0;
+        const t = parseFloat(it.tax) || 0;
+        const lineSub = q * r;
+        const lineTax = (lineSub * t) / 100;
+        subtotal += lineSub;
+        totalTax += lineTax;
+      });
+      const disc = parseFloat(discount) || 0;
+      const grandTotal = Math.max(0, Math.round(subtotal + totalTax - disc));
+      return {
+        subtotal: Math.round(subtotal),
+        totalTax: Math.round(totalTax),
+        discount: disc,
+        grandTotal: grandTotal
+      };
+    }
+
+    // Render quotations view (Table & KPIs)
+    function renderQuotationsView(tab = activeTab, searchTerm = '') {
+      activeTab = tab;
+      const tableBody = document.getElementById('quotations-table-body');
+      const searchVal = searchTerm.trim().toLowerCase();
+
+      // Filter
+      let filtered = quotations.filter(q => {
+        const matchesTab = (activeTab === 'all') || (q.status === activeTab);
+        const matchesSearch = !searchVal ||
+          q.id.toLowerCase().includes(searchVal) ||
+          q.clientName.toLowerCase().includes(searchVal) ||
+          (q.company && q.company.toLowerCase().includes(searchVal)) ||
+          q.phone.includes(searchVal);
+        return matchesTab && matchesSearch;
+      });
+
+      // Update KPIs
+      let totalAmount = 0;
+      let wonAmount = 0;
+      let pendingAmount = 0;
+      let sentCount = 0;
+      let wonCount = 0;
+      let pendingCount = 0;
+
+      quotations.forEach(q => {
+        const calc = calculateQuoteTotals(q.items, q.discount);
+        totalAmount += calc.grandTotal;
+        if (q.status === 'sent-whatsapp') sentCount++;
+        else if (q.status === 'accepted') {
+          wonCount++;
+          wonAmount += calc.grandTotal;
+        } else if (q.status === 'pending') {
+          pendingCount++;
+          pendingAmount += calc.grandTotal;
+        }
+      });
+
+      const kpiTotalCount = document.getElementById('kpi-quote-total-count');
+      const kpiTotalVal = document.getElementById('kpi-quote-total-val');
+      const kpiWaCount = document.getElementById('kpi-quote-wa-count');
+      const kpiWonCount = document.getElementById('kpi-quote-won-count');
+      const kpiWonVal = document.getElementById('kpi-quote-won-val');
+      const kpiPendingCount = document.getElementById('kpi-quote-pending-count');
+      const kpiPendingVal = document.getElementById('kpi-quote-pending-val');
+
+      if (kpiTotalCount) kpiTotalCount.textContent = quotations.length;
+      if (kpiTotalVal) kpiTotalVal.textContent = `${formatINR(totalAmount)} Quoted Value`;
+      if (kpiWaCount) kpiWaCount.textContent = sentCount;
+      if (kpiWonCount) kpiWonCount.textContent = wonCount;
+      if (kpiWonVal) kpiWonVal.textContent = `${formatINR(wonAmount)} Closed Deals`;
+      if (kpiPendingCount) kpiPendingCount.textContent = pendingCount;
+      if (kpiPendingVal) kpiPendingVal.textContent = `${formatINR(pendingAmount)} Active Proposals`;
+
+      if (!tableBody) return;
+
+      if (filtered.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: #64748b;">
+              <div style="font-size: 32px; margin-bottom: 8px;">📑</div>
+              <strong>No quotations match your criteria</strong>
+              <div style="font-size: 12px; margin-top: 4px;">Click "+ Create New Quotation" to create your first quote.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = filtered.map(q => {
+        const calc = calculateQuoteTotals(q.items, q.discount);
+        let statusBadge = '';
+        if (q.status === 'sent-whatsapp') {
+          statusBadge = '<span class="quote-status-badge sent-whatsapp">💬 Sent on WhatsApp</span>';
+        } else if (q.status === 'accepted') {
+          statusBadge = '<span class="quote-status-badge accepted">🎉 Accepted & Won</span>';
+        } else if (q.status === 'pending') {
+          statusBadge = '<span class="quote-status-badge pending">⏳ Pending Review</span>';
+        } else {
+          statusBadge = '<span class="quote-status-badge draft">📝 Draft</span>';
+        }
+
+        const itemsSummary = q.items.map(it => it.name).join(', ');
+        const truncatedSummary = itemsSummary.length > 40 ? itemsSummary.substring(0, 40) + '...' : itemsSummary;
+
+        return `
+          <tr>
+            <td>
+              <strong style="color: #0f172a; font-family: monospace; font-size: 13px;">${q.id}</strong>
+              <span style="display: block; font-size: 11.5px; color: #64748b;">${q.date}</span>
+            </td>
+            <td>
+              <strong style="color: #0f172a;">${q.clientName}</strong>
+              <span style="display: block; font-size: 11.5px; color: #64748b;">${q.company || 'Direct Client'}</span>
+            </td>
+            <td>
+              <span style="font-size: 12.5px; color: #1e293b; display: inline-flex; align-items: center; gap: 4px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                ${q.phone}
+              </span>
+            </td>
+            <td>
+              <span title="${itemsSummary}" style="cursor: help;">${truncatedSummary}</span>
+              <span style="display: block; font-size: 11px; color: #2563eb; font-weight: 600;">${q.items.length} ${q.items.length === 1 ? 'item' : 'items'}</span>
+            </td>
+            <td>
+              <strong style="font-size: 14px; color: #0f172a;">${formatINR(calc.grandTotal)}</strong>
+              ${calc.discount > 0 ? `<span style="display: block; font-size: 11px; color: #16a34a;">-${formatINR(calc.discount)} off</span>` : ''}
+            </td>
+            <td>
+              <span style="font-size: 12px; color: #64748b;">${q.validTill}</span>
+            </td>
+            <td>
+              ${statusBadge}
+            </td>
+            <td style="text-align: right; white-space: nowrap; padding-right: 20px;">
+              <button class="btn-secondary" style="font-size: 11px; padding: 4px 8px; color: #16a34a; border-color: #86efac; background: #f0fdf4;" onclick="window.openWhatsAppQuoteModal('${q.id}')" title="Send Quotation via WhatsApp">
+                💬 WhatsApp
+              </button>
+              <button class="btn-secondary" style="font-size: 11px; padding: 4px 8px; color: #2563eb; border-color: #bfdbfe;" onclick="window.openQuotationPreviewModal('${q.id}')" title="Print or PDF Preview">
+                👁️ View
+              </button>
+              <button class="btn-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="window.openQuotationBuilder('${q.id}')" title="Edit Quotation">
+                ✏️
+              </button>
+              <button class="btn-secondary" style="font-size: 11px; padding: 4px 8px; color: #ef4444;" onclick="window.deleteQuotation('${q.id}')" title="Delete">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setQuotationTab(tab, btn) {
+      activeTab = tab;
+      const tabs = document.querySelectorAll('#quote-filter-tabs .inbox-filter-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const searchVal = document.getElementById('quote-search-input')?.value || '';
+      renderQuotationsView(tab, searchVal);
+    }
+
+    function filterQuotations() {
+      const searchVal = document.getElementById('quote-search-input')?.value || '';
+      renderQuotationsView(activeTab, searchVal);
+    }
+
+    // Populate Autofill Lead dropdown
+    function populateLeadAutofillOptions() {
+      const select = document.getElementById('quote-lead-autofill');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Select Existing CRM Lead --</option>';
+
+      const leads = [
+        { name: 'Adnan Qureshi', phone: '+91 98765 43210', company: 'Adnan Enterprises', email: 'adnan@adnanenterprises.in' },
+        { name: 'Backend Support Team', phone: '+91 79832 98464', company: 'Apex Logistics Hub', email: 'support@apexlogistics.in' },
+        { name: 'faiz57185', phone: '+91 98111 22334', company: 'NextGen Digital Agency', email: 'faiz@nextgenagency.co' },
+        { name: 'Divya Agrawal', phone: '+91 99887 76655', company: 'Aura Aesthetics Wellness', email: 'divya@aurawellness.com' },
+        { name: 'Satyam Singh', phone: '+91 91234 56789', company: 'Varanasi Silk Emporium', email: 'satyam@varanasisilk.in' },
+        { name: 'Vikas Malhotra', phone: '+91 98112 34567', company: 'Malhotra Logistics', email: 'vikas@malhotralogistics.com' },
+        { name: 'Neha Chawla', phone: '+91 98223 45678', company: 'Aura Aesthetics Clinic', email: 'neha@auraclinic.in' },
+        { name: 'Rajeev Nair', phone: '+91 98445 67890', company: 'Kerala Spices Export', email: 'rajeev@keralaspices.com' }
+      ];
+
+      leads.forEach(l => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify(l);
+        opt.textContent = `${l.name} (${l.company}) - ${l.phone}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function handleQuoteAutofillLead(val) {
+      if (!val) return;
+      try {
+        const lead = JSON.parse(val);
+        const nameInput = document.getElementById('quote-client-name');
+        const compInput = document.getElementById('quote-company-name');
+        const phoneInput = document.getElementById('quote-client-phone');
+        const emailInput = document.getElementById('quote-client-email');
+
+        if (nameInput) nameInput.value = lead.name || '';
+        if (compInput) compInput.value = lead.company || '';
+        if (phoneInput) phoneInput.value = lead.phone || '';
+        if (emailInput) emailInput.value = lead.email || '';
+      } catch (e) {
+        console.error('Error autofilling lead', e);
+      }
+    }
+
+    // Open Quotation Builder Modal
+    function openQuotationBuilder(quoteId = null) {
+      populateLeadAutofillOptions();
+      const modal = document.getElementById('modal-quotation-builder');
+      const heading = document.getElementById('quote-modal-heading');
+      const editIdInput = document.getElementById('quote-editing-id');
+      const numberInput = document.getElementById('quote-number-input');
+      const dateInput = document.getElementById('quote-date-input');
+      const validityInput = document.getElementById('quote-validity-input');
+      const nameInput = document.getElementById('quote-client-name');
+      const compInput = document.getElementById('quote-company-name');
+      const phoneInput = document.getElementById('quote-client-phone');
+      const emailInput = document.getElementById('quote-client-email');
+      const gstinInput = document.getElementById('quote-client-gstin');
+      const addressInput = document.getElementById('quote-client-address');
+      const notesInput = document.getElementById('quote-notes-input');
+      const bankInput = document.getElementById('quote-bank-input');
+      const discountInput = document.getElementById('quote-discount-input');
+      const itemsTbody = document.getElementById('quote-items-tbody');
+
+      if (!modal) return;
+
+      const today = new Date().toISOString().split('T')[0];
+      const validDate = new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0];
+
+      if (itemsTbody) itemsTbody.innerHTML = '';
+
+      if (quoteId) {
+        const q = quotations.find(x => x.id === quoteId);
+        if (q) {
+          if (heading) heading.textContent = `Edit Quotation #${q.id}`;
+          if (editIdInput) editIdInput.value = q.id;
+          if (numberInput) numberInput.value = q.id;
+          if (dateInput) dateInput.value = q.date || today;
+          if (validityInput) validityInput.value = q.validTill || validDate;
+          if (nameInput) nameInput.value = q.clientName || '';
+          if (compInput) compInput.value = q.company || '';
+          if (phoneInput) phoneInput.value = q.phone || '';
+          if (emailInput) emailInput.value = q.email || '';
+          if (gstinInput) gstinInput.value = q.gstin || '';
+          if (addressInput) addressInput.value = q.address || '';
+          if (notesInput) notesInput.value = q.notes || '';
+          if (bankInput) bankInput.value = q.bankDetails || 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank';
+          if (discountInput) discountInput.value = q.discount || 0;
+
+          (q.items || []).forEach(it => addQuoteItemRow(it));
+        }
+      } else {
+        const nextNum = 'SF-QT-2026-' + (100 + quotations.length + 1);
+        if (heading) heading.textContent = 'Create Quotation & Estimate';
+        if (editIdInput) editIdInput.value = '';
+        if (numberInput) numberInput.value = nextNum;
+        if (dateInput) dateInput.value = today;
+        if (validityInput) validityInput.value = validDate;
+        if (nameInput) nameInput.value = '';
+        if (compInput) compInput.value = '';
+        if (phoneInput) phoneInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (gstinInput) gstinInput.value = '';
+        if (addressInput) addressInput.value = '';
+        if (notesInput) notesInput.value = '50% advance with purchase order, 50% upon deployment. Delivery within 3 business days.';
+        if (bankInput) bankInput.value = 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank';
+        if (discountInput) discountInput.value = 0;
+
+        addQuoteItemRow({ name: 'WhatsApp Business Cloud API Setup & Green Tick Verification', qty: 1, unit: 'Setup', rate: 12000, tax: 18 });
+      }
+
+      recalcQuoteTotals();
+      modal.style.display = 'flex';
+    }
+
+    function closeQuotationBuilder() {
+      const modal = document.getElementById('modal-quotation-builder');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function addQuoteItemRow(item = { name: '', qty: 1, unit: 'Nos', rate: 0, tax: 18 }) {
+      const tbody = document.getElementById('quote-items-tbody');
+      if (!tbody) return;
+
+      const tr = document.createElement('tr');
+      tr.className = 'quote-item-row';
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="quote-input-field item-name-field" style="padding: 6px 10px; font-size: 12.5px;" value="${item.name || ''}" placeholder="Service / Product Description..." required />
+        </td>
+        <td>
+          <input type="number" class="quote-input-field item-qty-field" style="padding: 6px 8px; font-size: 12.5px; width: 65px;" value="${item.qty || 1}" min="1" oninput="window.recalcQuoteTotals && window.recalcQuoteTotals()" />
+        </td>
+        <td>
+          <input type="text" class="quote-input-field item-unit-field" style="padding: 6px 8px; font-size: 12.5px; width: 80px;" value="${item.unit || 'Nos'}" placeholder="Nos / Mo" />
+        </td>
+        <td>
+          <input type="number" class="quote-input-field item-rate-field" style="padding: 6px 8px; font-size: 12.5px;" value="${item.rate || 0}" min="0" oninput="window.recalcQuoteTotals && window.recalcQuoteTotals()" />
+        </td>
+        <td>
+          <select class="quote-input-field item-tax-field" style="padding: 6px 6px; font-size: 12px; width: 75px;" onchange="window.recalcQuoteTotals && window.recalcQuoteTotals()">
+            <option value="0" ${item.tax === 0 ? 'selected' : ''}>0%</option>
+            <option value="5" ${item.tax === 5 ? 'selected' : ''}>5%</option>
+            <option value="12" ${item.tax === 12 ? 'selected' : ''}>12%</option>
+            <option value="18" ${(!item.tax || item.tax === 18) ? 'selected' : ''}>18%</option>
+            <option value="28" ${item.tax === 28 ? 'selected' : ''}>28%</option>
+          </select>
+        </td>
+        <td style="text-align: right; font-weight: 700; color: #0f172a;" class="item-total-col">
+          ₹0
+        </td>
+        <td style="text-align: center;">
+          <button type="button" class="btn-remove-item" onclick="window.removeQuoteItemRow(this)" title="Remove item">&times;</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      recalcQuoteTotals();
+    }
+
+    function removeQuoteItemRow(btn) {
+      const tr = btn.closest('tr');
+      if (tr) tr.remove();
+      recalcQuoteTotals();
+    }
+
+    function addPresetItemToQuote(presetKey) {
+      if (!presetKey || !SF_QUOTE_PRESETS[presetKey]) return;
+      addQuoteItemRow(SF_QUOTE_PRESETS[presetKey]);
+      const sel = document.getElementById('quote-preset-selector');
+      if (sel) sel.value = '';
+    }
+
+    function recalcQuoteTotals() {
+      const rows = document.querySelectorAll('#quote-items-tbody .quote-item-row');
+      const badge = document.getElementById('quote-items-count-badge');
+      if (badge) badge.textContent = `${rows.length} ${rows.length === 1 ? 'Item' : 'Items'}`;
+
+      let subtotal = 0;
+      let totalTax = 0;
+
+      rows.forEach(tr => {
+        const qty = parseFloat(tr.querySelector('.item-qty-field')?.value) || 0;
+        const rate = parseFloat(tr.querySelector('.item-rate-field')?.value) || 0;
+        const tax = parseFloat(tr.querySelector('.item-tax-field')?.value) || 0;
+
+        const lineSub = qty * rate;
+        const lineTax = (lineSub * tax) / 100;
+        const lineTotal = Math.round(lineSub + lineTax);
+
+        const totalCell = tr.querySelector('.item-total-col');
+        if (totalCell) totalCell.textContent = formatINR(lineTotal);
+
+        subtotal += lineSub;
+        totalTax += lineTax;
+      });
+
+      const discountVal = parseFloat(document.getElementById('quote-discount-input')?.value) || 0;
+      const grandTotal = Math.max(0, Math.round(subtotal + totalTax - discountVal));
+
+      const subtotalEl = document.getElementById('quote-calc-subtotal');
+      const gstEl = document.getElementById('quote-calc-gst');
+      const grandTotalEl = document.getElementById('quote-calc-grandtotal');
+
+      if (subtotalEl) subtotalEl.textContent = formatINR(Math.round(subtotal));
+      if (gstEl) gstEl.textContent = formatINR(Math.round(totalTax));
+      if (grandTotalEl) grandTotalEl.textContent = formatINR(grandTotal);
+    }
+
+    function getFormDataFromBuilder() {
+      const editId = document.getElementById('quote-editing-id')?.value || '';
+      const number = document.getElementById('quote-number-input')?.value.trim() || 'SF-QT-2026-001';
+      const date = document.getElementById('quote-date-input')?.value || new Date().toISOString().split('T')[0];
+      const validTill = document.getElementById('quote-validity-input')?.value || '';
+      const clientName = document.getElementById('quote-client-name')?.value.trim() || 'Valued Client';
+      const company = document.getElementById('quote-company-name')?.value.trim() || '';
+      const phone = document.getElementById('quote-client-phone')?.value.trim() || '';
+      const email = document.getElementById('quote-client-email')?.value.trim() || '';
+      const gstin = document.getElementById('quote-client-gstin')?.value.trim() || '';
+      const address = document.getElementById('quote-client-address')?.value.trim() || '';
+      const notes = document.getElementById('quote-notes-input')?.value.trim() || '';
+      const bankDetails = document.getElementById('quote-bank-input')?.value.trim() || '';
+      const discount = parseFloat(document.getElementById('quote-discount-input')?.value) || 0;
+
+      const items = [];
+      document.querySelectorAll('#quote-items-tbody .quote-item-row').forEach(tr => {
+        const name = tr.querySelector('.item-name-field')?.value.trim() || 'Custom Item';
+        const qty = parseFloat(tr.querySelector('.item-qty-field')?.value) || 1;
+        const unit = tr.querySelector('.item-unit-field')?.value.trim() || 'Nos';
+        const rate = parseFloat(tr.querySelector('.item-rate-field')?.value) || 0;
+        const tax = parseFloat(tr.querySelector('.item-tax-field')?.value) || 0;
+        items.push({ name, qty, unit, rate, tax });
+      });
+
+      return {
+        id: number,
+        editingId: editId,
+        date,
+        validTill,
+        clientName,
+        company,
+        phone,
+        email,
+        gstin,
+        address,
+        notes,
+        bankDetails,
+        discount,
+        items: items.length > 0 ? items : [{ name: 'Commercial Service', qty: 1, unit: 'Nos', rate: 10000, tax: 18 }]
+      };
+    }
+
+    function saveQuotationFromBuilder(status = 'draft') {
+      const data = getFormDataFromBuilder();
+      if (!data.clientName || !data.phone) {
+        alert('Please fill in Client Name and WhatsApp Number.');
+        return null;
+      }
+
+      let existingIdx = -1;
+      if (data.editingId) {
+        existingIdx = quotations.findIndex(x => x.id === data.editingId);
+      } else {
+        existingIdx = quotations.findIndex(x => x.id === data.id);
+      }
+
+      const quoteRecord = {
+        id: data.id,
+        clientName: data.clientName,
+        company: data.company,
+        phone: data.phone,
+        email: data.email,
+        gstin: data.gstin,
+        address: data.address,
+        date: data.date,
+        validTill: data.validTill,
+        status: status,
+        items: data.items,
+        discount: data.discount,
+        notes: data.notes,
+        bankDetails: data.bankDetails
+      };
+
+      if (existingIdx >= 0) {
+        quotations[existingIdx] = quoteRecord;
+      } else {
+        quotations.unshift(quoteRecord);
+      }
+
+      saveQuotationsStorage();
+      renderQuotationsView(activeTab);
+      closeQuotationBuilder();
+      if (typeof showNotificationToast === 'function') {
+        showNotificationToast(`Quotation #${quoteRecord.id} saved successfully!`, 'success');
+      }
+      return quoteRecord;
+    }
+
+    function saveAndDispatchWhatsApp() {
+      const quote = saveQuotationFromBuilder('sent-whatsapp');
+      if (quote) {
+        openWhatsAppQuoteModal(quote.id);
+      }
+    }
+
+    function generateWhatsAppQuoteMessage(quote) {
+      const calc = calculateQuoteTotals(quote.items, quote.discount);
+      let itemsText = quote.items.map((it, idx) => {
+        const lineTotal = Math.round((it.qty * it.rate) * (1 + (it.tax || 0) / 100));
+        return `${idx + 1}️⃣ *${it.name}*\n   • Qty: ${it.qty} ${it.unit || ''} | Rate: ${formatINR(it.rate)} | GST: ${it.tax || 18}%\n   • Line Total: *${formatINR(lineTotal)}*`;
+      }).join('\n\n');
+
+      let discText = calc.discount > 0 ? `🏷️ *Special Discount Applied:* -${formatINR(calc.discount)}\n` : '';
+
+      return `*COMMERCIAL QUOTATION FROM SIMPLE FLOWW* 📑\n` +
+             `*Quotation Ref:* #${quote.id}\n` +
+             `*Date:* ${quote.date}  |  *Valid Till:* ${quote.validTill}\n\n` +
+             `Dear *${quote.clientName}*,\n` +
+             `Greetings from Simple Floww Business Portal! Here is the tailored quotation prepared for *${quote.company || quote.clientName}*:\n\n` +
+             `━━━━━━━━━━━━━━━━━━━━\n` +
+             `📦 *PROPOSED ITEMS & SERVICES:*\n` +
+             `${itemsText}\n` +
+             `━━━━━━━━━━━━━━━━━━━━\n\n` +
+             `💵 *Taxable Subtotal:* ${formatINR(calc.subtotal)}\n` +
+             `${discText}` +
+             `📊 *GST Tax (18%):* ${formatINR(calc.totalTax)}\n` +
+             `💰 *GRAND TOTAL (Incl. GST):* *${formatINR(calc.grandTotal)}*\n\n` +
+             `💳 *Payment Terms & Banking:* \n` +
+             `${quote.notes || '50% advance with PO, 50% upon deployment.'}\n` +
+             `UPI ID: simplefloww@okhdfcbank\n\n` +
+             `📄 *View / Download Official PDF Quotation:*\n` +
+             `https://portal.simplefloww.com/quote-view?id=${quote.id}\n\n` +
+             `Please reply with *APPROVED* to proceed with onboarding or let us know if you require any customization. We are ready to assist you!`;
+    }
+
+    function openWhatsAppQuoteModal(quoteId) {
+      const quote = quotations.find(x => x.id === quoteId);
+      if (!quote) return;
+      activeDispatchQuote = quote;
+
+      const modal = document.getElementById('modal-quotation-whatsapp');
+      const nameEl = document.getElementById('wa-quote-recipient-name');
+      const phoneEl = document.getElementById('wa-quote-recipient-phone');
+      const bubbleEl = document.getElementById('wa-chat-bubble-view');
+      const textarea = document.getElementById('wa-quote-raw-textarea');
+
+      if (!modal) return;
+
+      if (nameEl) nameEl.textContent = `${quote.clientName} (${quote.company || 'Business'})`;
+      if (phoneEl) phoneEl.textContent = quote.phone;
+
+      const msg = generateWhatsAppQuoteMessage(quote);
+      if (textarea) textarea.value = msg;
+      if (bubbleEl) bubbleEl.innerHTML = formatWhatsAppMarkdownForHtml(msg);
+
+      modal.style.display = 'flex';
+    }
+
+    function closeWhatsAppQuoteModal() {
+      const modal = document.getElementById('modal-quotation-whatsapp');
+      if (modal) modal.style.display = 'none';
+      activeDispatchQuote = null;
+    }
+
+    function updateWhatsAppBubblePreview(text) {
+      const bubbleEl = document.getElementById('wa-chat-bubble-view');
+      if (bubbleEl) bubbleEl.innerHTML = formatWhatsAppMarkdownForHtml(text);
+    }
+
+    function resetWhatsAppQuoteTemplate() {
+      if (!activeDispatchQuote) return;
+      const msg = generateWhatsAppQuoteMessage(activeDispatchQuote);
+      const textarea = document.getElementById('wa-quote-raw-textarea');
+      if (textarea) textarea.value = msg;
+      updateWhatsAppBubblePreview(msg);
+    }
+
+    function formatWhatsAppMarkdownForHtml(text) {
+      if (!text) return '';
+      let escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      escaped = escaped.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+      escaped = escaped.replace(/\n/g, '<br/>');
+      return escaped;
+    }
+
+    function copyWhatsAppQuoteText() {
+      const textarea = document.getElementById('wa-quote-raw-textarea');
+      if (!textarea) return;
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast('Quotation message copied to clipboard! Ready to paste into WhatsApp.', 'success');
+        }
+      }).catch(() => {
+        textarea.select();
+        document.execCommand('copy');
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast('Quotation message copied!', 'success');
+        }
+      });
+    }
+
+    function launchWhatsAppClientWithQuote() {
+      if (!activeDispatchQuote) return;
+      const rawText = document.getElementById('wa-quote-raw-textarea')?.value || generateWhatsAppQuoteMessage(activeDispatchQuote);
+      const cleanPhone = activeDispatchQuote.phone.replace(/[^0-9]/g, '');
+
+      activeDispatchQuote.status = 'sent-whatsapp';
+      saveQuotationsStorage();
+      renderQuotationsView(activeTab);
+
+      injectQuoteIntoInboxChat(activeDispatchQuote, rawText);
+
+      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(rawText)}`;
+      window.open(url, '_blank');
+
+      if (typeof showNotificationToast === 'function') {
+        showNotificationToast(`Quotation #${activeDispatchQuote.id} sent on WhatsApp to ${activeDispatchQuote.clientName}!`, 'success');
+      }
+      closeWhatsAppQuoteModal();
+    }
+
+    function injectQuoteIntoInboxChat(quote, messageText) {
+      if (!quote) return;
+      const name = quote.clientName;
+      const textToLog = messageText || generateWhatsAppQuoteMessage(quote);
+      if (typeof chatHistories !== 'undefined') {
+        if (!chatHistories[name]) {
+          chatHistories[name] = [];
+        }
+        chatHistories[name].push({
+          text: `📑 *Quotation #${quote.id} Sent via WhatsApp*\n\n${textToLog}`,
+          time: 'Just now',
+          type: 'outgoing'
+        });
+        const activeContact = document.querySelector('.inbox-contact-row.active');
+        if (activeContact && activeContact.getAttribute('data-name') === name) {
+          if (typeof renderChatMessages === 'function') renderChatMessages(name);
+        }
+      }
+    }
+
+    function openQuotationPreviewModal(quoteId) {
+      const quote = quotations.find(x => x.id === quoteId);
+      if (!quote) return;
+      activeDispatchQuote = quote;
+
+      const modal = document.getElementById('modal-quotation-preview');
+      const titleEl = document.getElementById('quote-preview-modal-title');
+      const pillEl = document.getElementById('quote-preview-status-pill');
+      const printArea = document.getElementById('quotation-printable-area');
+
+      if (!modal || !printArea) return;
+
+      if (titleEl) titleEl.textContent = `Quotation Preview: #${quote.id}`;
+      if (pillEl) {
+        pillEl.textContent = quote.status.toUpperCase();
+        pillEl.className = `status-chip ${quote.status === 'accepted' ? 'resolved' : quote.status === 'sent-whatsapp' ? 'resolved' : 'open'}`;
+      }
+
+      const calc = calculateQuoteTotals(quote.items, quote.discount);
+
+      let rowsHtml = quote.items.map((it, idx) => {
+        const lineTotal = Math.round((it.qty * it.rate) * (1 + (it.tax || 0) / 100));
+        return `
+          <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 10px; font-weight: 500;">${idx + 1}</td>
+            <td style="padding: 10px;">
+              <strong style="color: #0f172a; display: block;">${it.name}</strong>
+            </td>
+            <td style="padding: 10px; text-align: center;">${it.qty} ${it.unit || ''}</td>
+            <td style="padding: 10px; text-align: right;">${formatINR(it.rate)}</td>
+            <td style="padding: 10px; text-align: center;">${it.tax || 18}%</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: #0f172a;">${formatINR(lineTotal)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      printArea.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 24px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <div style="width: 32px; height: 32px; border-radius: 8px; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;">SF</div>
+              <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a;">SIMPLE FLOWW</h2>
+            </div>
+            <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+              Advanced WhatsApp CRM & Marketing Automation Cloud<br/>
+              GSTIN: 07AABCS9876Q1Z2 | support@simplefloww.com<br/>
+              Tower B, Cyber City, Gurugram, HR - 122002
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 13px; font-weight: 800; color: #2563eb; letter-spacing: 1px; text-transform: uppercase;">COMMERCIAL ESTIMATE</span>
+            <h1 style="margin: 4px 0 6px 0; font-size: 26px; font-weight: 800; color: #0f172a;">#${quote.id}</h1>
+            <div style="font-size: 12px; color: #64748b;">
+              <strong>Date:</strong> ${quote.date}<br/>
+              <strong>Valid Till:</strong> ${quote.validTill}
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; padding: 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">PROPOSAL PREPARED FOR:</span>
+            <h3 style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f172a;">${quote.clientName}</h3>
+            <div style="font-size: 13px; font-weight: 600; color: #2563eb;">${quote.company || 'Business Client'}</div>
+            <div style="font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.4;">
+              ${quote.address || 'India'}<br/>
+              📱 ${quote.phone} | ✉️ ${quote.email || 'N/A'}
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">CLIENT TAX IDENTIFIER:</span>
+            <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 4px;">
+              GSTIN: <span style="font-family: monospace;">${quote.gstin || 'Unregistered / B2C'}</span>
+            </div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 8px; line-height: 1.4;">
+              <strong>Executive:</strong> Abhinandan Kumar (Enterprise Solutions)<br/>
+              <strong>Channel:</strong> WhatsApp Business Cloud Meta Gateway
+            </div>
+          </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 20px;">
+          <thead>
+            <tr style="background: #f1f5f9; border-top: 1px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;">
+              <th style="padding: 10px; text-align: left; width: 5%;">#</th>
+              <th style="padding: 10px; text-align: left; width: 45%;">Service / Item Description</th>
+              <th style="padding: 10px; text-align: center; width: 12%;">Qty</th>
+              <th style="padding: 10px; text-align: right; width: 13%;">Rate (₹)</th>
+              <th style="padding: 10px; text-align: center; width: 10%;">GST</th>
+              <th style="padding: 10px; text-align: right; width: 15%;">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+
+        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; margin-top: 10px;">
+          <div style="font-size: 12px; color: #475569;">
+            <div style="padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-bottom: 12px;">
+              <strong style="color: #14532d; display: block; margin-bottom: 4px;">🏦 Bank & Payment Coordinates:</strong>
+              ${quote.bankDetails || 'HDFC Bank A/c: 50200088992211 | IFSC: HDFC0001234 | UPI: simplefloww@okhdfcbank'}
+            </div>
+            <div style="line-height: 1.5;">
+              <strong>Terms & Conditions:</strong><br/>
+              • ${quote.notes || '50% advance on PO, 50% upon deployment.'}<br/>
+              • Quotation validity: 15 days from issue date.<br/>
+              • Subject to Delhi jurisdiction.
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+            <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 4px 0; color: #64748b;">Subtotal (Taxable):</td>
+                <td style="padding: 4px 0; text-align: right; font-weight: 600;">${formatINR(calc.subtotal)}</td>
+              </tr>
+              ${calc.discount > 0 ? `
+              <tr>
+                <td style="padding: 4px 0; color: #16a34a;">Special Discount:</td>
+                <td style="padding: 4px 0; text-align: right; color: #16a34a; font-weight: 600;">-${formatINR(calc.discount)}</td>
+              </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 4px 0; color: #64748b;">Total GST (18%):</td>
+                <td style="padding: 4px 0; text-align: right; font-weight: 600;">${formatINR(calc.totalTax)}</td>
+              </tr>
+              <tr style="border-top: 2px solid #cbd5e1; font-size: 15px;">
+                <td style="padding: 10px 0 4px; font-weight: 800; color: #0f172a;">Grand Total:</td>
+                <td style="padding: 10px 0 4px; text-align: right; font-weight: 800; color: #16a34a; font-size: 17px;">${formatINR(calc.grandTotal)}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 36px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+          <div style="text-align: center; width: 200px;">
+            <div style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 22px; color: #1e3a8a; margin-bottom: 4px;">Abhinandan Kumar</div>
+            <div style="border-top: 1px dashed #94a3b8; padding-top: 4px; font-size: 11px; font-weight: 700; color: #475569;">
+              Authorized Signatory<br/>
+              Simple Floww Business Portal
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
+    function closeQuotationPreviewModal() {
+      const modal = document.getElementById('modal-quotation-preview');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function printCurrentQuotation() {
+      window.print();
+    }
+
+    function openWhatsAppModalFromPreview() {
+      if (activeDispatchQuote) {
+        closeQuotationPreviewModal();
+        openWhatsAppQuoteModal(activeDispatchQuote.id);
+      }
+    }
+
+    function previewQuotationFromBuilder() {
+      const data = getFormDataFromBuilder();
+      const tempId = data.id || 'SF-QT-2026-TEMP';
+      let existingIdx = quotations.findIndex(x => x.id === tempId);
+      const tempRecord = { ...data, id: tempId, status: 'draft' };
+      if (existingIdx >= 0) quotations[existingIdx] = tempRecord;
+      else quotations.unshift(tempRecord);
+      openQuotationPreviewModal(tempId);
+    }
+
+    function deleteQuotation(quoteId) {
+      if (confirm(`Are you sure you want to delete quotation #${quoteId}?`)) {
+        quotations = quotations.filter(x => x.id !== quoteId);
+        saveQuotationsStorage();
+        renderQuotationsView(activeTab);
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast(`Quotation #${quoteId} deleted.`, 'info');
+        }
+      }
+    }
+
+    function exportQuotationsCSV() {
+      let csv = 'Quotation_ID,Date,Valid_Till,Client_Name,Company,Phone,Email,Items_Count,Subtotal,Discount,GST,Grand_Total,Status\n';
+      quotations.forEach(q => {
+        const calc = calculateQuoteTotals(q.items, q.discount);
+        csv += `"${q.id}","${q.date}","${q.validTill}","${q.clientName}","${q.company || ''}","${q.phone}","${q.email || ''}",${q.items.length},${calc.subtotal},${calc.discount},${calc.totalTax},${calc.grandTotal},"${q.status}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'simplefloww_quotations.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      if (typeof showNotificationToast === 'function') {
+        showNotificationToast('Quotations exported as CSV successfully!', 'success');
+      }
+    }
+
+    window.createQuotationForLead = function(name, phone, company) {
+      window.location.hash = '#quotations';
+      setTimeout(() => {
+        openQuotationBuilder();
+        const nameInput = document.getElementById('quote-client-name');
+        const phoneInput = document.getElementById('quote-client-phone');
+        const compInput = document.getElementById('quote-company-name');
+        if (nameInput) nameInput.value = name || '';
+        if (phoneInput) phoneInput.value = phone || '';
+        if (compInput) compInput.value = company || '';
+      }, 150);
+    };
+
+    window.createQuotationForCurrentChat = function() {
+      const currentContact = document.querySelector('.inbox-contact-row.active');
+      const name = currentContact ? currentContact.getAttribute('data-name') : (chatHeaderName?.textContent || 'Client');
+      const phone = currentContact ? (currentContact.getAttribute('data-phone') || '+91 98765 43210') : '+91 98765 43210';
+      window.createQuotationForLead(name, phone, name + ' Business');
+    };
+
+    window.sendWhatsAppToLead = function(phone, name) {
+      const clean = (phone || '').replace(/[^0-9]/g, '');
+      const url = `https://wa.me/${clean}?text=${encodeURIComponent(`Hello ${name}, greetings from Simple Floww Business Portal!`)}`;
+      window.open(url, '_blank');
+    };
+
+    window.renderQuotationsView = renderQuotationsView;
+    window.setQuotationTab = setQuotationTab;
+    window.filterQuotations = filterQuotations;
+    window.openQuotationBuilder = openQuotationBuilder;
+    window.closeQuotationBuilder = closeQuotationBuilder;
+    window.addQuoteItemRow = addQuoteItemRow;
+    window.removeQuoteItemRow = removeQuoteItemRow;
+    window.addPresetItemToQuote = addPresetItemToQuote;
+    window.recalcQuoteTotals = recalcQuoteTotals;
+    window.handleQuoteAutofillLead = handleQuoteAutofillLead;
+    window.saveQuotationFromBuilder = saveQuotationFromBuilder;
+    window.saveAndDispatchWhatsApp = saveAndDispatchWhatsApp;
+    window.generateWhatsAppQuoteMessage = generateWhatsAppQuoteMessage;
+    window.openWhatsAppQuoteModal = openWhatsAppQuoteModal;
+    window.closeWhatsAppQuoteModal = closeWhatsAppQuoteModal;
+    window.updateWhatsAppBubblePreview = updateWhatsAppBubblePreview;
+    window.resetWhatsAppQuoteTemplate = resetWhatsAppQuoteTemplate;
+    window.copyWhatsAppQuoteText = copyWhatsAppQuoteText;
+    window.launchWhatsAppClientWithQuote = launchWhatsAppClientWithQuote;
+    window.injectQuoteIntoInboxChat = injectQuoteIntoInboxChat;
+    window.openQuotationPreviewModal = openQuotationPreviewModal;
+    window.closeQuotationPreviewModal = closeQuotationPreviewModal;
+    window.printCurrentQuotation = printCurrentQuotation;
+    window.openWhatsAppModalFromPreview = openWhatsAppModalFromPreview;
+    window.previewQuotationFromBuilder = previewQuotationFromBuilder;
+    window.deleteQuotation = deleteQuotation;
+    window.exportQuotationsCSV = exportQuotationsCSV;
+
+    renderQuotationsView();
+  }
+
   initHelpDesk();
   initReferAndEarnHub();
+  initQuotationsModule();
   refreshDashboard(false);
 
 });
